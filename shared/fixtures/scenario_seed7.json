@@ -67,7 +67,7 @@
     }
   },
   "exception_eligible": [
-    "p-035",
+    "p-036",
     "p-005"
   ],
   "payments": [
@@ -280,23 +280,10 @@
       "vendor": "Orbital Components"
     },
     {
-      "agent_id": "controller_a",
-      "amount_cents": 2488000,
-      "executed_at": null,
-      "id": "p-017",
-      "po_number": "PO-6726",
-      "rail": "ACH",
-      "scheduled_at": "2026-09-08T14:57:28",
-      "settle_date": "2026-09-10",
-      "stamp": null,
-      "status": "planned",
-      "vendor": "Audit Partners LLP"
-    },
-    {
       "agent_id": "payroll",
       "amount_cents": 4701000,
       "executed_at": null,
-      "id": "p-018",
+      "id": "p-017",
       "po_number": "PO-5561",
       "rail": "ACH",
       "scheduled_at": "2026-09-08T16:25:55",
@@ -309,7 +296,7 @@
       "agent_id": "ap_east",
       "amount_cents": 2531000,
       "executed_at": null,
-      "id": "p-019",
+      "id": "p-018",
       "po_number": "PO-6823",
       "rail": "WIRE",
       "scheduled_at": "2026-09-09T09:28:29",
@@ -317,6 +304,19 @@
       "stamp": null,
       "status": "planned",
       "vendor": "Northwind Freight"
+    },
+    {
+      "agent_id": "ap_east",
+      "amount_cents": 7250000,
+      "executed_at": null,
+      "id": "p-019",
+      "po_number": "PO-7468",
+      "rail": "WIRE",
+      "scheduled_at": "2026-09-09T10:30:00",
+      "settle_date": "2026-09-09",
+      "stamp": null,
+      "status": "planned",
+      "vendor": "Brightline Courier"
     },
     {
       "agent_id": "controller_b",
@@ -489,16 +489,16 @@
     },
     {
       "agent_id": "treasury",
-      "amount_cents": 3195000,
+      "amount_cents": 4974000,
       "executed_at": null,
       "id": "p-033",
       "po_number": "PO-2408",
-      "rail": "WIRE",
+      "rail": "ACH",
       "scheduled_at": "2026-09-11T12:44:02",
-      "settle_date": "2026-09-11",
+      "settle_date": "2026-09-15",
       "stamp": null,
       "status": "planned",
-      "vendor": "First Harbor Bank Fees"
+      "vendor": "Cobalt Treasury Services"
     },
     {
       "agent_id": "procurement",
@@ -514,23 +514,10 @@
       "vendor": "Orbital Components"
     },
     {
-      "agent_id": "payroll",
-      "amount_cents": 41200000,
-      "executed_at": null,
-      "id": "p-035",
-      "po_number": "PO-7468",
-      "rail": "WIRE",
-      "scheduled_at": "2026-09-11T16:30:00",
-      "settle_date": "2026-09-11",
-      "stamp": null,
-      "status": "planned",
-      "vendor": "ADP Payroll Run W37"
-    },
-    {
       "agent_id": "fx",
       "amount_cents": 3068000,
       "executed_at": null,
-      "id": "p-036",
+      "id": "p-035",
       "po_number": "PO-2533",
       "rail": "WIRE",
       "scheduled_at": "2026-09-11T16:52:04",
@@ -540,11 +527,24 @@
       "vendor": "Yen Forward Settle"
     },
     {
+      "agent_id": "payroll",
+      "amount_cents": 41200000,
+      "executed_at": null,
+      "id": "p-036",
+      "po_number": "PO-1791",
+      "rail": "WIRE",
+      "scheduled_at": "2026-09-11T17:00:00",
+      "settle_date": "2026-09-11",
+      "stamp": null,
+      "status": "planned",
+      "vendor": "ADP Payroll Run W37"
+    },
+    {
       "agent_id": "treasury",
       "amount_cents": 12500000,
       "executed_at": null,
       "id": "p-037",
-      "po_number": "PO-1791",
+      "po_number": "PO-2186",
       "rail": "WIRE",
       "scheduled_at": "2026-09-11T17:20:00",
       "settle_date": "2026-09-11",
@@ -557,7 +557,7 @@
       "amount_cents": 18000000,
       "executed_at": null,
       "id": "p-038",
-      "po_number": "PO-2186",
+      "po_number": "PO-9779",
       "rail": "WIRE",
       "scheduled_at": "2026-09-11T17:45:00",
       "settle_date": "2026-09-11",
@@ -583,7 +583,7 @@
       "amount_cents": 5900000,
       "executed_at": null,
       "id": "p-040",
-      "po_number": "PO-9779",
+      "po_number": "PO-2542",
       "rail": "ACH",
       "scheduled_at": "2026-09-11T18:30:00",
       "settle_date": "2026-09-15",

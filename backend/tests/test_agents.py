@@ -53,13 +53,14 @@ async def test_stub_mandate_race():
         if p.status == "executed"
         and p.amount_cents > sc.threshold_cents
         and sc.window_start <= p.scheduled_at < sc.window_end
+        and p.executed_at < sc.window_end
         and p.id not in sc.exception_eligible
     ]
     assert [p.vendor for p in executed_over] == ["Halden Logistics"]
     assert executed_over[0].executed_at == ct("Mon 10:03:14")
     assert executed_over[0].stamp is not None and executed_over[0].stamp.mandate_id == "none"
-    held = [p for p in fleet.ledger.payments.values() if p.status == "held"]
-    assert [p.vendor for p in held] == ["Vantage Steel Supply"]
+    held_events = {e.payload["payment_id"] for e in events if e.type == "payment.held"}
+    assert {fleet.ledger.payments[i].vendor for i in held_events} == {"Vantage Steel Supply", "Brightline Courier"}
     assert all(fleet.ledger.payments[i].status == "executed" for i in sc.exception_eligible)
     reports = [e for e in events if e.type == "status.report" and e.payload["agent_id"] == "ap_west"]
     stale = [e for e in reports if e.payload["source"] == "executor" and e.ts_company == ct("Mon 10:03:14")]

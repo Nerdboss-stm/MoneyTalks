@@ -47,6 +47,7 @@ class Mandate(BaseModel):
     transcript: str
     compiled_text: str
     bound_at: datetime | None = None
+    expires_on: str | None = None
 
 
 class Event(BaseModel):

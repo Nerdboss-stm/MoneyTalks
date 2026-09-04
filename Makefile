@@ -1,4 +1,9 @@
-.PHONY: setup dev-backend dev-frontend test
+.PHONY: setup dev-backend dev-frontend test run replay stage prove
+
+V ?= v1
+N ?= 1
+SPEED ?= 0
+S ?= mandate-v1-01
 
 setup:
 	cd backend && uv sync
@@ -13,3 +18,15 @@ dev-frontend:
 test:
 	cd backend && uv run pytest -q
 	cd frontend && npx tsc --noEmit
+
+run:
+	cd backend && uv run python -m mandate.runner run --version $(V) --index $(N) --speed $(SPEED)
+
+replay:
+	cd backend && uv run python -m mandate.runner replay --session $(S) --speed $(SPEED)
+
+stage:
+	cd backend && uv run python -m mandate.runner stage --session $(S)
+
+prove:
+	cd backend && uv run python -m mandate.runner prove

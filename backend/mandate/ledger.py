@@ -32,6 +32,11 @@ def _update(ledger: Ledger, payment_id: str, allowed: tuple[str, ...], **changes
     return Ledger(cash_cents=ledger.cash_cents, payments=payments), np
 
 
+def begin(ledger: Ledger, payment_id: str) -> Ledger:
+    new, _ = _update(ledger, payment_id, ("planned",), status="executing")
+    return new
+
+
 def execute(ledger: Ledger, payment_id: str, at: datetime, stamp: Stamp | None = None) -> Ledger:
     new, p = _update(
         ledger, payment_id, ("planned", "executing"), status="executed", executed_at=at, stamp=stamp

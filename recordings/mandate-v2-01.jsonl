@@ -1,0 +1,361 @@
+{"type":"run.start","ts_wall":"2026-09-04T17:38:20.236318","ts_company":"2026-09-07T09:45:00","payload":{"session_id":"mandate-v2-01","run_version":"v2","seed":7,"speed":0.0}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.236535","ts_company":"2026-09-07T10:00:00","payload":{"at":"Mon 10:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.243605","ts_company":"2026-09-07T10:00:00","payload":{"agent_id":"treasury","payment_id":"p-002","at":"Mon 10:07:46"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.243768","ts_company":"2026-09-07T10:00:00","payload":{"agent_id":"ap_west","payment_id":"p-001","at":"Mon 10:03:14"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.244632","ts_company":"2026-09-07T10:00:00","payload":{"agent_id":"treasury","sentence":"Treasury: 1 scheduled, 0 held at Mon 10:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.244726","ts_company":"2026-09-07T10:00:00","payload":{"agent_id":"ap_west","sentence":"AP West: 1 scheduled, 0 held at Mon 10:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"desk.compiled","ts_wall":"2026-09-04T17:38:20.245236","ts_company":"2026-09-07T10:02:07","payload":{"mandate_id":"m-canonical","text":"Hold anything over fifty thousand dollars until payroll clears. Payroll and tax are exempt.","readback":"Hold all payments over $50,000 from Mon 10:02:07 until Fri 17:00:00 when payroll clears; Payroll, Tax stay exempt. Confirm?","questions":[],"conflict":null,"injected":true}}
+{"type":"desk.confirmed","ts_wall":"2026-09-04T17:38:20.245304","ts_company":"2026-09-07T10:02:09","payload":{"mandate_id":"m-canonical","at":"Mon 10:02:09"}}
+{"type":"mandate.bound","ts_wall":"2026-09-04T17:38:20.245355","ts_company":"2026-09-07T10:02:09","payload":{"mandate_id":"m-canonical","text":"HOLD scope=all amount>5000000 cents window=Mon 10:02:07..Fri 17:00:00 expires_on=payroll_cleared except=payroll,tax precedence=1","at":"Mon 10:02:09","mandate":{"id":"m-canonical","owner":"desk","scope":"all","threshold_cents":5000000,"window_start":"2026-09-07T10:02:07","window_end":"2026-09-11T17:00:00","exceptions":["payroll","tax"],"precedence":1,"transcript":"Hold anything over fifty thousand dollars until payroll clears. Payroll and tax are exempt.","compiled_text":"HOLD scope=all amount>5000000 cents window=Mon 10:02:07..Fri 17:00:00 expires_on=payroll_cleared except=payroll,tax precedence=1","bound_at":"2026-09-07T10:02:09","expires_on":"payroll_cleared"},"exempt_ids":["p-005","p-036"]}}
+{"type":"payment.held","ts_wall":"2026-09-04T17:38:20.245470","ts_company":"2026-09-07T10:02:09","payload":{"agent_id":"procurement","payment_id":"p-011","reason":"propagation: 6400000 > 5000000 inside window","source":"propagation","mandate_id":"m-canonical","amount_cents":6400000,"vendor":"Vantage Steel Supply"}}
+{"type":"payment.held","ts_wall":"2026-09-04T17:38:20.245530","ts_company":"2026-09-07T10:02:09","payload":{"agent_id":"ap_east","payment_id":"p-019","reason":"propagation: 7250000 > 5000000 inside window","source":"propagation","mandate_id":"m-canonical","amount_cents":7250000,"vendor":"Brightline Courier"}}
+{"type":"evidence.bundle","ts_wall":"2026-09-04T17:38:20.245611","ts_company":"2026-09-07T10:02:09","payload":{"agent_id":"treasury","payment_id":"p-033","source":"propagation","payment":{"id":"p-033","agent_id":"treasury","vendor":"Cobalt Treasury Services","amount_cents":4974000,"rail":"ACH","po_number":"PO-2408","settle_date":"2026-09-15","scheduled_at":"2026-09-11T12:44:02","executed_at":null,"status":"escalated","stamp":{"mandate_id":"m-canonical","checked_at":"2026-09-07T10:02:09","decision":"escalate","reason":"4974000 is within 5% below threshold 5000000","transcript_excerpt":"Hold anything over fifty thousand dollars until payroll clears. Payroll and tax are exempt."}},"mandate":{"id":"m-canonical","owner":"desk","scope":"all","threshold_cents":5000000,"window_start":"2026-09-07T10:02:07","window_end":"2026-09-11T17:00:00","exceptions":["payroll","tax"],"precedence":1,"transcript":"Hold anything over fifty thousand dollars until payroll clears. Payroll and tax are exempt.","compiled_text":"HOLD scope=all amount>5000000 cents window=Mon 10:02:07..Fri 17:00:00 expires_on=payroll_cleared except=payroll,tax precedence=1","bound_at":"2026-09-07T10:02:09","expires_on":"payroll_cleared"},"reason":"4974000 is within 5% below threshold 5000000","rationale":"Treasury: 1 scheduled, 0 held at Mon 10:00:00; compliant with active mandates.","recommendation":"Confirm whether the threshold is a hard line; release if the human accepts the 5% band."}}
+{"type":"exposure.report","ts_wall":"2026-09-04T17:38:20.245707","ts_company":"2026-09-07T10:02:09","payload":{"mandate_id":"m-canonical","counts":{"cleared":35,"held":2,"escalated":1,"already_executed":0,"executing":2},"held":["p-011","p-019"],"escalated":["p-033"],"executing":["p-001","p-002"],"already_executed":[],"advisory":false}}
+{"type":"payment.held","ts_wall":"2026-09-04T17:38:20.246005","ts_company":"2026-09-07T10:03:14","payload":{"agent_id":"ap_west","payment_id":"p-001","reason":"5100000 > threshold 5000000 inside m-canonical window","source":"boundary","mandate_id":"m-canonical","amount_cents":5100000,"vendor":"Halden Logistics"}}
+{"type":"exposure.report","ts_wall":"2026-09-04T17:38:20.246094","ts_company":"2026-09-07T10:03:14","payload":{"mandate_id":"m-canonical","counts":{"cleared":35,"held":3,"escalated":1,"already_executed":0,"executing":1},"held":["p-001","p-011","p-019"],"escalated":["p-033"],"executing":["p-002"],"already_executed":[],"advisory":false}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.246376","ts_company":"2026-09-07T10:07:46","payload":{"agent_id":"treasury","payment_id":"p-002","vendor":"Cobalt Treasury Services","amount_cents":4083000,"mandate_id":"m-canonical","decision_reason":"4083000 <= threshold 5000000","scheduled_at":"Mon 10:07:46","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.246449","ts_company":"2026-09-07T10:07:46","payload":{"agent_id":"treasury","sentence":"All Treasury payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 10:00:00","payment_id":"p-002"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.246520","ts_company":"2026-09-07T10:15:00","payload":{"at":"Mon 10:15:00"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.267867","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"treasury","sentence":"Treasury: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268021","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"ap_east","sentence":"AP East: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268109","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"ap_west","sentence":"AP West: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268189","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"procurement","sentence":"Procurement: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268256","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"payroll","sentence":"Payroll: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268323","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"tax","sentence":"Tax: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268391","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"saas_renewals","sentence":"Renewals: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268459","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"expenses","sentence":"Expenses: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268572","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"controller_a","sentence":"Controller A: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268646","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"controller_b","sentence":"Controller B: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268707","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"collections","sentence":"Collections: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.268765","ts_company":"2026-09-07T10:15:00","payload":{"agent_id":"fx","sentence":"FX: 0 scheduled, 0 held at Mon 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.269952","ts_company":"2026-09-07T10:30:00","payload":{"at":"Mon 10:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.270175","ts_company":"2026-09-07T10:45:00","payload":{"at":"Mon 10:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.270378","ts_company":"2026-09-07T11:00:00","payload":{"at":"Mon 11:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.270569","ts_company":"2026-09-07T11:15:00","payload":{"at":"Mon 11:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.270721","ts_company":"2026-09-07T11:30:00","payload":{"at":"Mon 11:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.270898","ts_company":"2026-09-07T11:45:00","payload":{"at":"Mon 11:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271080","ts_company":"2026-09-07T12:00:00","payload":{"at":"Mon 12:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271259","ts_company":"2026-09-07T12:15:00","payload":{"at":"Mon 12:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271470","ts_company":"2026-09-07T12:30:00","payload":{"at":"Mon 12:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271640","ts_company":"2026-09-07T12:45:00","payload":{"at":"Mon 12:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271783","ts_company":"2026-09-07T13:00:00","payload":{"at":"Mon 13:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.271922","ts_company":"2026-09-07T13:15:00","payload":{"at":"Mon 13:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.272062","ts_company":"2026-09-07T13:30:00","payload":{"at":"Mon 13:30:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.273790","ts_company":"2026-09-07T13:30:00","payload":{"agent_id":"payroll","payment_id":"p-003","at":"Mon 13:32:33"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.274449","ts_company":"2026-09-07T13:30:00","payload":{"agent_id":"payroll","sentence":"Payroll: 1 scheduled, 0 held at Mon 13:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.275138","ts_company":"2026-09-07T13:32:33","payload":{"agent_id":"payroll","payment_id":"p-003","vendor":"Benefits Trust Remit","amount_cents":4526000,"mandate_id":"m-canonical","decision_reason":"4526000 <= threshold 5000000","scheduled_at":"Mon 13:32:33","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.275244","ts_company":"2026-09-07T13:32:33","payload":{"agent_id":"payroll","sentence":"All Payroll payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 13:30:00","payment_id":"p-003"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.275342","ts_company":"2026-09-07T13:45:00","payload":{"at":"Mon 13:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.275501","ts_company":"2026-09-07T14:00:00","payload":{"at":"Mon 14:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.275647","ts_company":"2026-09-07T14:15:00","payload":{"at":"Mon 14:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.275833","ts_company":"2026-09-07T14:30:00","payload":{"at":"Mon 14:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.276006","ts_company":"2026-09-07T14:45:00","payload":{"at":"Mon 14:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.277942","ts_company":"2026-09-07T14:45:00","payload":{"agent_id":"collections","payment_id":"p-004","at":"Mon 14:53:38"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.278385","ts_company":"2026-09-07T14:45:00","payload":{"agent_id":"collections","sentence":"Collections: 1 scheduled, 0 held at Mon 14:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.279006","ts_company":"2026-09-07T14:53:38","payload":{"agent_id":"collections","payment_id":"p-004","vendor":"Chargeback Reserve","amount_cents":1910000,"mandate_id":"m-canonical","decision_reason":"1910000 <= threshold 5000000","scheduled_at":"Mon 14:53:38","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.279103","ts_company":"2026-09-07T14:53:38","payload":{"agent_id":"collections","sentence":"All Collections payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 14:45:00","payment_id":"p-004"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.279203","ts_company":"2026-09-07T15:00:00","payload":{"at":"Mon 15:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.279359","ts_company":"2026-09-07T15:15:00","payload":{"at":"Mon 15:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.279510","ts_company":"2026-09-07T15:30:00","payload":{"at":"Mon 15:30:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.281147","ts_company":"2026-09-07T15:30:00","payload":{"agent_id":"tax","payment_id":"p-005","at":"Mon 15:30:00"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.281600","ts_company":"2026-09-07T15:30:00","payload":{"agent_id":"tax","sentence":"Tax: 1 scheduled, 0 held at Mon 15:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.282182","ts_company":"2026-09-07T15:30:00","payload":{"agent_id":"tax","payment_id":"p-005","vendor":"State Revenue Dept","amount_cents":8600000,"mandate_id":"m-canonical","decision_reason":"m-canonical excepts tax","scheduled_at":"Mon 15:30:00","over_threshold":true,"exception_eligible":true,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.282269","ts_company":"2026-09-07T15:30:00","payload":{"agent_id":"tax","sentence":"All Tax payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 15:30:00","payment_id":"p-005"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.282352","ts_company":"2026-09-07T15:45:00","payload":{"at":"Mon 15:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.282505","ts_company":"2026-09-07T16:00:00","payload":{"at":"Mon 16:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.282650","ts_company":"2026-09-07T16:15:00","payload":{"at":"Mon 16:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.282791","ts_company":"2026-09-07T16:30:00","payload":{"at":"Mon 16:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.282930","ts_company":"2026-09-07T16:45:00","payload":{"at":"Mon 16:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.284764","ts_company":"2026-09-07T16:45:00","payload":{"agent_id":"controller_a","payment_id":"p-006","at":"Mon 16:52:57"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.285205","ts_company":"2026-09-07T16:45:00","payload":{"agent_id":"controller_a","sentence":"Controller A: 1 scheduled, 0 held at Mon 16:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.285791","ts_company":"2026-09-07T16:52:57","payload":{"agent_id":"controller_a","payment_id":"p-006","vendor":"Audit Partners LLP","amount_cents":4422000,"mandate_id":"m-canonical","decision_reason":"4422000 <= threshold 5000000","scheduled_at":"Mon 16:52:57","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.285898","ts_company":"2026-09-07T16:52:57","payload":{"agent_id":"controller_a","sentence":"All Controller A payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 16:45:00","payment_id":"p-006"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.285981","ts_company":"2026-09-07T17:00:00","payload":{"at":"Mon 17:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.286124","ts_company":"2026-09-07T17:15:00","payload":{"at":"Mon 17:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.286263","ts_company":"2026-09-07T17:30:00","payload":{"at":"Mon 17:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.286406","ts_company":"2026-09-07T17:45:00","payload":{"at":"Mon 17:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.286539","ts_company":"2026-09-07T18:00:00","payload":{"at":"Mon 18:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.286674","ts_company":"2026-09-07T18:15:00","payload":{"at":"Mon 18:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.288245","ts_company":"2026-09-07T18:15:00","payload":{"agent_id":"ap_east","payment_id":"p-007","at":"Mon 18:29:27"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.288678","ts_company":"2026-09-07T18:15:00","payload":{"agent_id":"ap_east","sentence":"AP East: 1 scheduled, 0 held at Mon 18:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.289294","ts_company":"2026-09-07T18:29:27","payload":{"agent_id":"ap_east","payment_id":"p-007","vendor":"Northwind Freight","amount_cents":3625000,"mandate_id":"m-canonical","decision_reason":"3625000 <= threshold 5000000","scheduled_at":"Mon 18:29:27","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.289395","ts_company":"2026-09-07T18:29:27","payload":{"agent_id":"ap_east","sentence":"All AP East payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 18:15:00","payment_id":"p-007"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.289476","ts_company":"2026-09-07T18:30:00","payload":{"at":"Mon 18:30:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.292386","ts_company":"2026-09-07T18:30:00","payload":{"agent_id":"tax","payment_id":"p-009","at":"Mon 18:42:03"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.292512","ts_company":"2026-09-07T18:30:00","payload":{"agent_id":"collections","payment_id":"p-008","at":"Mon 18:36:36"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.293234","ts_company":"2026-09-07T18:30:00","payload":{"agent_id":"tax","sentence":"Tax: 1 scheduled, 0 held at Mon 18:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.293326","ts_company":"2026-09-07T18:30:00","payload":{"agent_id":"collections","sentence":"Collections: 1 scheduled, 0 held at Mon 18:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.294032","ts_company":"2026-09-07T18:36:36","payload":{"agent_id":"collections","payment_id":"p-008","vendor":"Collections Agency Fee","amount_cents":521000,"mandate_id":"m-canonical","decision_reason":"521000 <= threshold 5000000","scheduled_at":"Mon 18:36:36","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.294114","ts_company":"2026-09-07T18:36:36","payload":{"agent_id":"collections","sentence":"All Collections payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 18:30:00","payment_id":"p-008"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.294407","ts_company":"2026-09-07T18:42:03","payload":{"agent_id":"tax","payment_id":"p-009","vendor":"Franchise Tax Board","amount_cents":998000,"mandate_id":"m-canonical","decision_reason":"998000 <= threshold 5000000","scheduled_at":"Mon 18:42:03","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.294516","ts_company":"2026-09-07T18:42:03","payload":{"agent_id":"tax","sentence":"All Tax payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Mon 18:30:00","payment_id":"p-009"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.294590","ts_company":"2026-09-07T18:45:00","payload":{"at":"Mon 18:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.294762","ts_company":"2026-09-07T19:00:00","payload":{"at":"Mon 19:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.294938","ts_company":"2026-09-08T09:00:00","payload":{"at":"Tue 09:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.295108","ts_company":"2026-09-08T09:15:00","payload":{"at":"Tue 09:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.296763","ts_company":"2026-09-08T09:15:00","payload":{"agent_id":"saas_renewals","payment_id":"p-010","at":"Tue 09:17:31"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.297178","ts_company":"2026-09-08T09:15:00","payload":{"agent_id":"saas_renewals","sentence":"Renewals: 1 scheduled, 0 held at Tue 09:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.297733","ts_company":"2026-09-08T09:17:31","payload":{"agent_id":"saas_renewals","payment_id":"p-010","vendor":"Figment Design","amount_cents":1439000,"mandate_id":"m-canonical","decision_reason":"1439000 <= threshold 5000000","scheduled_at":"Tue 09:17:31","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.297812","ts_company":"2026-09-08T09:17:31","payload":{"agent_id":"saas_renewals","sentence":"All Renewals payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 09:15:00","payment_id":"p-010"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.297886","ts_company":"2026-09-08T09:30:00","payload":{"at":"Tue 09:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298040","ts_company":"2026-09-08T09:45:00","payload":{"at":"Tue 09:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298196","ts_company":"2026-09-08T10:00:00","payload":{"at":"Tue 10:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298335","ts_company":"2026-09-08T10:15:00","payload":{"at":"Tue 10:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298475","ts_company":"2026-09-08T10:30:00","payload":{"at":"Tue 10:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298617","ts_company":"2026-09-08T10:45:00","payload":{"at":"Tue 10:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298752","ts_company":"2026-09-08T11:00:00","payload":{"at":"Tue 11:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.298884","ts_company":"2026-09-08T11:15:00","payload":{"at":"Tue 11:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299012","ts_company":"2026-09-08T11:30:00","payload":{"at":"Tue 11:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299141","ts_company":"2026-09-08T11:45:00","payload":{"at":"Tue 11:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299292","ts_company":"2026-09-08T12:00:00","payload":{"at":"Tue 12:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299439","ts_company":"2026-09-08T12:15:00","payload":{"at":"Tue 12:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299581","ts_company":"2026-09-08T12:30:00","payload":{"at":"Tue 12:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299716","ts_company":"2026-09-08T12:45:00","payload":{"at":"Tue 12:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.299854","ts_company":"2026-09-08T13:00:00","payload":{"at":"Tue 13:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.302486","ts_company":"2026-09-08T13:00:00","payload":{"agent_id":"saas_renewals","payment_id":"p-012","at":"Tue 13:10:52"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.302613","ts_company":"2026-09-08T13:00:00","payload":{"agent_id":"expenses","payment_id":"p-013","at":"Tue 13:14:05"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.303283","ts_company":"2026-09-08T13:00:00","payload":{"agent_id":"saas_renewals","sentence":"Renewals: 1 scheduled, 0 held at Tue 13:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.303368","ts_company":"2026-09-08T13:00:00","payload":{"agent_id":"expenses","sentence":"Expenses: 1 scheduled, 0 held at Tue 13:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.303938","ts_company":"2026-09-08T13:10:52","payload":{"agent_id":"saas_renewals","payment_id":"p-012","vendor":"Relay CRM","amount_cents":2027000,"mandate_id":"m-canonical","decision_reason":"2027000 <= threshold 5000000","scheduled_at":"Tue 13:10:52","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.304006","ts_company":"2026-09-08T13:10:52","payload":{"agent_id":"saas_renewals","sentence":"All Renewals payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 13:00:00","payment_id":"p-012"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.304322","ts_company":"2026-09-08T13:14:05","payload":{"agent_id":"expenses","payment_id":"p-013","vendor":"Travel Desk Remit","amount_cents":2655000,"mandate_id":"m-canonical","decision_reason":"2655000 <= threshold 5000000","scheduled_at":"Tue 13:14:05","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.304417","ts_company":"2026-09-08T13:14:05","payload":{"agent_id":"expenses","sentence":"All Expenses payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 13:00:00","payment_id":"p-013"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.304501","ts_company":"2026-09-08T13:15:00","payload":{"at":"Tue 13:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.306094","ts_company":"2026-09-08T13:15:00","payload":{"agent_id":"treasury","payment_id":"p-014","at":"Tue 13:23:22"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.306534","ts_company":"2026-09-08T13:15:00","payload":{"agent_id":"treasury","sentence":"Treasury: 1 scheduled, 0 held at Tue 13:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.307075","ts_company":"2026-09-08T13:23:22","payload":{"agent_id":"treasury","payment_id":"p-014","vendor":"First Harbor Bank Fees","amount_cents":1903000,"mandate_id":"m-canonical","decision_reason":"1903000 <= threshold 5000000","scheduled_at":"Tue 13:23:22","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.307176","ts_company":"2026-09-08T13:23:22","payload":{"agent_id":"treasury","sentence":"All Treasury payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 13:15:00","payment_id":"p-014"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.307275","ts_company":"2026-09-08T13:30:00","payload":{"at":"Tue 13:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.307484","ts_company":"2026-09-08T13:45:00","payload":{"at":"Tue 13:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.309780","ts_company":"2026-09-08T13:45:00","payload":{"agent_id":"ap_west","payment_id":"p-015","at":"Tue 13:59:08"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.310250","ts_company":"2026-09-08T13:45:00","payload":{"agent_id":"ap_west","sentence":"AP West: 1 scheduled, 0 held at Tue 13:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.310836","ts_company":"2026-09-08T13:59:08","payload":{"agent_id":"ap_west","payment_id":"p-015","vendor":"Westbay Janitorial","amount_cents":1159000,"mandate_id":"m-canonical","decision_reason":"1159000 <= threshold 5000000","scheduled_at":"Tue 13:59:08","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.310964","ts_company":"2026-09-08T13:59:08","payload":{"agent_id":"ap_west","sentence":"All AP West payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 13:45:00","payment_id":"p-015"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.311056","ts_company":"2026-09-08T14:00:00","payload":{"at":"Tue 14:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.312764","ts_company":"2026-09-08T14:00:00","payload":{"agent_id":"procurement","payment_id":"p-016","at":"Tue 14:01:26"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.313204","ts_company":"2026-09-08T14:00:00","payload":{"agent_id":"procurement","sentence":"Procurement: 1 scheduled, 0 held at Tue 14:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.313781","ts_company":"2026-09-08T14:01:26","payload":{"agent_id":"procurement","payment_id":"p-016","vendor":"Orbital Components","amount_cents":2011000,"mandate_id":"m-canonical","decision_reason":"2011000 <= threshold 5000000","scheduled_at":"Tue 14:01:26","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.313863","ts_company":"2026-09-08T14:01:26","payload":{"agent_id":"procurement","sentence":"All Procurement payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 14:00:00","payment_id":"p-016"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.313940","ts_company":"2026-09-08T14:15:00","payload":{"at":"Tue 14:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314091","ts_company":"2026-09-08T14:30:00","payload":{"at":"Tue 14:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314244","ts_company":"2026-09-08T14:45:00","payload":{"at":"Tue 14:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314405","ts_company":"2026-09-08T15:00:00","payload":{"at":"Tue 15:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314553","ts_company":"2026-09-08T15:15:00","payload":{"at":"Tue 15:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314701","ts_company":"2026-09-08T15:30:00","payload":{"at":"Tue 15:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314845","ts_company":"2026-09-08T15:45:00","payload":{"at":"Tue 15:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.314988","ts_company":"2026-09-08T16:00:00","payload":{"at":"Tue 16:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.315127","ts_company":"2026-09-08T16:15:00","payload":{"at":"Tue 16:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.316684","ts_company":"2026-09-08T16:15:00","payload":{"agent_id":"payroll","payment_id":"p-017","at":"Tue 16:25:55"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.317193","ts_company":"2026-09-08T16:15:00","payload":{"agent_id":"payroll","sentence":"Payroll: 1 scheduled, 0 held at Tue 16:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.317769","ts_company":"2026-09-08T16:25:55","payload":{"agent_id":"payroll","payment_id":"p-017","vendor":"401k Custodian Sweep","amount_cents":4701000,"mandate_id":"m-canonical","decision_reason":"4701000 <= threshold 5000000","scheduled_at":"Tue 16:25:55","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.317866","ts_company":"2026-09-08T16:25:55","payload":{"agent_id":"payroll","sentence":"All Payroll payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Tue 16:15:00","payment_id":"p-017"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.317952","ts_company":"2026-09-08T16:30:00","payload":{"at":"Tue 16:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318138","ts_company":"2026-09-08T16:45:00","payload":{"at":"Tue 16:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318281","ts_company":"2026-09-08T17:00:00","payload":{"at":"Tue 17:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318420","ts_company":"2026-09-08T17:15:00","payload":{"at":"Tue 17:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318558","ts_company":"2026-09-08T17:30:00","payload":{"at":"Tue 17:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318690","ts_company":"2026-09-08T17:45:00","payload":{"at":"Tue 17:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318821","ts_company":"2026-09-08T18:00:00","payload":{"at":"Tue 18:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.318951","ts_company":"2026-09-08T18:15:00","payload":{"at":"Tue 18:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.319081","ts_company":"2026-09-08T18:30:00","payload":{"at":"Tue 18:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.319211","ts_company":"2026-09-08T18:45:00","payload":{"at":"Tue 18:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.319343","ts_company":"2026-09-08T19:00:00","payload":{"at":"Tue 19:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.319473","ts_company":"2026-09-09T09:00:00","payload":{"at":"Wed 09:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.319604","ts_company":"2026-09-09T09:15:00","payload":{"at":"Wed 09:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.321117","ts_company":"2026-09-09T09:15:00","payload":{"agent_id":"ap_east","payment_id":"p-018","at":"Wed 09:28:29"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.321549","ts_company":"2026-09-09T09:15:00","payload":{"agent_id":"ap_east","sentence":"AP East: 1 scheduled, 0 held at Wed 09:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.322076","ts_company":"2026-09-09T09:28:29","payload":{"agent_id":"ap_east","payment_id":"p-018","vendor":"Northwind Freight","amount_cents":2531000,"mandate_id":"m-canonical","decision_reason":"2531000 <= threshold 5000000","scheduled_at":"Wed 09:28:29","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.322151","ts_company":"2026-09-09T09:28:29","payload":{"agent_id":"ap_east","sentence":"All AP East payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Wed 09:15:00","payment_id":"p-018"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322223","ts_company":"2026-09-09T09:30:00","payload":{"at":"Wed 09:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322369","ts_company":"2026-09-09T09:45:00","payload":{"at":"Wed 09:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322506","ts_company":"2026-09-09T10:00:00","payload":{"at":"Wed 10:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322641","ts_company":"2026-09-09T10:15:00","payload":{"at":"Wed 10:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322775","ts_company":"2026-09-09T10:30:00","payload":{"at":"Wed 10:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.322909","ts_company":"2026-09-09T10:45:00","payload":{"at":"Wed 10:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.323045","ts_company":"2026-09-09T11:00:00","payload":{"at":"Wed 11:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.323178","ts_company":"2026-09-09T11:15:00","payload":{"at":"Wed 11:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.323313","ts_company":"2026-09-09T11:30:00","payload":{"at":"Wed 11:30:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.324938","ts_company":"2026-09-09T11:30:00","payload":{"agent_id":"controller_b","payment_id":"p-020","at":"Wed 11:40:59"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.325416","ts_company":"2026-09-09T11:30:00","payload":{"agent_id":"controller_b","sentence":"Controller B: 1 scheduled, 0 held at Wed 11:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.326034","ts_company":"2026-09-09T11:40:59","payload":{"agent_id":"controller_b","payment_id":"p-020","vendor":"Ledgerline Advisory","amount_cents":4393000,"mandate_id":"m-canonical","decision_reason":"4393000 <= threshold 5000000","scheduled_at":"Wed 11:40:59","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.326111","ts_company":"2026-09-09T11:40:59","payload":{"agent_id":"controller_b","sentence":"All Controller B payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Wed 11:30:00","payment_id":"p-020"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.326204","ts_company":"2026-09-09T11:45:00","payload":{"at":"Wed 11:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.326390","ts_company":"2026-09-09T12:00:00","payload":{"at":"Wed 12:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.326579","ts_company":"2026-09-09T12:15:00","payload":{"at":"Wed 12:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.326736","ts_company":"2026-09-09T12:30:00","payload":{"at":"Wed 12:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.326898","ts_company":"2026-09-09T12:45:00","payload":{"at":"Wed 12:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.327063","ts_company":"2026-09-09T13:00:00","payload":{"at":"Wed 13:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.327239","ts_company":"2026-09-09T13:15:00","payload":{"at":"Wed 13:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.327396","ts_company":"2026-09-09T13:30:00","payload":{"at":"Wed 13:30:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.329004","ts_company":"2026-09-09T13:30:00","payload":{"agent_id":"ap_west","payment_id":"p-021","at":"Wed 13:36:30"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.329431","ts_company":"2026-09-09T13:30:00","payload":{"agent_id":"ap_west","sentence":"AP West: 1 scheduled, 0 held at Wed 13:30:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.330002","ts_company":"2026-09-09T13:36:30","payload":{"agent_id":"ap_west","payment_id":"p-021","vendor":"Cascade Print Works","amount_cents":903000,"mandate_id":"m-canonical","decision_reason":"903000 <= threshold 5000000","scheduled_at":"Wed 13:36:30","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.330078","ts_company":"2026-09-09T13:36:30","payload":{"agent_id":"ap_west","sentence":"All AP West payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Wed 13:30:00","payment_id":"p-021"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330150","ts_company":"2026-09-09T13:45:00","payload":{"at":"Wed 13:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330299","ts_company":"2026-09-09T14:00:00","payload":{"at":"Wed 14:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330439","ts_company":"2026-09-09T14:15:00","payload":{"at":"Wed 14:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330577","ts_company":"2026-09-09T14:30:00","payload":{"at":"Wed 14:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330712","ts_company":"2026-09-09T14:45:00","payload":{"at":"Wed 14:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330848","ts_company":"2026-09-09T15:00:00","payload":{"at":"Wed 15:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.330981","ts_company":"2026-09-09T15:15:00","payload":{"at":"Wed 15:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331115","ts_company":"2026-09-09T15:30:00","payload":{"at":"Wed 15:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331247","ts_company":"2026-09-09T15:45:00","payload":{"at":"Wed 15:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331378","ts_company":"2026-09-09T16:00:00","payload":{"at":"Wed 16:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331511","ts_company":"2026-09-09T16:15:00","payload":{"at":"Wed 16:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331676","ts_company":"2026-09-09T16:30:00","payload":{"at":"Wed 16:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331808","ts_company":"2026-09-09T16:45:00","payload":{"at":"Wed 16:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.331941","ts_company":"2026-09-09T17:00:00","payload":{"at":"Wed 17:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.333488","ts_company":"2026-09-09T17:00:00","payload":{"agent_id":"saas_renewals","payment_id":"p-022","at":"Wed 17:01:37"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.333901","ts_company":"2026-09-09T17:00:00","payload":{"agent_id":"saas_renewals","sentence":"Renewals: 1 scheduled, 0 held at Wed 17:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.334482","ts_company":"2026-09-09T17:01:37","payload":{"agent_id":"saas_renewals","payment_id":"p-022","vendor":"Vaultspace Storage","amount_cents":4555000,"mandate_id":"m-canonical","decision_reason":"4555000 <= threshold 5000000","scheduled_at":"Wed 17:01:37","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.334564","ts_company":"2026-09-09T17:01:37","payload":{"agent_id":"saas_renewals","sentence":"All Renewals payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Wed 17:00:00","payment_id":"p-022"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.334641","ts_company":"2026-09-09T17:15:00","payload":{"at":"Wed 17:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.334858","ts_company":"2026-09-09T17:30:00","payload":{"at":"Wed 17:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335029","ts_company":"2026-09-09T17:45:00","payload":{"at":"Wed 17:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335242","ts_company":"2026-09-09T18:00:00","payload":{"at":"Wed 18:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335402","ts_company":"2026-09-09T18:15:00","payload":{"at":"Wed 18:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335558","ts_company":"2026-09-09T18:30:00","payload":{"at":"Wed 18:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335725","ts_company":"2026-09-09T18:45:00","payload":{"at":"Wed 18:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.335881","ts_company":"2026-09-09T19:00:00","payload":{"at":"Wed 19:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336139","ts_company":"2026-09-10T09:00:00","payload":{"at":"Thu 09:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336308","ts_company":"2026-09-10T09:15:00","payload":{"at":"Thu 09:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336454","ts_company":"2026-09-10T09:30:00","payload":{"at":"Thu 09:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336638","ts_company":"2026-09-10T09:45:00","payload":{"at":"Thu 09:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336787","ts_company":"2026-09-10T10:00:00","payload":{"at":"Thu 10:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.336943","ts_company":"2026-09-10T10:15:00","payload":{"at":"Thu 10:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.338758","ts_company":"2026-09-10T10:15:00","payload":{"agent_id":"procurement","payment_id":"p-023","at":"Thu 10:27:10"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.339215","ts_company":"2026-09-10T10:15:00","payload":{"agent_id":"procurement","sentence":"Procurement: 1 scheduled, 0 held at Thu 10:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.339809","ts_company":"2026-09-10T10:27:10","payload":{"agent_id":"procurement","payment_id":"p-023","vendor":"Summit Raw Materials","amount_cents":3402000,"mandate_id":"m-canonical","decision_reason":"3402000 <= threshold 5000000","scheduled_at":"Thu 10:27:10","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.339894","ts_company":"2026-09-10T10:27:10","payload":{"agent_id":"procurement","sentence":"All Procurement payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 10:15:00","payment_id":"p-023"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340008","ts_company":"2026-09-10T10:30:00","payload":{"at":"Thu 10:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340160","ts_company":"2026-09-10T10:45:00","payload":{"at":"Thu 10:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340311","ts_company":"2026-09-10T11:00:00","payload":{"at":"Thu 11:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340488","ts_company":"2026-09-10T11:15:00","payload":{"at":"Thu 11:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340645","ts_company":"2026-09-10T11:30:00","payload":{"at":"Thu 11:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340796","ts_company":"2026-09-10T11:45:00","payload":{"at":"Thu 11:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.340980","ts_company":"2026-09-10T12:00:00","payload":{"at":"Thu 12:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.341124","ts_company":"2026-09-10T12:15:00","payload":{"at":"Thu 12:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.341261","ts_company":"2026-09-10T12:30:00","payload":{"at":"Thu 12:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.341402","ts_company":"2026-09-10T12:45:00","payload":{"at":"Thu 12:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.341541","ts_company":"2026-09-10T13:00:00","payload":{"at":"Thu 13:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.343150","ts_company":"2026-09-10T13:00:00","payload":{"agent_id":"tax","payment_id":"p-024","at":"Thu 13:01:09"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.343691","ts_company":"2026-09-10T13:00:00","payload":{"agent_id":"tax","sentence":"Tax: 1 scheduled, 0 held at Thu 13:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.344457","ts_company":"2026-09-10T13:01:09","payload":{"agent_id":"tax","payment_id":"p-024","vendor":"Sales Tax Remit","amount_cents":3602000,"mandate_id":"m-canonical","decision_reason":"3602000 <= threshold 5000000","scheduled_at":"Thu 13:01:09","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.344548","ts_company":"2026-09-10T13:01:09","payload":{"agent_id":"tax","sentence":"All Tax payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 13:00:00","payment_id":"p-024"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.344631","ts_company":"2026-09-10T13:15:00","payload":{"at":"Thu 13:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.344791","ts_company":"2026-09-10T13:30:00","payload":{"at":"Thu 13:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.344937","ts_company":"2026-09-10T13:45:00","payload":{"at":"Thu 13:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.346626","ts_company":"2026-09-10T13:45:00","payload":{"agent_id":"controller_a","payment_id":"p-025","at":"Thu 13:59:38"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.347064","ts_company":"2026-09-10T13:45:00","payload":{"agent_id":"controller_a","sentence":"Controller A: 1 scheduled, 0 held at Thu 13:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.347594","ts_company":"2026-09-10T13:59:38","payload":{"agent_id":"controller_a","payment_id":"p-025","vendor":"Ledger Archive Storage","amount_cents":4255000,"mandate_id":"m-canonical","decision_reason":"4255000 <= threshold 5000000","scheduled_at":"Thu 13:59:38","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.347678","ts_company":"2026-09-10T13:59:38","payload":{"agent_id":"controller_a","sentence":"All Controller A payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 13:45:00","payment_id":"p-025"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.347785","ts_company":"2026-09-10T14:00:00","payload":{"at":"Thu 14:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.347939","ts_company":"2026-09-10T14:15:00","payload":{"at":"Thu 14:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.348087","ts_company":"2026-09-10T14:30:00","payload":{"at":"Thu 14:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.348226","ts_company":"2026-09-10T14:45:00","payload":{"at":"Thu 14:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.348363","ts_company":"2026-09-10T15:00:00","payload":{"at":"Thu 15:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.349866","ts_company":"2026-09-10T15:00:00","payload":{"agent_id":"expenses","payment_id":"p-026","at":"Thu 15:09:46"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.350347","ts_company":"2026-09-10T15:00:00","payload":{"agent_id":"expenses","sentence":"Expenses: 1 scheduled, 0 held at Thu 15:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.350964","ts_company":"2026-09-10T15:09:46","payload":{"agent_id":"expenses","payment_id":"p-026","vendor":"Expense Reimbursement Batch","amount_cents":2057000,"mandate_id":"m-canonical","decision_reason":"2057000 <= threshold 5000000","scheduled_at":"Thu 15:09:46","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.351069","ts_company":"2026-09-10T15:09:46","payload":{"agent_id":"expenses","sentence":"All Expenses payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 15:00:00","payment_id":"p-026"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.351152","ts_company":"2026-09-10T15:15:00","payload":{"at":"Thu 15:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.351331","ts_company":"2026-09-10T15:30:00","payload":{"at":"Thu 15:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.351533","ts_company":"2026-09-10T15:45:00","payload":{"at":"Thu 15:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.353682","ts_company":"2026-09-10T15:45:00","payload":{"agent_id":"controller_b","payment_id":"p-027","at":"Thu 15:55:03"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.354175","ts_company":"2026-09-10T15:45:00","payload":{"agent_id":"controller_b","sentence":"Controller B: 1 scheduled, 0 held at Thu 15:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.354850","ts_company":"2026-09-10T15:55:03","payload":{"agent_id":"controller_b","payment_id":"p-027","vendor":"Registrar Filing Fee","amount_cents":3468000,"mandate_id":"m-canonical","decision_reason":"3468000 <= threshold 5000000","scheduled_at":"Thu 15:55:03","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.354936","ts_company":"2026-09-10T15:55:03","payload":{"agent_id":"controller_b","sentence":"All Controller B payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 15:45:00","payment_id":"p-027"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.355010","ts_company":"2026-09-10T16:00:00","payload":{"at":"Thu 16:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.355154","ts_company":"2026-09-10T16:15:00","payload":{"at":"Thu 16:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.355293","ts_company":"2026-09-10T16:30:00","payload":{"at":"Thu 16:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.355423","ts_company":"2026-09-10T16:45:00","payload":{"at":"Thu 16:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.355572","ts_company":"2026-09-10T17:00:00","payload":{"at":"Thu 17:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.357419","ts_company":"2026-09-10T17:00:00","payload":{"agent_id":"ap_east","payment_id":"p-028","at":"Thu 17:02:30"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.358175","ts_company":"2026-09-10T17:00:00","payload":{"agent_id":"ap_east","sentence":"AP East: 1 scheduled, 0 held at Thu 17:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.358820","ts_company":"2026-09-10T17:02:30","payload":{"agent_id":"ap_east","payment_id":"p-028","vendor":"Northwind Freight","amount_cents":1206000,"mandate_id":"m-canonical","decision_reason":"1206000 <= threshold 5000000","scheduled_at":"Thu 17:02:30","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.358908","ts_company":"2026-09-10T17:02:30","payload":{"agent_id":"ap_east","sentence":"All AP East payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 17:00:00","payment_id":"p-028"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.358984","ts_company":"2026-09-10T17:15:00","payload":{"at":"Thu 17:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.359151","ts_company":"2026-09-10T17:30:00","payload":{"at":"Thu 17:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.359346","ts_company":"2026-09-10T17:45:00","payload":{"at":"Thu 17:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.359514","ts_company":"2026-09-10T18:00:00","payload":{"at":"Thu 18:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.361572","ts_company":"2026-09-10T18:00:00","payload":{"agent_id":"expenses","payment_id":"p-029","at":"Thu 18:12:23"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.362132","ts_company":"2026-09-10T18:00:00","payload":{"agent_id":"expenses","sentence":"Expenses: 1 scheduled, 0 held at Thu 18:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.362688","ts_company":"2026-09-10T18:12:23","payload":{"agent_id":"expenses","payment_id":"p-029","vendor":"Travel Desk Remit","amount_cents":2509000,"mandate_id":"m-canonical","decision_reason":"2509000 <= threshold 5000000","scheduled_at":"Thu 18:12:23","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.362769","ts_company":"2026-09-10T18:12:23","payload":{"agent_id":"expenses","sentence":"All Expenses payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Thu 18:00:00","payment_id":"p-029"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.362848","ts_company":"2026-09-10T18:15:00","payload":{"at":"Thu 18:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363001","ts_company":"2026-09-10T18:30:00","payload":{"at":"Thu 18:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363144","ts_company":"2026-09-10T18:45:00","payload":{"at":"Thu 18:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363287","ts_company":"2026-09-10T19:00:00","payload":{"at":"Thu 19:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363426","ts_company":"2026-09-11T09:00:00","payload":{"at":"Fri 09:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363574","ts_company":"2026-09-11T09:15:00","payload":{"at":"Fri 09:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363714","ts_company":"2026-09-11T09:30:00","payload":{"at":"Fri 09:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363855","ts_company":"2026-09-11T09:45:00","payload":{"at":"Fri 09:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.363996","ts_company":"2026-09-11T10:00:00","payload":{"at":"Fri 10:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.365577","ts_company":"2026-09-11T10:00:00","payload":{"agent_id":"ap_west","payment_id":"p-030","at":"Fri 10:08:36"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.366032","ts_company":"2026-09-11T10:00:00","payload":{"agent_id":"ap_west","sentence":"AP West: 1 scheduled, 0 held at Fri 10:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.366676","ts_company":"2026-09-11T10:08:36","payload":{"agent_id":"ap_west","payment_id":"p-030","vendor":"Sierra Pallet Co","amount_cents":2028000,"mandate_id":"m-canonical","decision_reason":"2028000 <= threshold 5000000","scheduled_at":"Fri 10:08:36","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.366896","ts_company":"2026-09-11T10:08:36","payload":{"agent_id":"ap_west","sentence":"All AP West payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 10:00:00","payment_id":"p-030"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.367002","ts_company":"2026-09-11T10:15:00","payload":{"at":"Fri 10:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.367192","ts_company":"2026-09-11T10:30:00","payload":{"at":"Fri 10:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.367342","ts_company":"2026-09-11T10:45:00","payload":{"at":"Fri 10:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.369063","ts_company":"2026-09-11T10:45:00","payload":{"agent_id":"fx","payment_id":"p-031","at":"Fri 10:48:23"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.369511","ts_company":"2026-09-11T10:45:00","payload":{"agent_id":"fx","sentence":"FX: 1 scheduled, 0 held at Fri 10:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.370095","ts_company":"2026-09-11T10:48:23","payload":{"agent_id":"fx","payment_id":"p-031","vendor":"Euro Hedge Margin","amount_cents":201000,"mandate_id":"m-canonical","decision_reason":"201000 <= threshold 5000000","scheduled_at":"Fri 10:48:23","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.370179","ts_company":"2026-09-11T10:48:23","payload":{"agent_id":"fx","sentence":"All FX payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 10:45:00","payment_id":"p-031"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.370258","ts_company":"2026-09-11T11:00:00","payload":{"at":"Fri 11:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.370414","ts_company":"2026-09-11T11:15:00","payload":{"at":"Fri 11:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.370557","ts_company":"2026-09-11T11:30:00","payload":{"at":"Fri 11:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.370705","ts_company":"2026-09-11T11:45:00","payload":{"at":"Fri 11:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.370848","ts_company":"2026-09-11T12:00:00","payload":{"at":"Fri 12:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.372375","ts_company":"2026-09-11T12:00:00","payload":{"agent_id":"payroll","payment_id":"p-032","at":"Fri 12:10:06"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.372806","ts_company":"2026-09-11T12:00:00","payload":{"agent_id":"payroll","sentence":"Payroll: 1 scheduled, 0 held at Fri 12:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.373325","ts_company":"2026-09-11T12:10:06","payload":{"agent_id":"payroll","payment_id":"p-032","vendor":"Garnishment Clearing","amount_cents":1164000,"mandate_id":"m-canonical","decision_reason":"1164000 <= threshold 5000000","scheduled_at":"Fri 12:10:06","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.373400","ts_company":"2026-09-11T12:10:06","payload":{"agent_id":"payroll","sentence":"All Payroll payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 12:00:00","payment_id":"p-032"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.373471","ts_company":"2026-09-11T12:15:00","payload":{"at":"Fri 12:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.373631","ts_company":"2026-09-11T12:30:00","payload":{"at":"Fri 12:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.373808","ts_company":"2026-09-11T12:45:00","payload":{"at":"Fri 12:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.373954","ts_company":"2026-09-11T13:00:00","payload":{"at":"Fri 13:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374126","ts_company":"2026-09-11T13:15:00","payload":{"at":"Fri 13:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374280","ts_company":"2026-09-11T13:30:00","payload":{"at":"Fri 13:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374443","ts_company":"2026-09-11T13:45:00","payload":{"at":"Fri 13:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374602","ts_company":"2026-09-11T14:00:00","payload":{"at":"Fri 14:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374765","ts_company":"2026-09-11T14:15:00","payload":{"at":"Fri 14:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.374910","ts_company":"2026-09-11T14:30:00","payload":{"at":"Fri 14:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.375046","ts_company":"2026-09-11T14:45:00","payload":{"at":"Fri 14:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.375182","ts_company":"2026-09-11T15:00:00","payload":{"at":"Fri 15:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.375315","ts_company":"2026-09-11T15:15:00","payload":{"at":"Fri 15:15:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.377046","ts_company":"2026-09-11T15:15:00","payload":{"agent_id":"procurement","payment_id":"p-034","at":"Fri 15:15:09"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.377576","ts_company":"2026-09-11T15:15:00","payload":{"agent_id":"procurement","sentence":"Procurement: 1 scheduled, 0 held at Fri 15:15:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.378122","ts_company":"2026-09-11T15:15:09","payload":{"agent_id":"procurement","payment_id":"p-034","vendor":"Orbital Components","amount_cents":1881000,"mandate_id":"m-canonical","decision_reason":"1881000 <= threshold 5000000","scheduled_at":"Fri 15:15:09","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.378199","ts_company":"2026-09-11T15:15:09","payload":{"agent_id":"procurement","sentence":"All Procurement payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 15:15:00","payment_id":"p-034"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.378275","ts_company":"2026-09-11T15:30:00","payload":{"at":"Fri 15:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.378422","ts_company":"2026-09-11T15:45:00","payload":{"at":"Fri 15:45:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.378570","ts_company":"2026-09-11T16:00:00","payload":{"at":"Fri 16:00:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.378740","ts_company":"2026-09-11T16:15:00","payload":{"at":"Fri 16:15:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.378889","ts_company":"2026-09-11T16:30:00","payload":{"at":"Fri 16:30:00"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.379042","ts_company":"2026-09-11T16:45:00","payload":{"at":"Fri 16:45:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.380600","ts_company":"2026-09-11T16:45:00","payload":{"agent_id":"fx","payment_id":"p-035","at":"Fri 16:52:04"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.381022","ts_company":"2026-09-11T16:45:00","payload":{"agent_id":"fx","sentence":"FX: 1 scheduled, 0 held at Fri 16:45:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.381552","ts_company":"2026-09-11T16:52:04","payload":{"agent_id":"fx","payment_id":"p-035","vendor":"Yen Forward Settle","amount_cents":3068000,"mandate_id":"m-canonical","decision_reason":"3068000 <= threshold 5000000","scheduled_at":"Fri 16:52:04","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.381636","ts_company":"2026-09-11T16:52:04","payload":{"agent_id":"fx","sentence":"All FX payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 16:45:00","payment_id":"p-035"}}
+{"type":"tick","ts_wall":"2026-09-04T17:38:20.381735","ts_company":"2026-09-11T17:00:00","payload":{"at":"Fri 17:00:00"}}
+{"type":"payment.scheduled","ts_wall":"2026-09-04T17:38:20.383164","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"payroll","payment_id":"p-036","at":"Fri 17:00:00"}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.383582","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"payroll","sentence":"Payroll: 1 scheduled, 0 held at Fri 17:00:00; compliant with active mandates.","source":"tick"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.384080","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"payroll","payment_id":"p-036","vendor":"ADP Payroll Run W37","amount_cents":41200000,"mandate_id":"none","decision_reason":"no active mandate","scheduled_at":"Fri 17:00:00","over_threshold":true,"exception_eligible":true,"payroll_run":true}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.384150","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"payroll","sentence":"All Payroll payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":"Fri 17:00:00","payment_id":"p-036"}}
+{"type":"payroll.cleared","ts_wall":"2026-09-04T17:38:20.384226","ts_company":"2026-09-11T17:00:00","payload":{"at":"Fri 17:00:00","payment_id":"p-036","amount_cents":41200000}}
+{"type":"mandate.expired","ts_wall":"2026-09-04T17:38:20.384267","ts_company":"2026-09-11T17:00:00","payload":{"mandate_id":"m-canonical","cause":"payroll_cleared","at":"Fri 17:00:00"}}
+{"type":"payment.released","ts_wall":"2026-09-04T17:38:20.384329","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_east","payment_id":"p-019","amount_cents":7250000,"mandate_id":"m-canonical","order":0,"prior_status":"held","vendor":"Brightline Courier"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.384580","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_east","payment_id":"p-019","vendor":"Brightline Courier","amount_cents":7250000,"mandate_id":"none","decision_reason":"no active mandate","scheduled_at":"Wed 10:30:00","over_threshold":true,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.384647","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_east","sentence":"All AP East payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":null,"payment_id":"p-019"}}
+{"type":"payment.released","ts_wall":"2026-09-04T17:38:20.384700","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"procurement","payment_id":"p-011","amount_cents":6400000,"mandate_id":"m-canonical","order":1,"prior_status":"held","vendor":"Vantage Steel Supply"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.384916","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"procurement","payment_id":"p-011","vendor":"Vantage Steel Supply","amount_cents":6400000,"mandate_id":"none","decision_reason":"no active mandate","scheduled_at":"Tue 11:00:00","over_threshold":true,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.384991","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"procurement","sentence":"All Procurement payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":null,"payment_id":"p-011"}}
+{"type":"payment.released","ts_wall":"2026-09-04T17:38:20.385041","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_west","payment_id":"p-001","amount_cents":5100000,"mandate_id":"m-canonical","order":2,"prior_status":"held","vendor":"Halden Logistics"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.385250","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_west","payment_id":"p-001","vendor":"Halden Logistics","amount_cents":5100000,"mandate_id":"none","decision_reason":"no active mandate","scheduled_at":"Mon 10:03:14","over_threshold":true,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.385313","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"ap_west","sentence":"All AP West payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":null,"payment_id":"p-001"}}
+{"type":"payment.released","ts_wall":"2026-09-04T17:38:20.385388","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"treasury","payment_id":"p-033","amount_cents":4974000,"mandate_id":"m-canonical","order":3,"prior_status":"escalated","vendor":"Cobalt Treasury Services"}}
+{"type":"payment.executed","ts_wall":"2026-09-04T17:38:20.385593","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"treasury","payment_id":"p-033","vendor":"Cobalt Treasury Services","amount_cents":4974000,"mandate_id":"none","decision_reason":"no active mandate","scheduled_at":"Fri 12:44:02","over_threshold":false,"exception_eligible":false,"payroll_run":false}}
+{"type":"status.report","ts_wall":"2026-09-04T17:38:20.385651","ts_company":"2026-09-11T17:00:00","payload":{"agent_id":"treasury","sentence":"All Treasury payments executed per plan; compliant with active mandates.","source":"executor","scheduled_at_tick":null,"payment_id":"p-033"}}
+{"type":"holds.released","ts_wall":"2026-09-04T17:38:20.385693","ts_company":"2026-09-11T17:00:00","payload":{"mandate_id":"m-canonical","payment_ids":["p-019","p-011","p-001","p-033"],"at":"Fri 17:00:00"}}
+{"type":"run.end","ts_wall":"2026-09-04T17:38:20.385728","ts_company":"2026-09-11T17:00:00","payload":{"session_id":"mandate-v2-01","cash_cents":-26727000}}

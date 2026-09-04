@@ -64,3 +64,5 @@ def test_guarantee_exceptions():
     assert {by_id[i].agent_id for i in sc.exception_eligible} == {"payroll", "tax"}
     assert sc.company.payroll.exception_eligible and sc.company.tax.exception_eligible
     assert sc.company.payroll.due == ct("Fri 17:00") and sc.company.tax.due == ct("Mon 17:00")
+    payroll_run = by_id[sc.exception_eligible[0]]
+    assert payroll_run.scheduled_at == sc.window_end == ct("Fri 17:00")
