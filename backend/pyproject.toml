@@ -12,6 +12,7 @@ dependencies = [
     "structlog>=24",
     "reportlab>=4",
     "httpx>=0.27",
+    "prismtrace-sdk>=0.4.0",
 ]
 
 [dependency-groups]

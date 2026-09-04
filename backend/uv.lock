@@ -449,6 +449,7 @@ dependencies = [
     { name = "httpx" },
     { name = "langchain-anthropic" },
     { name = "langgraph" },
+    { name = "prismtrace-sdk" },
     { name = "pydantic" },
     { name = "reportlab" },
     { name = "structlog" },
@@ -468,6 +469,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.27" },
     { name = "langchain-anthropic", specifier = ">=0.3" },
     { name = "langgraph", specifier = ">=0.2" },
+    { name = "prismtrace-sdk", specifier = ">=0.4.0" },
     { name = "pydantic", specifier = ">=2.8" },
     { name = "reportlab", specifier = ">=4" },
     { name = "structlog", specifier = ">=24" },
@@ -550,6 +552,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
+name = "prismtrace-sdk"
+version = "0.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/20/a8/8fa86b731460b1948c651968e3858101042e1bc8ddf315858ab39ca93a80/prismtrace_sdk-0.4.2.tar.gz", hash = "sha256:1b1ecc54735df59a7fa8dbb92b7594b445bd90c5a54b1f0443e8cd0630c92ebc", size = 50531, upload-time = "2026-09-04T16:52:13.598Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ae/3d/b6ce9a18179242d7ad755faa32ba37e31f1f85088c90655fa04426a60aeb/prismtrace_sdk-0.4.2-py3-none-any.whl", hash = "sha256:f1a5cf35d83f899c9054f220b8d583c89e458fd7a1279410845d89fb4ac36084", size = 44149, upload-time = "2026-09-04T16:52:12.272Z" },
 ]
 
 [[package]]
