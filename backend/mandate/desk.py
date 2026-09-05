@@ -354,10 +354,30 @@ class Meeting:
         self.evidence = engine.to_evidence_json()
 
     def summary(self) -> dict:
+        from explain.engine import REVENUE_CATEGORIES
+
         variances = self.evidence["variances"]
+        var_ids = {r["target"]: r["id"] for r in self.evidence["evidence"] if r["kind"] == "variance"}
         total = next((v for v in variances if v["key"] == "TOTAL:revenue"), None)
-        top = sorted([v for v in variances if not v["key"].startswith("TOTAL:")], key=lambda v: v["rank"] or 999)[:3]
-        return {"session_id": self.session_id, "mode": self.mode, "directory": str(self.directory), "periods": self.evidence["periods"], "total_revenue": total, "top_variances": top, "evidence_rows": len(self.evidence["evidence"])}
+        expense = next((v for v in variances if v["key"] == "TOTAL:expense"), None)
+        accounts = sorted([v for v in variances if not v["key"].startswith("TOTAL:")], key=lambda v: v["rank"] or 999)
+
+        def bad(v: dict) -> bool:
+            revenue = v.get("category") in REVENUE_CATEGORIES or str(v.get("key", "")).startswith("4")
+            return v["delta_cents"] < 0 if revenue else v["delta_cents"] > 0
+
+        def item(v: dict) -> dict:
+            return {"account": v["key"], "category": v.get("category"), "owner_agent": v.get("owner_agent"), "delta_cents": v["delta_cents"], "delta_pct": v.get("delta_pct"), "direction": v.get("direction"), "bad": bad(v), "evidence_id": var_ids.get(v["key"])}
+
+        owners: dict[str, list[dict]] = {}
+        for v in accounts:
+            owners.setdefault(v.get("owner_agent", ""), []).append(item(v))
+        return {
+            "session_id": self.session_id, "mode": self.mode, "run_index": self.index, "directory": str(self.directory), "periods": self.evidence["periods"],
+            "total_revenue": total, "total_expense": expense,
+            "headline": {"revenue_pct": total["delta_pct"] if total else None, "expense_pct": expense["delta_pct"] if expense else None, "revenue_evidence_id": var_ids.get("TOTAL:revenue"), "expense_evidence_id": var_ids.get("TOTAL:expense")},
+            "top_variances": [item(v) for v in accounts[:3]], "owners": {k: v[:2] for k, v in owners.items()}, "evidence_rows": len(self.evidence["evidence"]),
+        }
 
 
 class Desk:
@@ -399,13 +419,16 @@ class Desk:
             res = await O.answer_as_owner(agent_id, intent.question or text, m.mode, memory, m.engine, llm, session_id=m.session_id)
         latency = int((time.perf_counter() - t0) * 1000)
         answer = res["answer"]
+        await self.fleet.publish("agent.retrieving", agent_id=agent_id, rows=res["rows"], scope=res["scope"], mode=m.mode)
+        await self.fleet.publish("agent.verified", agent_id=agent_id, checks=res["checks"], ok=bool(res["verify"].get("ok")), unverifiable=res["verify"].get("unverifiable_figures", []), coverage=res["verify"].get("driver_coverage_pct"), mode=m.mode)
         job = await speak(answer, V.VOICES.for_agent(agent_id))
         trace_id = await prism_voice_trace(self.fleet, agent_id, text, answer, latency, session_id=m.session_id, metadata={"mode": m.mode, "agent_id": agent_id, "verifier": res["verify"], "scope": res["scope"]})
+        await self.fleet.publish("agent.traced", agent_id=agent_id, session=m.session_id, trace_id=trace_id, recorded=trace_id is not None)
         steps, sid = res["steps"], m.session_id
         if self.fleet.agents[agent_id].prism:
             self.fleet.prism.enqueue("trajectory", lambda: prism_steps.submit_steps(sid, trace_id, steps, agent_id=agent_id, model=res["model"]))
-        out = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": agent_id, "answer": answer, "raw_answer": res["raw_answer"], "verify": res["verify"], "replaced": res["replaced"], "citations": res["citations"], "mode": m.mode, "session_id": m.session_id, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error, "prism_trace_id": trace_id}
-        await self.fleet.publish("agent.answer", agent_id=agent_id, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, verify=res["verify"], citations=res["citations"], mode=m.mode, replaced=res["replaced"])
+        out = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": agent_id, "answer": answer, "raw_answer": res["raw_answer"], "verify": res["verify"], "replaced": res["replaced"], "citations": res["citations"], "figures": res["figures"], "rows": res["rows"], "checks": res["checks"], "mode": m.mode, "session_id": m.session_id, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error, "prism_trace_id": trace_id}
+        await self.fleet.publish("agent.answer", agent_id=agent_id, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, verify=res["verify"], citations=res["citations"], figures=res["figures"], mode=m.mode, replaced=res["replaced"])
         return out
 
     def company_state(self) -> CompanyState:

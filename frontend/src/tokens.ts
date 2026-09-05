@@ -53,4 +53,25 @@ export const RADIAL = {
   push: 12, // collision offset, outward
 } as const;
 
+// Conference room (MEETING mode). Fractions of the viewport.
+export const ROOM = {
+  topY: 0.22,
+  botY: 0.72,
+  topW: 0.46,
+  botW: 0.68,
+  cfoY: 0.84,
+  agendaY: 0.47,
+  seatTick: 8,
+  labelGap: 12,
+  paperMin: 8,
+  paperMax: 24,
+  rowPitch: 16,
+  fontNear: 12,
+  fontMid: 11,
+  fontFar: 10,
+  wordMs: 70, // pacing when the answer has no audio duration
+  dim: 0.45,
+  previous: 0.7,
+} as const;
+
 export const snap = (v: number, g: number = GRID): number => Math.round(v / g) * g;

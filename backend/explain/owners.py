@@ -136,6 +136,85 @@ def evidence_prompt(evidence: dict) -> str:
     return json.dumps(_strip_ids(slim), separators=(",", ":"))
 
 
+MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+
+
+def month_label(period: str) -> str:
+    try:
+        return MONTHS[int(period[5:7]) - 1]
+    except (ValueError, IndexError):
+        return period
+
+
+def _fmt_pct(p: Any) -> str:
+    return f"{float(p):+.1f}%" if p is not None else "—"
+
+
+def render_rows(evidence: dict, limit: int = 8) -> list[dict]:
+    """The evidence rows an owner retrieves, as the room prints them. Figures are the exact strings the verifier matches."""
+    periods = evidence.get("periods") or {}
+    pl, cl = month_label(str(periods.get("prior", ""))), month_label(str(periods.get("current", "")))
+    ev = evidence.get("evidence", [])
+    by_target: dict[str, list[dict]] = {}
+    for r in ev:
+        by_target.setdefault(r.get("target", ""), []).append(r)
+    variances = evidence.get("variances", [])
+    totals = [v for v in variances if v["key"] in ("TOTAL:revenue", "TOTAL:expense")]
+    accounts = sorted([v for v in variances if not v["key"].startswith("TOTAL:")], key=lambda v: v.get("rank") or 999)
+    rows: list[dict] = []
+    for v in totals + accounts:
+        if len(rows) >= limit:
+            break
+        target = v["key"]
+        trs = by_target.get(target, [])
+        var = next((r for r in trs if r.get("kind") == "variance"), None)
+        if var is None:
+            continue
+        prior, current = _usd(v.get("prior")), _usd(v.get("current"))
+        pct_s = _fmt_pct(v.get("delta_pct"))
+        name = target.replace("TOTAL:", "").upper()
+        rows.append({"row_id": var["id"], "target": target, "kind": "variance", "text": f"{name}  {pl} {prior} → {cl} {current}  {pct_s}", "figures": [prior, current, pct_s], "delta_cents": v.get("delta_cents"), "delta_pct": v.get("delta_pct")})
+        conc = next((r for r in trs if r.get("kind") == "concentration"), None)
+        if conc and len(rows) < limit:
+            f = conc["figures"]
+            noun = {"customer": "customers", "vendor": "vendors", "segment": "segments", "category": "categories", "owner_agent": "owners", "account": "accounts"}.get(f.get("dimension", ""), f.get("dimension", ""))
+            share = f"{float(f.get('share', 0)):.0f}%"
+            rows.append({"row_id": conc["id"], "target": target, "kind": "concentration", "text": f"{f.get('k')} {noun} {share}  {', '.join(f.get('values', []))}", "figures": [share, str(f.get("k"))]})
+        drv = next((r for r in trs if r.get("kind") == "driver"), None)
+        if drv and len(rows) < limit:
+            f = drv["figures"]
+            contrib = _usd(f.get("contribution_cents"))
+            contrib = ("+" + contrib) if not contrib.startswith("-") else contrib
+            share = f"{float(f.get('contribution_pct_of_delta') or 0):.1f}%"
+            rows.append({"row_id": drv["id"], "target": target, "kind": "driver", "text": f"{f.get('dimension')} {f.get('value')}  {contrib}  {share}", "figures": [contrib.lstrip('+'), share]})
+    return rows
+
+
+def figure_checks(answer: str, evidence: dict, rows: list[dict], cited: list[str]) -> list[dict]:
+    """Per-figure verdicts for the room: which retrieved row backs each spoken figure, or that nothing does."""
+    allowed = verify.allowed_figures(evidence)
+    row_by_figure: dict[str, str] = {}
+    for r in rows:
+        for f in r.get("figures", []):
+            row_by_figure.setdefault(f.replace("+", "").strip(), r["row_id"])
+    checks = []
+    for fig in verify.extract_figures(answer):
+        ok = verify._matches(fig, allowed)
+        raw = fig.raw.replace("+", "").strip()
+        row_id = row_by_figure.get(raw) or next((r["row_id"] for r in rows if any(abs(_num(x) - fig.value) < 0.005 for x in r.get("figures", []) if _num(x) is not None)), None)
+        if row_id is None and cited:
+            row_id = cited[0]
+        checks.append({"row_id": row_id, "figure": fig.raw, "kind": fig.kind, "ok": ok})
+    return checks
+
+
+def _num(s: str) -> float | None:
+    try:
+        return float(s.replace("$", "").replace(",", "").replace("%", "").replace("+", "").strip())
+    except ValueError:
+        return None
+
+
 def top_driver(evidence: dict) -> dict | None:
     rows = [r for r in evidence.get("evidence", []) if r.get("kind") == "driver"]
     if not rows:
@@ -225,7 +304,9 @@ async def answer_as_owner(agent_id: str, question: str, mode: str, memory: str, 
         if replaced:
             result = {"replaced_with": "top driver statement", "first_attempt": result} | verify.check(answer, slice_)
     steps.append(prism_steps.final_step(answer, "", "answer"))
-    return {"agent_id": agent_id, "display": display, "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": result.get("citations", []), "scope": "slice", "model": source, "steps": steps, "session_id": session_id}
+    rows = render_rows(slice_)
+    citations = result.get("citations", [])
+    return {"agent_id": agent_id, "display": display, "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "slice", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, slice_, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)]}
 
 
 async def answer_change(question: str, mode: str, memory: str, engine: Any, llm: Any = AUTO, session_id: str = "") -> dict:
@@ -253,4 +334,6 @@ async def answer_change(question: str, mode: str, memory: str, engine: Any, llm:
         result = {"replaced_with": "top driver statement", "first_attempt": result} | verify.check(answer, full)
     steps.append(prism_steps.tool_step("verify", {"mode": mode}, json.dumps(result)[:200], "", status="success" if result["ok"] else "error"))
     steps.append(prism_steps.final_step(answer, "", "answer"))
-    return {"agent_id": "controller_a", "display": "Controller A", "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": result.get("citations", []), "scope": "full", "model": source, "steps": steps, "session_id": session_id}
+    rows = render_rows(full, limit=10)
+    citations = result.get("citations", [])
+    return {"agent_id": "controller_a", "display": "Controller A", "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "full", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, full, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)]}

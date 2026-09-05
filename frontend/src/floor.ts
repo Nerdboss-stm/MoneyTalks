@@ -245,7 +245,7 @@ export class Floor {
       sp.rect.clear();
       if (p.place === "done") sp.rect.rect(0, -0.5, RADIAL.tickLen, 1).fill(color);
       else sp.rect.rect(0, -1, sp.barLen, 2).stroke({ width: 1, color, alignment: 0 });
-      sp.tag.visible = p.place !== "done";
+      sp.tag.visible = this.shown && p.place !== "done";
     }
   }
 
@@ -306,7 +306,19 @@ export class Floor {
   }
 
   setRecording(on: boolean): void {
-    this.recG.visible = on;
+    this.recG.visible = on && this.shown;
+  }
+
+  private shown = true;
+
+  setVisible(v: boolean): void {
+    this.shown = v;
+    for (const o of [this.ringG, this.execLabel, this.mandateLabel, this.cfo, this.counter, ...this.spokes, ...this.labels]) o.visible = v;
+    for (const sp of this.sprites.values()) {
+      sp.rect.visible = v;
+      sp.tag.visible = v && sp.p.place !== "done";
+    }
+    if (!v) this.recG.visible = false;
   }
 
   startCounter(): void {
@@ -345,7 +357,20 @@ export class Floor {
     this.drawStatic();
   }
 
+  private countFrame(): void {
+    this.frames++;
+    const t = performance.now();
+    if (t - this.fpsAt >= 1000) {
+      this.fps = Math.round((this.frames * 1000) / (t - this.fpsAt));
+      this.frames = 0;
+      this.fpsAt = t;
+      if (import.meta.env.DEV) console.log(`fps ${this.fps}`);
+    }
+  }
+
   private frame(): void {
+    this.countFrame();
+    if (!this.shown) return;
     const now = this.clock.now();
     const { cx, cy } = this.geo;
     const boxes: Array<[number, number, number, number]> = [...this.labelBoxes];
@@ -419,14 +444,6 @@ export class Floor {
       const s = Math.max(0, Math.floor((now.getTime() - this.model.windowStart.getTime()) / 1000));
       const txt = String(s);
       if (this.counter.text !== txt) this.counter.text = txt;
-    }
-    this.frames++;
-    const t = performance.now();
-    if (t - this.fpsAt >= 1000) {
-      this.fps = Math.round((this.frames * 1000) / (t - this.fpsAt));
-      this.frames = 0;
-      this.fpsAt = t;
-      if (import.meta.env.DEV) console.log(`fps ${this.fps}`);
     }
   }
 }

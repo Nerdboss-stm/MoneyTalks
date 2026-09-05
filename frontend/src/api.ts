@@ -33,6 +33,8 @@ export const api = {
   confirm: (mandate_id: string) => post("/desk/confirm", { mandate_id }),
   prove: (v1 = "mandate-v1-01", v2 = "mandate-v2-01") => get(`/prove?v1=${v1}&v2=${v2}`),
   record: (agent: string) => get(`/record/${agent}`),
+  explainLoad: (dir?: string, mode = "v2", index = 1) => post("/explain/load", { dir, mode, index }),
+  explainEvidence: () => get("/explain/evidence"),
 };
 
 export async function netCheck(): Promise<{ backend: boolean; voice: boolean }> {

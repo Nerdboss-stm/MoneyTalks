@@ -106,7 +106,8 @@ export class Model {
   cash_cents = 0;
   sessionId = "mandate-v1-01";
   runVersion: "v1" | "v2" = "v1";
-  mode: "LIVE" | "REPLAY" = "REPLAY";
+  mode: "LIVE" | "REPLAY" | "MEETING" = "REPLAY";
+  meetingSession = "explain-v2-01";
   windowStart: Date | null = null;
   windowEnd: Date | null = null;
   mandateSeq = 0;

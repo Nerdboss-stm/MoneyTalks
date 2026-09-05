@@ -1,7 +1,7 @@
 /* Playwright verification: flat replay of mandate-v1-01 at speed 12, capture mandate_bound, exposure_report,
    already_executed; then mandate-v2-01 at the Halden boundary hold. Writes PNGs to shots/. */
 import { spawn, type ChildProcess } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { chromium, type Page } from "playwright";
 
@@ -142,6 +142,84 @@ async function main(): Promise<void> {
   await shot("v2-03-halden_hold");
   await cmd("seek", "Fri 19:15");
   ctl?.close();
+
+  // MEETING mode: drive the room by injecting the recorded meeting events with real pacing
+  const rec = (sid: string) => readFileSync(resolve(ROOT, "recordings", `${sid}.jsonl`), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
+  const inject = (ev: any) => page.evaluate((e) => (window as any).__inject(e), ev);
+  const turns = (events: any[], agent: string) => {
+    const kinds = ["agent.addressed", "agent.retrieving", "agent.verified", "agent.traced", "agent.answer", "agent.released"];
+    const out: Record<string, any> = {};
+    let seen = false;
+    for (const e of events) {
+      if (e.type === "agent.addressed") seen = e.payload.agent_id === agent && !out["agent.answer"];
+      if (seen && kinds.includes(e.type) && !out[e.type]) out[e.type] = e;
+    }
+    return out;
+  };
+  const v1 = rec("explain-v1-01");
+  const v2 = rec("explain-v2-01");
+  const answerText = () => page.evaluate(() => document.getElementById("room-a")?.textContent ?? "");
+  const answerShown = () => page.waitForFunction(() => document.getElementById("room-a")?.style.display === "block", null, { timeout: 60000 });
+  const answerGone = () => page.waitForFunction(() => document.getElementById("room-a")?.style.display !== "block", null, { timeout: 120000 });
+  const answerHas = (s: string) => page.waitForFunction((needle) => (document.getElementById("room-a")?.textContent ?? "").includes(needle), s, { timeout: 120000 });
+  await page.evaluate(() => (window as any).__meeting(true));
+  await inject(v1.find((e) => e.type === "meeting.loaded"));
+  await sleep(700);
+  await shot("room-01-rest");
+  const t1 = turns(v1, "procurement");
+  await inject(t1["agent.addressed"]);
+  await sleep(500);
+  await inject(t1["agent.retrieving"]);
+  await sleep(1600);
+  await shot("room-02-addressed-rows");
+  await inject(t1["agent.verified"]);
+  await sleep(1800);
+  await shot("room-03-v1-verified-red");
+  await inject(t1["agent.traced"]);
+  await inject({ ...t1["agent.answer"], payload: { ...t1["agent.answer"].payload, duration_ms: 1500 } });
+  await answerShown();
+  await inject(t1["agent.released"]);
+  await answerGone();
+  await sleep(400);
+  await page.keyboard.press("2");
+  await inject(v2.find((e) => e.type === "meeting.loaded"));
+  const t2 = turns(v2, "procurement");
+  await inject(t2["agent.addressed"]);
+  await inject(t2["agent.retrieving"]);
+  await inject(t2["agent.verified"]);
+  await inject(t2["agent.traced"]);
+  await inject(t2["agent.answer"]);
+  // the frame is taken the moment a row figure is printed, while that token is lit
+  const rowFigs: string[] = t2["agent.retrieving"].payload.rows.flatMap((r: any) => r.figures ?? []);
+  const words: string[] = t2["agent.answer"].payload.text.split(/\s+/);
+  const lit = rowFigs.find((f) => words.some((w) => w.includes(f)));
+  if (lit) await answerHas(lit);
+  else {
+    await answerShown();
+    await sleep(1500);
+  }
+  await shot("room-04-v2-answer-midprint");
+  console.error("room-04 lit figure:", lit ?? "(none)", "printed:", (await answerText()).slice(0, 120));
+  await inject(t2["agent.released"]);
+  await answerGone();
+  await sleep(400);
+  // cross-examination: the next speaker cites rows the previous speaker cited
+  const t3 = turns(v2, "controller_a");
+  await inject({ ...t3["agent.addressed"], payload: { ...t3["agent.addressed"].payload, question: "Controller A, do you agree with Procurement's read?" } });
+  await inject({ ...t3["agent.retrieving"], payload: { ...t3["agent.retrieving"].payload, rows: t2["agent.retrieving"].payload.rows } });
+  await inject({ ...t3["agent.verified"], payload: { ...t3["agent.verified"].payload, checks: [] } });
+  await inject(t3["agent.traced"]);
+  await inject({ ...t3["agent.answer"], payload: { ...t3["agent.answer"].payload, text: `I read the same rows: cloud hosting is the expense story ${t2["agent.answer"].payload.citations.map((c: string) => `[${c}]`).join(" ")}.`, citations: t2["agent.answer"].payload.citations, duration_ms: 3000 } });
+  await answerHas("story");
+  await sleep(300);
+  await shot("room-05-cross-examination");
+  await inject(t3["agent.released"]);
+  await answerGone();
+  await sleep(400);
+  const learned = v2.find((e) => e.type === "memory.learned");
+  await inject({ ...learned, type: "meeting.learned" });
+  await sleep(700);
+  await shot("room-06-learned");
 
   const fps = fpsLog.length ? fpsLog.slice(-8) : [await page.evaluate(() => (window as any).__floor?.fps)];
   await browser.close();

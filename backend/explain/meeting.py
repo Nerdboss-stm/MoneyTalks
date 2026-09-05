@@ -83,6 +83,8 @@ async def run_meeting(mode: str, index: int, directory: Path | None = None, llm:
         out = await desk.voice_turn(q, speak=speak or quiet_speak, explain_llm=llm)
         turns.append(out)
         await fleet.publish("explain.turn", question=q, intent=out["intent"], agent_id=out.get("agent_id"), answer=out.get("answer"), verify=out.get("verify"), replaced=out.get("replaced"))
+        if out.get("agent_id") and out["intent"] in ("AGENT_QUERY", "CHANGE_QUERY"):
+            await fleet.publish("agent.released", agent_id=out["agent_id"])  # headless: no playback to end
     learned = None
     if mode == "v2":
         learned = owners.learn(desk.meeting.engine, sid, memory_path)

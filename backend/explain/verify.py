@@ -53,7 +53,8 @@ def extract_figures(text: str) -> list[Figure]:
             if "." not in num and "," not in num and 1900 <= value <= 2100:
                 continue  # a year, not a figure
             kind = "number"
-        out.append(Figure((m.group(1) + num + (" " + m.group(3) if m.group(3) else "")).strip(), kind, value))
+        sfx = m.group(3) or ""
+        out.append(Figure((m.group(1) + num + (sfx if len(sfx) <= 1 else " " + sfx)).strip(), kind, value))
     return out
 
 

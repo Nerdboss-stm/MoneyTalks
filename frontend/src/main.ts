@@ -7,6 +7,7 @@ import { api, netCheck } from "./api";
 import { Floor } from "./floor";
 import { Clock, Model, dollars, fmtClock, parseCompany, type Payment } from "./model";
 import * as ui from "./overlays";
+import { Room } from "./room";
 import { MOTION } from "./tokens";
 import { Voice } from "./voice";
 import { connect, send, wsOpen, type BusEvent } from "./ws";
@@ -14,7 +15,9 @@ import { connect, send, wsOpen, type BusEvent } from "./ws";
 const model = new Model();
 const clock = new Clock();
 let floor: Floor;
+let room: Room;
 let voice: Voice;
+let meetingMode = false;
 let pendingMandate: string | null = null;
 let net = "NET —";
 let netOk = false;
@@ -47,7 +50,29 @@ function playAudio(name: string): void {
 }
 
 function status(): void {
-  ui.setStatus(model.mode, model.sessionId, net);
+  ui.setStatus(meetingMode ? "MEETING" : model.mode, meetingMode ? model.meetingSession : model.sessionId, net);
+}
+
+function setMeetingMode(on: boolean): void {
+  meetingMode = on;
+  floor.setVisible(!on);
+  room.setVisible(on);
+  ui.setPaymentsHud(!on);
+  ui.closeOverlays();
+  status();
+}
+
+async function openEvidence(id: string): Promise<void> {
+  let row = room.evidenceRow(id);
+  if (!row) {
+    const json = await api.explainEvidence().catch(() => null);
+    if (json) {
+      room.setEvidence(json);
+      row = room.evidenceRow(id);
+    }
+  }
+  if (row) ui.openEvidenceRow(row);
+  else ui.showTransientAnswer(`${id}: evidence not loaded`);
 }
 
 function onEvent(e: BusEvent): void {
@@ -58,6 +83,13 @@ function onEvent(e: BusEvent): void {
   if (e.ts_company) clock.onEvent(parseCompany(e.ts_company));
   lastEvent = { type: e.type, ts: e.ts_company };
   mark(`${e.type}@${(e.ts_company ?? "").slice(11)}`);
+  room.handle(e);
+  if (e.type === "meeting.loaded") {
+    if (e.payload.session_id) model.meetingSession = e.payload.session_id;
+    void api.explainEvidence().then((json) => room.setEvidence(json)).catch(() => undefined);
+    if (!meetingMode) setMeetingMode(true);
+    else status();
+  }
   if (e.type === "payment.held") mark(`held:${e.payload.source}:${e.payload.payment_id}@${(e.ts_company ?? "").slice(11)}`);
   const effects = model.apply(e);
   for (const fx of effects) {
@@ -155,7 +187,7 @@ async function startReplay(speed: number, stage: boolean): Promise<void> {
   try {
     send("seek", "Fri 19:15"); // end any running replay; HTTP /replay/cmd is shadowed by /replay/{session_id}
     await new Promise((r) => setTimeout(r, 200));
-    await api.replay(model.sessionId, speed, stage);
+    await api.replay(meetingMode ? model.meetingSession : model.sessionId, speed, meetingMode ? false : stage);
   } catch (err) {
     ui.showTransientAnswer(`replay: ${(err as Error).message}`);
   }
@@ -173,6 +205,10 @@ async function onKey(e: KeyboardEvent): Promise<void> {
     void voice.start();
     return;
   }
+  if (e.key === "m" || e.key === "M") {
+    setMeetingMode(!meetingMode);
+    return;
+  }
   if (e.key === "Escape") {
     ui.closeOverlays();
     return;
@@ -180,10 +216,18 @@ async function onKey(e: KeyboardEvent): Promise<void> {
   if (ui.anyOverlayOpen() && e.key.toLowerCase() !== "p" && e.key.toLowerCase() !== "k") return;
   switch (e.key) {
     case "1":
-      await selectSession("mandate-v1-01");
+      if (meetingMode) {
+        model.meetingSession = "explain-v1-01";
+        room.setRun(1, "v1");
+        status();
+      } else await selectSession("mandate-v1-01");
       break;
     case "2":
-      await selectSession("mandate-v2-01");
+      if (meetingMode) {
+        model.meetingSession = "explain-v2-01";
+        room.setRun(2, "v2");
+        status();
+      } else await selectSession("mandate-v2-01");
       break;
     case "r":
       await startReplay(1, true);
@@ -202,6 +246,10 @@ async function onKey(e: KeyboardEvent): Promise<void> {
       break;
     case "l":
     case "L":
+      if (meetingMode) {
+        await api.explainLoad(undefined, model.meetingSession.includes("v1") ? "v1" : "v2", 1).catch((err) => ui.showTransientAnswer(`load: ${(err as Error).message}`));
+        break;
+      }
       model.mode = "LIVE";
       status();
       await api.run().catch((err) => ui.showTransientAnswer(`live: ${(err as Error).message}`));
@@ -272,6 +320,7 @@ async function boot(): Promise<void> {
   await Promise.all([document.fonts.load('10px "IBM Plex Mono"'), document.fonts.load('11px "Inter Tight"')]).catch(() => undefined);
   floor = new Floor(model, clock, (p) => ui.openEvidence(p));
   await floor.init(document.getElementById("floor") as HTMLCanvasElement);
+  room = new Room(floor.app, (id) => void openEvidence(id));
   ui.setCash(model.cash_cents);
   ui.setPayroll(41_200_000, model.payrollDue);
   status();
@@ -288,7 +337,10 @@ async function boot(): Promise<void> {
   });
   window.addEventListener("keydown", (e) => void onKey(e));
   voice = new Voice({
-    onRecording: (on) => floor.setRecording(on),
+    onRecording: (on) => {
+      floor.setRecording(on);
+      room.setRecording(on);
+    },
     onAnswer: () => undefined, // text arrives on the bus as agent.answer / desk.answer / query.answer
     onError: (msg) => ui.showTransientAnswer(msg),
     isReplaying: () => model.mode === "REPLAY",
@@ -296,7 +348,10 @@ async function boot(): Promise<void> {
   window.addEventListener("keyup", (e) => {
     if (e.key === " ") void voice.stop();
   });
-  if (import.meta.env.DEV) (window as any).__inject = (ev: BusEvent) => window.dispatchEvent(new CustomEvent<BusEvent>("bus:event", { detail: ev }));
+  if (import.meta.env.DEV) {
+    (window as any).__inject = (ev: BusEvent) => window.dispatchEvent(new CustomEvent<BusEvent>("bus:event", { detail: ev }));
+    (window as any).__meeting = (on: boolean) => setMeetingMode(on);
+  }
   connect();
   gsap.ticker.add(() => {
     ui.setClock(clock.now());

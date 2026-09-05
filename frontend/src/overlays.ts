@@ -22,6 +22,14 @@ export function setClock(d: Date): void {
   $("clock").textContent = fmtClock(d);
 }
 
+/* The payments HUD (cash, payroll, clock, mandate block) belongs to PAYMENTS mode only. */
+export function setPaymentsHud(on: boolean): void {
+  for (const id of ["hud-left", "hud-right", "mandate", "answers"]) {
+    const el = document.getElementById(id);
+    if (el) el.style.visibility = on ? "visible" : "hidden";
+  }
+}
+
 export function setStatus(mode: string, session: string, net: string): void {
   $("status").textContent = `${mode}  ${session}  ${net}`;
 }
@@ -113,6 +121,20 @@ export function openEvidence(p: Payment): void {
     body = `<div class="line">NO STAMP. Executed without mandate check.</div>`;
   }
   el.innerHTML = head + body + `<div class="rule"></div>`;
+  el.style.display = "block";
+}
+
+/* Evidence zoom for a variance-review row: statement, figures one per line, txn_ids. */
+export function openEvidenceRow(row: { id: string; statement?: string; figures?: Record<string, unknown>; txn_ids?: string[]; kind?: string; target?: string }): void {
+  const el = $("evidence");
+  const figs = Object.entries(row.figures ?? {}).map(([k, v]) => `<div class="line">${esc(k.toUpperCase().padEnd(28))}${esc(Array.isArray(v) ? v.join(", ") : String(v))}</div>`).join("");
+  const ids = row.txn_ids ?? [];
+  const shown = ids.slice(0, 24).join("  ") + (ids.length > 24 ? `  … +${ids.length - 24}` : "");
+  el.innerHTML =
+    `<div class="head">${esc(row.id)}  ${esc((row.kind ?? "").toUpperCase())}  ${esc(row.target ?? "")}</div><div class="rule"></div>` +
+    `<div class="excerpt">${esc(row.statement ?? "")}</div><div class="rule"></div>` +
+    figs +
+    `<div class="rule"></div><div class="line muted">TXN_IDS ${ids.length}</div><div class="line muted">${esc(shown || "—")}</div><div class="rule"></div>`;
   el.style.display = "block";
 }
 
