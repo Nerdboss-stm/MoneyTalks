@@ -24,6 +24,14 @@ interface Sprite {
 const ONE_MIN = 60_000;
 const LOG_RANGE = Math.log((LAYOUT.daysAtLeft * 1440) / LAYOUT.minutesAtLine);
 
+function lerpColor(a: number, b: number, t: number): number {
+  if (t <= 0) return a;
+  if (t >= 1) return b;
+  const ch = (x: number, s: number) => (x >> s) & 0xff;
+  const mix = (s: number) => Math.round(ch(a, s) + (ch(b, s) - ch(a, s)) * t);
+  return (mix(16) << 16) | (mix(8) << 8) | mix(0);
+}
+
 export class Floor {
   app = new Application();
   lanes: Container[] = [];
@@ -42,6 +50,8 @@ export class Floor {
   private fpsAt = performance.now();
   fps = 0;
   private emphasis: number | null = null;
+  private emphasisT = 0;
+  private emphasisState = { t: 0 };
 
   constructor(private model: Model, private clock: Clock, private onClickPayment: (p: Payment) => void) {}
 
@@ -124,8 +134,8 @@ export class Floor {
   private drawStatic(): void {
     const g = this.staticG;
     g.clear();
-    for (let i = 0; i <= this.lanes.length; i++) g.rect(LAYOUT.leftX - 240, LAYOUT.laneTop + i * LAYOUT.laneH, LAYOUT.lineX - (LAYOUT.leftX - 240), 1).fill(COLOR.rule);
-    g.rect(LAYOUT.leftX - 240, LAYOUT.holdY - 8, LAYOUT.lineX - (LAYOUT.leftX - 240), 1).fill(COLOR.rule);
+    for (let i = 0; i <= this.lanes.length; i++) g.rect(24, LAYOUT.laneTop + i * LAYOUT.laneH, LAYOUT.lineX - 24, 1).fill(COLOR.rule);
+    g.rect(24, LAYOUT.holdY - 8, LAYOUT.lineX - 24, 1).fill(COLOR.rule);
     this.labelX.forEach((x) => g.rect(x, LAYOUT.labelY - 8, 1, 6).fill(COLOR.rule));
     const r = this.rulerG;
     r.clear();
@@ -141,7 +151,7 @@ export class Floor {
   }
 
   laneCenter(lane: number): number {
-    return LAYOUT.laneTop + lane * LAYOUT.laneH + 6; // first of four 12px rows inside a 48px lane
+    return LAYOUT.laneTop + lane * LAYOUT.laneH + 8; // rows at +8/+20/+32/+44: four 12px rows, all on the 4px grid
   }
 
   rebind(): void {
@@ -177,17 +187,34 @@ export class Floor {
     ];
   }
 
-  colorOf(p: Payment): number {
+  baseColor(p: Payment): number {
     if (p.red) return COLOR.red;
     if (p.code === "HLD" || (p.code === "ESC" && p.place === "esc" && !p.glyph)) return COLOR.amber;
-    if (this.emphasis !== null) return p.lane === this.emphasis ? COLOR.text : COLOR.muted;
     if (p.cleared || p.code === "DONE") return COLOR.muted;
     return COLOR.text;
   }
 
-  private redraw(sp: Sprite): void {
+  // emphasis: the addressed lane reads #E6E6E3, every other lane #7C8087; blended by emphasisT during the 240ms tween
+  colorOf(p: Payment): number {
+    const base = this.baseColor(p);
+    if (this.emphasis === null && this.emphasisT === 0) return base;
+    const target = this.emphasis !== null && p.lane === this.emphasis ? COLOR.text : COLOR.muted;
+    return lerpColor(base, target, this.emphasisT);
+  }
+
+  private redraw(sp: Sprite, colorOnly = false): void {
     const p = sp.p;
     const color = this.colorOf(p);
+    if (colorOnly) {
+      if (color === sp.color) return;
+      sp.color = color;
+      sp.tag.style.fill = color;
+      sp.tag2.style.fill = color;
+      sp.rect.clear();
+      if (p.place === "done") sp.rect.rect(0, 0, 1, 8).fill(color);
+      else sp.rect.rect(0, 0, sp.width, 2).stroke({ width: 1, color, alignment: 0 });
+      return;
+    }
     const inColumn = p.place === "esc";
     const [row1, row2] = inColumn ? this.tagRows(p) : [this.tagText(p), ""];
     const key = `${inColumn ? "c" : "l"}|${row1}|${row2}`;
@@ -245,17 +272,25 @@ export class Floor {
   }
 
   setEmphasis(lane: number | null): void {
-    this.emphasis = lane;
-    this.labels.forEach((t, i) => {
-      t.style.fill = lane === null ? COLOR.muted : i === lane ? COLOR.text : COLOR.muted;
+    if (lane !== null) this.emphasis = lane;
+    const target = lane === null ? 0 : 1;
+    gsap.killTweensOf(this.emphasisState);
+    gsap.to(this.emphasisState, {
+      t: target,
+      duration: MOTION.fast,
+      ease: MOTION.ease,
+      onUpdate: () => {
+        this.emphasisT = this.emphasisState.t;
+        this.labels.forEach((lbl, i) => {
+          const to = this.emphasis !== null && i === this.emphasis ? COLOR.text : COLOR.muted;
+          lbl.style.fill = lerpColor(COLOR.muted, to, this.emphasisT);
+        });
+        for (const sp of this.sprites.values()) this.redraw(sp, true);
+      },
+      onComplete: () => {
+        if (target === 0) this.emphasis = null;
+      },
     });
-    for (const sp of this.sprites.values()) {
-      const to = lane === null || sp.p.lane === lane ? 1 : 0.7;
-      gsap.to(sp.tag, { alpha: to, duration: MOTION.fast, ease: MOTION.ease });
-      gsap.to(sp.tag2, { alpha: to, duration: MOTION.fast, ease: MOTION.ease });
-      gsap.to(sp.rect, { alpha: to, duration: MOTION.fast, ease: MOTION.ease });
-      this.redraw(sp);
-    }
   }
 
   startCounter(): void {
@@ -271,7 +306,10 @@ export class Floor {
     this.rebind();
     this.counterActive = false;
     this.counter.text = "";
+    gsap.killTweensOf(this.emphasisState);
     this.emphasis = null;
+    this.emphasisT = this.emphasisState.t = 0;
+    this.labels.forEach((lbl) => (lbl.style.fill = COLOR.muted));
     for (const sp of this.sprites.values()) {
       gsap.killTweensOf(sp);
       sp.y = sp.targetY = this.laneCenter(sp.p.lane);

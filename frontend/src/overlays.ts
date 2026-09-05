@@ -35,7 +35,7 @@ export function showMandate(text: string, label: string): void {
   el.querySelector(".text")!.textContent = text;
   el.querySelector(".id")!.textContent = label;
   el.style.display = "block";
-  gsap.fromTo(el, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: MOTION.fast, ease: MOTION.ease });
+  gsap.fromTo(el, { y: -8 }, { y: 0, duration: MOTION.fast, ease: MOTION.ease });
 }
 
 export function showReadback(text: string, label: string): void {
@@ -75,7 +75,7 @@ function setAnswer(html: string, sticky: boolean): void {
     answerTimer = null;
   }
   el.innerHTML = html;
-  gsap.fromTo(el, { x: 12, opacity: 0 }, { x: 0, opacity: 1, duration: MOTION.fast, ease: MOTION.ease });
+  gsap.fromTo(el, { x: 12 }, { x: 0, duration: MOTION.fast, ease: MOTION.ease });
   if (!sticky) answerTimer = window.setTimeout(() => (el.innerHTML = ""), 6000);
 }
 
