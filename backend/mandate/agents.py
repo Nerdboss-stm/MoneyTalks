@@ -21,6 +21,7 @@ from mandate.schemas import Event, Mandate, Payment, Stamp
 
 MODEL = "claude-haiku-4-5"
 MAX_PARALLEL = 12
+OPENING_TICK = ct("Mon 10:00")
 
 
 class Action(BaseModel):
@@ -151,7 +152,7 @@ class AgentRuntime:
         self.queue: list[tuple[datetime, str]] = []
         self.plans: dict[str, dict] = {}
         self.status_template = f"{display} has not planned yet."
-        self.mandates_seen_count = 0
+        self.epoch_seen = 0
         self.record: dict[str, list] = {"plans": [], "tool_calls": [], "reports": [], "stamps": [], "mandates_seen": []}
         self.tools = self._make_tools()
         self.graph = self._build_graph()
@@ -203,7 +204,7 @@ class AgentRuntime:
             result = json.dumps([m.model_dump(mode="json") for m in active])
             for m in active:
                 agent.record["mandates_seen"].append(_entry(agent.now(), mandate_id=m.id, text=m.compiled_text))
-            agent.mandates_seen_count = len(fleet.mandates)
+            agent.epoch_seen = fleet.mandate_epoch
             agent._log_tool("read_mandates", {}, result)
             return result
 
@@ -369,9 +370,14 @@ class AgentRuntime:
             if p.agent_id == self.id and p.status == "planned" and p.id not in queued and p.id not in self.plans and tick <= p.scheduled_at < tick + TICK
         ]
 
+    def should_decide(self, tick: datetime, due: list[str]) -> bool:
+        # (a) a payment is due before the next tick, (b) a mandate was bound/released/expired since this
+        # agent last decided, or (c) the Monday 10:00 opening tick. Otherwise: no LLM call, no PRISM trace.
+        return bool(due) or self.epoch_seen != self.fleet.mandate_epoch or tick == OPENING_TICK
+
     async def run_tick(self, tick: datetime) -> None:
         due = self.due_at(tick)
-        if not due and self.mandates_seen_count == len(self.fleet.mandates):
+        if not self.should_decide(tick, due):
             return
         await self.graph.ainvoke({"tick": fmt(tick), "due_ids": due}, self.config(tick))
 
@@ -403,6 +409,7 @@ class Fleet:
         self.ledger = L.from_scenario(scenario)
         self.mandates: list[Mandate] = []
         self.expired: set[str] = set()
+        self.mandate_epoch = 0
         self.pending_mandates: list[tuple[datetime, Mandate]] = []
         self.timers: list[tuple[datetime, Callable[[datetime], Awaitable[None]]]] = []
         self.exempt_ids = frozenset(scenario.exception_eligible)
@@ -438,6 +445,7 @@ class Fleet:
         now = at or self.clock.now()
         mandate.bound_at = now
         self.mandates.append(mandate)
+        self.mandate_epoch += 1
         await self.publish("mandate.bound", mandate_id=mandate.id, text=mandate.compiled_text, at=fmt(now), mandate=mandate.model_dump(mode="json"), exempt_ids=sorted(self.exempt_ids))
         await propagation.on_bound(self, mandate, now)
 
@@ -445,10 +453,16 @@ class Fleet:
         if mandate.id in self.expired:
             return
         self.expired.add(mandate.id)
+        self.mandate_epoch += 1
         await self.publish("mandate.expired", mandate_id=mandate.id, cause=cause, at=fmt(now))
         released = await propagation.release_held(self, mandate, now)
         if released:
             await self.publish("holds.released", mandate_id=mandate.id, payment_ids=released, at=fmt(now))
+
+    async def release_mandate(self, mandate_id: str, now: datetime | None = None) -> None:
+        m = self.mandate_by_id(mandate_id)
+        if m is not None:
+            await self.expire_mandate(m, now or self.clock.now(), "released")
 
     async def _payroll_check(self, now: datetime) -> None:
         p = self.ledger.payments.get(self.payroll_run_id) if self.payroll_run_id else None
