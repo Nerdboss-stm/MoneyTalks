@@ -116,6 +116,12 @@ async function main(): Promise<void> {
   await waitEvent(page, has("already_executed"));
   await sleep(700);
   await shot("v1-03-already_executed");
+  await cmd("pause");
+  await page.evaluate(() => (window as any).__inject({ type: "agent.addressed", payload: { agent_id: "ap_west" } }));
+  await sleep(500);
+  await shot("v1-04-agent_addressed");
+  await page.evaluate(() => (window as any).__inject({ type: "agent.released", payload: { agent_id: "ap_west" } }));
+  await cmd("resume");
   await cmd("seek", "Fri 19:15");
   await sleep(1500);
 
@@ -125,9 +131,15 @@ async function main(): Promise<void> {
   await sleep(200);
   await resetSeen(page);
   await cmd("seek", "Mon 10:01:30");
+  await waitEvent(page, has("mandate.bound@"));
+  await sleep(400);
+  await shot("v2-01-mandate_bound");
+  await waitEvent(page, has("exposure.report@"));
+  await sleep(1200);
+  await shot("v2-02-exposure_report");
   await waitEvent(page, has("held:boundary:p-001@10:03:14"));
   await sleep(700);
-  await shot("v2-01-halden_hold");
+  await shot("v2-03-halden_hold");
   await cmd("seek", "Fri 19:15");
   ctl?.close();
 

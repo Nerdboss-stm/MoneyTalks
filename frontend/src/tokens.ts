@@ -35,23 +35,22 @@ export const MONO_CAPS_TRACKING = 0.04;
 export const LINE_HEIGHT = 1.4;
 export const MIN_TEXT_PX = 10;
 
-export const DESIGN_W = 1920;
-export const DESIGN_H = 1080;
-
-export const LAYOUT = {
-  lineX: 1496, // 78% of 1920, snapped to 4px
-  leftX: 640, // right edge of a payment 5 company days out; leaves room for a 180px bar + 380px tag
-  laneTop: 88,
-  laneH: 48,
-  holdY: 668, // 62% of 1080, snapped
-  escX: 1520,
-  escTop: 96,
-  escPitch: 36, // bar + two tag rows + 6px
-  stackPitch: 18,
-  labelY: 1040,
-  rulerStep: 60,
-  minutesAtLine: 5,
-  daysAtLeft: 5,
+// Radial round table. C = (50vw, 47vh), R = 0.40 * min(vw, vh).
+export const RADIAL = {
+  cx: 0.5,
+  cy: 0.47,
+  r: 0.4,
+  labelR: 0.28, // agent name ring
+  farR: 0.35, // 5 company days out
+  holdR: 0.55, // held / escalated park radius
+  minutesAtRing: 5,
+  daysAtFar: 5,
+  barMin: 16,
+  barMax: 72,
+  tickGap: 6, // executed tick starts this far outside the ring
+  tickLen: 8,
+  tagGap: 8,
+  push: 12, // collision offset, outward
 } as const;
 
 export const snap = (v: number, g: number = GRID): number => Math.round(v / g) * g;

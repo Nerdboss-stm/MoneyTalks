@@ -26,10 +26,6 @@ export function setStatus(mode: string, session: string, net: string): void {
   $("status").textContent = `${mode}  ${session}  ${net}`;
 }
 
-export function setRecording(on: boolean): void {
-  $("rec").style.visibility = on ? "visible" : "hidden";
-}
-
 export function showMandate(text: string, label: string): void {
   const el = $("mandate");
   el.querySelector(".text")!.textContent = text;

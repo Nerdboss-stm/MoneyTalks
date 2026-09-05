@@ -95,7 +95,7 @@ function onEvent(e: BusEvent): void {
         break;
       }
       case "already_executed": {
-        floor.stopCounter(model.landedSeconds ?? 0);
+        floor.stopCounter(model.landedSeconds ?? 0, fx.payload.payment?.id);
         if (fx.payload.payment) floor.applyState(fx.payload.payment, false);
         playAudio("thud.wav");
         const p = fx.payload.payment as Payment | undefined;
@@ -106,7 +106,7 @@ function onEvent(e: BusEvent): void {
       case "held":
         if (fx.payload.source === "boundary" && model.windowStart) {
           const at = e.ts_company ? parseCompany(e.ts_company) : null;
-          if (at) floor.stopCounter(Math.round((at.getTime() - model.windowStart.getTime()) / 1000));
+          if (at) floor.stopCounter(Math.round((at.getTime() - model.windowStart.getTime()) / 1000), fx.payload.payment?.id);
         }
         floor.applyState(fx.payload.payment, true);
         break;
@@ -164,7 +164,7 @@ async function onKey(e: KeyboardEvent): Promise<void> {
   if (e.repeat) return;
   if (e.key === " ") {
     e.preventDefault();
-    ui.setRecording(true);
+    floor.setRecording(true);
     return;
   }
   if (e.key === "Escape") {
@@ -275,8 +275,9 @@ async function boot(): Promise<void> {
   });
   window.addEventListener("keydown", (e) => void onKey(e));
   window.addEventListener("keyup", (e) => {
-    if (e.key === " ") ui.setRecording(false);
+    if (e.key === " ") floor.setRecording(false);
   });
+  if (import.meta.env.DEV) (window as any).__inject = (ev: BusEvent) => window.dispatchEvent(new CustomEvent<BusEvent>("bus:event", { detail: ev }));
   connect();
   gsap.ticker.add(() => {
     ui.setClock(clock.now());

@@ -7,34 +7,33 @@
     <style>
       html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0B0C0E; overflow: hidden; color: #E6E6E3; }
       #floor { position: fixed; inset: 0; display: block; }
-      #ui { position: fixed; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; pointer-events: none; font-family: "Inter Tight", sans-serif; }
+      #ui { position: fixed; inset: 0; pointer-events: none; font-family: "Inter Tight", sans-serif; }
       #ui > * { position: absolute; }
       .mono { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; }
       .muted { color: #7C8087; }
       .rule { height: 1px; background: #2A2C30; }
-      #hud-left { left: 24px; top: 16px; font-size: 12px; line-height: 1.4; }
-      #rec { width: 120px; height: 2px; background: #D23B3B; margin-top: 4px; visibility: hidden; }
-      #hud-right { right: 24px; top: 16px; font-size: 12px; text-align: right; line-height: 1.4; }
-      #status { left: 24px; bottom: 16px; font-size: 10px; color: #7C8087; }
-      #mandate { left: 560px; top: 12px; width: 800px; text-align: left; display: none; }
+      #hud-left { left: 4vw; top: 16px; font-size: 12px; line-height: 1.4; }
+      #hud-right { right: 4vw; top: 16px; font-size: 12px; text-align: right; line-height: 1.4; }
+      #status { left: 4vw; bottom: 16px; font-size: 10px; color: #7C8087; }
+      #mandate { left: max(4vw, calc(50% - 400px)); top: 12px; width: min(800px, 92vw); text-align: left; display: none; }
       #mandate .text { font-size: 14px; line-height: 1.4; color: #E6E6E3; }
       #mandate .id { font-size: 10px; color: #7C8087; margin-top: 4px; }
       #mandate .rule { margin-top: 8px; }
-      #order { left: 560px; top: 12px; width: 800px; display: none; pointer-events: auto; }
-      #order input { width: 800px; box-sizing: border-box; background: #0B0C0E; color: #E6E6E3; border: 0; border-bottom: 1px solid #2A2C30; outline: none; font: 14px "Inter Tight", sans-serif; padding: 4px 0; }
-      #answers { right: 24px; bottom: 40px; width: 640px; text-align: right; font-size: 13px; line-height: 1.4; color: #7C8087; }
+      #order { left: max(4vw, calc(50% - 400px)); top: 12px; width: min(800px, 92vw); display: none; pointer-events: auto; }
+      #order input { width: 100%; box-sizing: border-box; background: #0B0C0E; color: #E6E6E3; border: 0; border-bottom: 1px solid #2A2C30; outline: none; font: 14px "Inter Tight", sans-serif; padding: 4px 0; }
+      #answers { right: 4vw; bottom: 40px; width: min(640px, 60vw); text-align: right; font-size: 13px; line-height: 1.4; color: #7C8087; }
       #answers .who { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.04em; color: #7C8087; }
       #answers .txt { color: #E6E6E3; }
       #answers .hi { color: #E6E6E3; }
       #answers .exec { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; color: #E6E6E3; margin-top: 4px; }
-      .overlay { left: 480px; top: 160px; width: 960px; background: #0B0C0E; display: none; pointer-events: auto; padding: 0; }
+      .overlay { left: max(4vw, calc(50% - 480px)); top: 160px; width: min(960px, 92vw); background: #0B0C0E; display: none; pointer-events: auto; padding: 0; }
       .overlay .head { font-size: 11px; color: #7C8087; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; padding: 8px 0; }
       .overlay .row { display: grid; grid-template-columns: 240px 1fr 1fr; font-size: 12px; line-height: 1.4; padding: 6px 0; border-bottom: 1px solid #2A2C30; }
       .overlay .row .k { font-family: "Inter Tight", sans-serif; color: #7C8087; }
       .overlay .row .v { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; color: #E6E6E3; }
       .overlay .line { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; line-height: 1.4; padding: 4px 0; }
       .overlay .excerpt { font-family: "Inter Tight", sans-serif; font-size: 13px; line-height: 1.4; padding: 8px 0; }
-      #record { left: 240px; top: 96px; width: 1440px; max-height: 880px; overflow: hidden; }
+      #record { left: max(4vw, calc(50% - 720px)); top: 96px; width: min(1440px, 92vw); max-height: 80vh; overflow: hidden; }
       #record .line { font-size: 11px; white-space: pre; }
       #timer { display: none; }
     </style>
@@ -45,7 +44,6 @@
       <div id="hud-left" class="mono">
         <div id="cash">CASH $1,240,000</div>
         <div id="payroll">PAYROLL $412,000  DUE FRI 17:00</div>
-        <div id="rec"></div>
       </div>
       <div id="hud-right" class="mono">
         <div id="clock">MON 09:45:00</div>
