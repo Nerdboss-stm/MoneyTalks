@@ -91,7 +91,7 @@ async def test_detach_flush_posts_sdk_payload_through_queue():
     assert len(posted) == 1
     p = posted[0]
     assert p["trace_id"] == "trace-1" and p["project_id"] == "proj" and p["session_id"] == "mandate-v2-test"
-    assert p["metadata"] == {"source": "langgraph", "agent_name": "ap_west"}
+    assert p["metadata"] == {"source": "langgraph", "agent_name": "ap_west", "failure_class": "none"}
     assert [s["name"] for s in p["spans"]] == ["[langgraph] read_cash", "[langgraph] read"]
     assert p["spans"][1]["end_time"] == "t2"
     assert q.submitted == 1

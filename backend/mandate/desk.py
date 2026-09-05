@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 
 from mandate import compiler
 from mandate import ledger as L
+from mandate import prism_util
 from mandate.compiler import CANONICAL_ORDER, CompanyState, Engine, dollars
 from mandate.scenario import ROLES, build_scenario, company_day_id, ct, fmt
 from mandate.schemas import Event, Mandate, Stamp
@@ -302,15 +303,10 @@ def default_answer_engine() -> AnswerEngine:
     return rules_answer_async
 
 
-async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: str, latency_ms: int, session_id: str | None = None, metadata: dict | None = None) -> str | None:
-    """Plain trace in the current fleet session (or the given one), channel voice (docs/prism-notes.md §3)."""
-    if os.environ.get("PRISM_HANDLERS", "on") == "off":
-        return None
-    key, project, host = os.environ.get("PRISMTRACE_API_KEY"), os.environ.get("PRISMTRACE_PROJECT_ID"), os.environ.get("PRISMTRACE_HOST", "https://prism.blockconvey.com")
-    if not (key and project):
-        return None
-    body = {
-        "project_id": project,
+def voice_trace_body(fleet: Any, agent_id: str, question: str, answer: str, latency_ms: int, session_id: str | None = None, metadata: dict | None = None, project: str | None = None) -> dict:
+    """The /api/traces body for one spoken exchange (docs/prism-notes.md §3). Every trace carries failure_class."""
+    return {
+        "project_id": project or os.environ.get("PRISMTRACE_PROJECT_ID"),
         "model": MODEL,
         "input_messages": [{"role": "user", "content": question}],
         "output_message": answer,
@@ -318,8 +314,18 @@ async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: st
         "session_id": session_id or fleet.session_id,
         "agent_id": agent_id,
         "agent_name": agent_id,
-        "metadata": {"channel": "voice", "company_day_id": company_day_id(fleet.clock.now()), "mandate_id": fleet.current_mandate_id(), "run_version": fleet.run_version, "tick": None, "seed": fleet.scenario.seed, **(metadata or {})},
+        "metadata": {"channel": "voice", "company_day_id": company_day_id(fleet.clock.now()), "mandate_id": fleet.current_mandate_id(), "run_version": fleet.run_version, "tick": None, "seed": fleet.scenario.seed, "failure_class": prism_util.FAILURE_NONE, **(metadata or {})},
     }
+
+
+async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: str, latency_ms: int, session_id: str | None = None, metadata: dict | None = None) -> str | None:
+    """Plain trace in the current fleet session (or the given one), channel voice (docs/prism-notes.md §3)."""
+    if os.environ.get("PRISM_HANDLERS", "on") == "off":
+        return None
+    key, project, host = os.environ.get("PRISMTRACE_API_KEY"), os.environ.get("PRISMTRACE_PROJECT_ID"), os.environ.get("PRISMTRACE_HOST", prism_util.DEFAULT_HOST)
+    if not (key and project):
+        return None
+    body = voice_trace_body(fleet, agent_id, question, answer, latency_ms, session_id, metadata, project)
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             r = await client.post(f"{host.rstrip('/')}/api/traces", headers={"X-PRISMtrace-Key": key}, json=body)
@@ -388,6 +394,7 @@ class Desk:
         self.replay_session: str | None = None
         self.meeting: Meeting | None = None
         self.memory_path: Path | None = None
+        self._tasks: set[asyncio.Task] = set()
 
     # ---- explain meeting
 
@@ -422,14 +429,20 @@ class Desk:
         await self.fleet.publish("agent.retrieving", agent_id=agent_id, rows=res["rows"], scope=res["scope"], mode=m.mode)
         await self.fleet.publish("agent.verified", agent_id=agent_id, checks=res["checks"], ok=bool(res["verify"].get("ok")), unverifiable=res["verify"].get("unverifiable_figures", []), coverage=res["verify"].get("driver_coverage_pct"), mode=m.mode)
         job = await speak(answer, V.VOICES.for_agent(agent_id))
-        trace_id = await prism_voice_trace(self.fleet, agent_id, text, answer, latency, session_id=m.session_id, metadata={"mode": m.mode, "agent_id": agent_id, "verifier": res["verify"], "scope": res["scope"]})
+        failure_class = res.get("failure_class", prism_util.FAILURE_NONE)
+        trace_id = await prism_voice_trace(self.fleet, agent_id, text, answer, latency, session_id=m.session_id, metadata={"mode": m.mode, "agent_id": agent_id, "verifier": res["verify"], "scope": res["scope"], "failure_class": failure_class})
         await self.fleet.publish("agent.traced", agent_id=agent_id, session=m.session_id, trace_id=trace_id, recorded=trace_id is not None)
         steps, sid = res["steps"], m.session_id
         if self.fleet.agents[agent_id].prism:
-            self.fleet.prism.enqueue("trajectory", lambda: prism_steps.submit_steps(sid, trace_id, steps, agent_id=agent_id, model=res["model"]))
-        out = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": agent_id, "answer": answer, "raw_answer": res["raw_answer"], "verify": res["verify"], "replaced": res["replaced"], "citations": res["citations"], "figures": res["figures"], "rows": res["rows"], "checks": res["checks"], "mode": m.mode, "session_id": m.session_id, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error, "prism_trace_id": trace_id}
-        await self.fleet.publish("agent.answer", agent_id=agent_id, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, verify=res["verify"], citations=res["citations"], figures=res["figures"], mode=m.mode, replaced=res["replaced"])
+            self.fleet.prism.enqueue("trajectory", lambda: prism_steps.submit_steps(sid, trace_id, steps, agent_id=agent_id, model=res["model"], failure_class=failure_class))
+        out = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": agent_id, "answer": answer, "raw_answer": res["raw_answer"], "verify": res["verify"], "replaced": res["replaced"], "citations": res["citations"], "figures": res["figures"], "rows": res["rows"], "checks": res["checks"], "mode": m.mode, "session_id": m.session_id, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error, "prism_trace_id": trace_id, "failure_class": failure_class}
+        await self.fleet.publish("agent.answer", agent_id=agent_id, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, verify=res["verify"], citations=res["citations"], figures=res["figures"], mode=m.mode, replaced=res["replaced"], failure_class=failure_class)
+        self._track(asyncio.create_task(prism_util.publish_verdict(self.fleet.publish, trace_id)))
         return out
+
+    def _track(self, task: asyncio.Task) -> None:
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
 
     def company_state(self) -> CompanyState:
         sc = self.fleet.scenario
@@ -469,6 +482,7 @@ class Desk:
         now = self.fleet.clock.now()
         await self.fleet.publish("desk.confirmed", mandate_id=mandate_id, at=fmt(now))
         await self.fleet.bind_mandate(mandate, now)
+        prism_util.register_mandate(self.fleet.session_id, mandate.threshold_cents, mandate.window_start, mandate.window_end, mandate.exceptions)
         return mandate
 
     def cancel(self, mandate_id: str) -> None:
@@ -600,6 +614,46 @@ class Desk:
         out |= {"answer": answer, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error}
         await self.fleet.publish(kind, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, intent=intent.kind)
         return out
+
+
+# ---------------------------------------------------------------- PRISM links and prove extras
+
+FLAGGED_SESSION = "explain-v1-01"
+FLAGGED_AGENT = "procurement"
+
+
+def flagged_trace_id(session_id: str = FLAGGED_SESSION, agent_id: str = FLAGGED_AGENT) -> str | None:
+    """The trace of the first answer in the recording that verify.py failed for that owner (docs/gate.md's rule)."""
+    path = RECORDINGS / f"{session_id}.jsonl"
+    if not path.exists():
+        return None
+    failed = False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        e = json.loads(line)
+        pl = e.get("payload") or {}
+        if e.get("type") == "agent.verified" and pl.get("agent_id") == agent_id and not pl.get("ok", True):
+            failed = True
+        elif failed and e.get("type") == "agent.traced" and pl.get("agent_id") == agent_id:
+            return pl.get("trace_id")
+    return None
+
+
+def links_payload() -> dict:
+    trace = flagged_trace_id()
+    entries = [
+        prism_util.links("explain-v1-01", label="explain-v1-01 · freeform meeting") | {"key": "explain_v1"},
+        prism_util.links("explain-v2-01", label="explain-v2-01 · grounded meeting") | {"key": "explain_v2"},
+        prism_util.links(FLAGGED_SESSION, trace, label=f"{DISPLAY.get(FLAGGED_AGENT, FLAGGED_AGENT)} · figures verify.py failed") | {"key": "flagged_trace"},
+        prism_util.links("mandate-v1-01", label="mandate-v1-01 · payments, stale plan executes") | {"key": "mandate_v1"},
+        prism_util.links("mandate-v2-01", label="mandate-v2-01 · payments, boundary holds") | {"key": "mandate_v2"},
+    ]
+    return {"host": os.environ.get("PRISMTRACE_HOST", prism_util.DEFAULT_HOST).rstrip("/"), "project_id": os.environ.get("PRISMTRACE_PROJECT_ID"), "link_label": "Open PRISM", "entries": entries}
+
+
+def prove_extras() -> dict:
+    return {"links": links_payload(), "remediation": prism_util.remediation(), "prism_credits_used": prism_util.credits_used(), "prism_credits_cycle": prism_util.CREDITS_CYCLE}
 
 
 # ---------------------------------------------------------------- fallback cache items

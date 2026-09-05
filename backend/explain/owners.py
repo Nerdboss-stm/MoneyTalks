@@ -306,7 +306,12 @@ async def answer_as_owner(agent_id: str, question: str, mode: str, memory: str, 
     steps.append(prism_steps.final_step(answer, "", "answer"))
     rows = render_rows(slice_)
     citations = result.get("citations", [])
-    return {"agent_id": agent_id, "display": display, "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "slice", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, slice_, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)]}
+    return {"agent_id": agent_id, "display": display, "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "slice", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, slice_, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)], "failure_class": failure_class(result)}
+
+
+def failure_class(result: dict) -> str:
+    """Root Cause tag for the spoken answer: the verifier failed it, or nothing failed."""
+    return "none" if result.get("ok") else "hallucinated_figure"
 
 
 async def answer_change(question: str, mode: str, memory: str, engine: Any, llm: Any = AUTO, session_id: str = "") -> dict:
@@ -336,4 +341,4 @@ async def answer_change(question: str, mode: str, memory: str, engine: Any, llm:
     steps.append(prism_steps.final_step(answer, "", "answer"))
     rows = render_rows(full, limit=10)
     citations = result.get("citations", [])
-    return {"agent_id": "controller_a", "display": "Controller A", "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "full", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, full, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)]}
+    return {"agent_id": "controller_a", "display": "Controller A", "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": citations, "scope": "full", "model": source, "steps": steps, "session_id": session_id, "rows": rows, "checks": figure_checks(raw if mode == "v1" else answer, full, rows, citations), "figures": [f.raw for f in verify.extract_figures(answer)], "failure_class": failure_class(result)}

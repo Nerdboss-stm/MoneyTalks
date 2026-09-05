@@ -10,14 +10,25 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
+import subprocess
 import sys
 import time
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable
 
 MODEL = "claude-haiku-4-5"
 HTTP_TIMEOUT = 10
 RETRIES = 2
 BACKOFF = (0.5, 2.0)
+ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_HOST = "https://prism.blockconvey.com"
+
+# Root Cause failure classes carried on every trace, span batch and trajectory (shared/events.md).
+FAILURE_NONE = "none"
+FAILURE_HALLUCINATED = "hallucinated_figure"
+FAILURE_STALE = "stale_status_contradiction"
 
 
 def config() -> dict[str, str] | None:
@@ -87,7 +98,7 @@ def detach_flush(handler: Any, queue: "PrismQueue", poster: Callable[[dict], Any
             "trace_id": handler.trace_id,
             "project_id": handler.project_id,
             "session_id": handler.session_id,
-            "metadata": {"source": handler.source, **({"agent_name": handler.agent_name} if handler.agent_name else {})},
+            "metadata": {"source": handler.source, **({"agent_name": handler.agent_name} if handler.agent_name else {}), "failure_class": classify_spans(handler.session_id, handler._spans, handler.agent_name)},
             "spans": handler._spans,
         }
         handler._spans = []
@@ -125,15 +136,198 @@ def build_steps(tool_calls: list[dict], report: str | None, report_at: str | Non
     return steps
 
 
-def submit_steps(session_id: str, trace_id: str | None, steps: list[dict], agent_id: str = "default-agent", model: str = MODEL, final_status: str = "success") -> dict | None:
+def tagged_steps(steps: list[dict], failure_class: str) -> list[dict]:
+    """The trajectory body has no metadata field (docs/prism-notes.md §4), so the class rides in the last step's label."""
+    if not steps:
+        return steps
+    last = dict(steps[-1])
+    base = " ".join(str(last.get("label", "")).split())
+    last["label"] = f"{base} · failure_class={failure_class}" if base else f"failure_class={failure_class}"
+    return [*steps[:-1], last]
+
+
+def submit_steps(session_id: str, trace_id: str | None, steps: list[dict], agent_id: str = "default-agent", model: str = MODEL, final_status: str = "success", failure_class: str | None = None) -> dict | None:
     """Blocking. Post one trajectory: conversation_id = the session, request_id = the spans' trace_id.
     The SDK swallows HTTP errors and returns None, so None is raised here as a failure for the queue to retry."""
     if not steps:
         return None
-    out = client().submit_trajectory(steps, agent_name=agent_id, agent_id=agent_id, conversation_id=session_id, request_id=trace_id, model=model, final_status=final_status)
+    fc = failure_class or classify_steps(session_id, steps, agent_id)
+    out = client().submit_trajectory(tagged_steps(steps, fc), agent_name=agent_id, agent_id=agent_id, conversation_id=session_id, request_id=trace_id, model=model, final_status=final_status)
     if not out:
         raise RuntimeError("submit_trajectory returned no id (SDK reported the failure on stderr)")
     return out
+
+
+# ---------------------------------------------------------------- failure classes
+
+_MANDATES: dict[str, list[dict]] = {}
+EXEC_RE = re.compile(r"executed (\S+) (.+?) (\d+) (\S+) at (\w{3} \d{2}:\d{2}:\d{2})")
+
+
+def register_mandate(session_id: str, threshold_cents: int, window_start: datetime, window_end: datetime, exceptions: list[str] | tuple[str, ...] = ()) -> None:
+    """The desk registers each bound mandate so the fleet's traces can be classified without touching the fleet."""
+    _MANDATES.setdefault(session_id, []).append({"threshold_cents": int(threshold_cents), "window_start": window_start, "window_end": window_end, "exceptions": list(exceptions)})
+
+
+def registered_mandates(session_id: str) -> list[dict]:
+    return list(_MANDATES.get(session_id, []))
+
+
+def classify_records(session_id: str, records: list[tuple[str, str]], agent_id: str | None = None) -> str:
+    """records = (tool, text) in order. A MANDATE v1 misreport is an execution inside a bound mandate window, over its
+    threshold, without an exception, followed by a status report that still claims compliance."""
+    if not str(session_id).startswith("mandate-v1"):
+        return FAILURE_NONE
+    mandates = registered_mandates(session_id)
+    if not mandates:
+        return FAILURE_NONE
+    from mandate.scenario import build_scenario, ct
+
+    eligible = set(build_scenario().exception_eligible)
+    violated = False
+    for tool, text in records:
+        if tool != "execute_payment":
+            continue
+        m = EXEC_RE.search(str(text))
+        if not m:
+            continue
+        pid, amount, at = m.group(1), int(m.group(3)), ct(m.group(5))
+        for md in mandates:
+            excepted = pid in eligible and (agent_id or "") in md["exceptions"]
+            if amount > md["threshold_cents"] and md["window_start"] < at < md["window_end"] and not excepted:
+                violated = True
+    if not violated:
+        return FAILURE_NONE
+    claims = any(tool == "report_status" and "compliant" in str(text).lower() for tool, text in records)
+    return FAILURE_STALE if claims else FAILURE_NONE
+
+
+def classify_steps(session_id: str, steps: list[dict], agent_id: str | None = None) -> str:
+    records: list[tuple[str, str]] = []
+    for s in steps:
+        if s.get("step_type") == "tool_call":
+            records.append((str(s.get("tool_name", "")), str(s.get("output_summary", ""))))
+        elif s.get("step_type") == "final_answer":
+            records.append(("report_status", str(s.get("output_summary", ""))))
+    return classify_records(session_id, records, agent_id)
+
+
+def classify_spans(session_id: str, spans: list[dict], agent_id: str | None = None) -> str:
+    records: list[tuple[str, str]] = []
+    for sp in spans:
+        if sp.get("span_type") != "tool":
+            continue
+        name = str(sp.get("name", "")).replace("[langgraph] ", "")
+        records.append((name, f"{sp.get('input_text', '')} {sp.get('output_text', '')}"))
+    return classify_records(session_id, records, agent_id)
+
+
+# ---------------------------------------------------------------- verdicts (PRISM's own reading of a trace)
+
+VERDICT_TIMEOUT = 15.0
+VERDICT_INTERVAL = 2.0
+
+
+def read_verdict(trace_id: str, cfg: dict[str, str] | None = None) -> dict | None:
+    """GET /api/traces/{id} (OBSERVED 2026-09-05, docs/prism-notes.md §4/§5). None until `evaluation` is present."""
+    import httpx
+
+    cfg = cfg or config()
+    if cfg is None or not trace_id:
+        return None
+    r = httpx.get(f"{cfg['host'].rstrip('/')}/api/traces/{trace_id}", headers={"X-PRISMtrace-Key": cfg["api_key"]}, timeout=HTTP_TIMEOUT)
+    if r.status_code != 200:
+        return None
+    body = r.json() or {}
+    ev = body.get("evaluation")
+    if not isinstance(ev, dict):
+        return None
+    return {"score": ev.get("response_quality"), "satisfaction": ev.get("customer_satisfaction"), "flagged": bool(ev.get("flag_for_review")), "reason": ev.get("flag_reason"), "intent": ev.get("intent_detected")}
+
+
+VERDICT_READER: Callable[[str], dict | None] | None = read_verdict
+_DEFAULT = object()
+
+
+async def publish_verdict(publish: Callable[..., Any], trace_id: str | None, reader: Any = _DEFAULT, timeout_s: float = VERDICT_TIMEOUT, interval_s: float = VERDICT_INTERVAL) -> dict:
+    """Exactly one prism.verdict per answer. scored when the reader returns within the window, recorded when the trace
+    exists but analysis has not landed (or no reader is verified), unrecorded when no trace was sent. Never invents a score."""
+    if reader is _DEFAULT:
+        reader = VERDICT_READER
+    if not trace_id:
+        payload = {"trace_id": None, "status": "unrecorded"}
+        await publish("prism.verdict", **payload)
+        return payload
+    if reader is None:
+        payload = {"trace_id": trace_id, "status": "recorded"}
+        await publish("prism.verdict", **payload)
+        return payload
+    deadline = time.monotonic() + timeout_s
+    logged = False
+    while True:
+        try:
+            v = await asyncio.to_thread(reader, trace_id)
+        except Exception as exc:
+            v = None
+            if not logged:
+                logged = True
+                print(f"prism verdict: {type(exc).__name__}: {exc}", file=sys.stderr)
+        if v and v.get("score") is not None:
+            payload = {"trace_id": trace_id, "status": "scored", "score": v["score"], "satisfaction": v.get("satisfaction"), "flagged": bool(v.get("flagged")), "reason": v.get("reason"), "intent": v.get("intent")}
+            await publish("prism.verdict", **payload)
+            return payload
+        if time.monotonic() >= deadline:
+            break
+        await asyncio.sleep(interval_s)
+    payload = {"trace_id": trace_id, "status": "recorded"}
+    await publish("prism.verdict", **payload)
+    return payload
+
+
+# ---------------------------------------------------------------- links, remediation, credits
+
+
+def links(session_id: str | None = None, trace_id: str | None = None, label: str | None = None) -> dict:
+    """A product link into PRISM. No dashboard page URL shape is verified (docs/prism-notes.md §4), so the link is the
+    host root labelled "Open PRISM"; the session and trace ids travel alongside for the reader."""
+    host = os.environ.get("PRISMTRACE_HOST", DEFAULT_HOST).rstrip("/")
+    return {"label": label or session_id or "PRISM", "session_id": session_id, "trace_id": trace_id, "project_id": os.environ.get("PRISMTRACE_PROJECT_ID"), "url": host, "link_label": "Open PRISM", "url_shape": "host"}
+
+
+REMEDIATION_FILE = ROOT / "recordings" / "explain-v1-01" / "prism" / "remediation.md"
+REMEDIATION_RE = re.compile(r"^apply PRISM remediation (\S+) \((.+?)\): ?(.*)$")
+
+
+def parse_remediation_log(lines: list[str], text_file: Path | None = REMEDIATION_FILE) -> dict | None:
+    """lines are `<hash>\\x1f<subject>`; the newest commit whose subject scripts/apply_remediation.sh wrote wins."""
+    for line in lines:
+        commit, _, subject = line.partition("\x1f")
+        m = REMEDIATION_RE.match(subject.strip())
+        if not m:
+            continue
+        text = text_file.read_text(encoding="utf-8").strip() if text_file and text_file.exists() else m.group(3)
+        return {"id": m.group(1), "timestamp": m.group(2), "text": text, "first_line": m.group(3), "commit": commit.strip()}
+    return None
+
+
+def remediation(root: Path = ROOT) -> dict | None:
+    """The applied PRISM remediation, read back from git by message prefix; None until that commit exists."""
+    try:
+        out = subprocess.run(["git", "-C", str(root), "log", "--format=%H%x1f%s", "-n", "500"], capture_output=True, text=True, timeout=5, check=False).stdout
+    except Exception:
+        return None
+    return parse_remediation_log(out.splitlines())
+
+
+CREDITS_CYCLE = 100  # Free plan credits per rolling cycle (docs/prism-notes.md §9)
+
+
+def credits_used() -> int:
+    """Set by hand in backend/.env as PRISM_CREDITS_USED after dashboard actions; PRISM spends credits only on those."""
+    try:
+        return int(float(os.environ.get("PRISM_CREDITS_USED", "0") or 0))
+    except ValueError:
+        return 0
 
 
 WORKERS = 4

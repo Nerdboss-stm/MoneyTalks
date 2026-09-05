@@ -9,6 +9,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSock
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
+from mandate import desk as D
 from mandate import runner, voice
 from mandate.bus import EventBus, bus
 from mandate.desk import DeskError
@@ -106,12 +107,27 @@ async def record(agent_id: str, as_of: str | None = None, session: str | None = 
     return rt.desk.record_for(agent_id, as_of, session)
 
 
-@app.get("/prove")
-async def prove(v1: str = "mandate-v1-01", v2: str = "mandate-v2-01") -> dict:
+def _prove(v1: str, v2: str) -> dict:
     try:
-        return runner.prove(v1, v2)
+        base = runner.prove(v1, v2)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=f"missing recording: {exc.filename}")
+    return base | D.prove_extras()
+
+
+@app.get("/prove")
+async def prove(v1: str = "mandate-v1-01", v2: str = "mandate-v2-01") -> dict:
+    return _prove(v1, v2)
+
+
+@app.get("/explain/prove")
+async def explain_prove(v1: str = "mandate-v1-01", v2: str = "mandate-v2-01") -> dict:
+    return _prove(v1, v2)
+
+
+@app.get("/explain/links")
+async def explain_links() -> dict:
+    return D.links_payload()
 
 
 @app.post("/run")

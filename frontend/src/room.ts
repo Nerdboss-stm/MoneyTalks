@@ -19,6 +19,7 @@ export interface RoomHooks {
 }
 const ROW_TOKENS = 8;
 const ROW_POOL = 10;
+const VERDICT_FONT = 10; // the PRISM verdict appended to the RECORDED line
 
 interface Seat {
   id: string;
@@ -68,6 +69,10 @@ export class Room {
   private flagged!: Text;
   private flaggedUnderline = new Graphics();
   private recorded!: Text;
+  private verdictA!: Text;
+  private verdictB!: Text;
+  private traceId: string | null = null;
+  private pendingVerdicts = new Map<string, any>();
   private stackGroup = new Container();
   private q: HTMLDivElement;
   private a: HTMLDivElement;
@@ -195,7 +200,10 @@ export class Room {
     this.flagged.visible = false;
     this.recorded = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.muted) });
     this.recorded.visible = false;
-    this.stackGroup.addChild(this.flagged, this.flaggedUnderline, this.recorded);
+    this.verdictA = new Text({ text: "", style: mono(VERDICT_FONT,COLOR.muted) });
+    this.verdictB = new Text({ text: "", style: mono(VERDICT_FONT,COLOR.text) });
+    this.verdictA.visible = this.verdictB.visible = false;
+    this.stackGroup.addChild(this.flagged, this.flaggedUnderline, this.recorded, this.verdictA, this.verdictB);
     this.root.addChild(this.stackGroup);
   }
 
@@ -389,7 +397,10 @@ export class Room {
         this.enqueue(() => this.stageVerified(pl.agent_id, pl.checks ?? []));
         break;
       case "agent.traced":
-        this.enqueue(() => this.stageTraced(pl.session ?? ""));
+        this.enqueue(() => this.stageTraced(pl.session ?? "", pl.trace_id ?? null));
+        break;
+      case "prism.verdict":
+        this.onVerdict(pl);
         break;
       case "agent.answer":
         this.enqueue(() => this.stageAnswer(pl.agent_id, pl.text ?? "", Number(pl.duration_ms ?? 0), pl.citations ?? []));
@@ -598,11 +609,53 @@ export class Room {
     }
   }
 
-  private async stageTraced(session: string): Promise<void> {
+  private async stageTraced(session: string, traceId: string | null): Promise<void> {
     this.recorded.text = `RECORDED · PRISM · ${session}`;
     this.recorded.alpha = 0;
     this.recorded.visible = true;
+    this.traceId = traceId;
+    this.verdictA.visible = this.verdictB.visible = false;
     await this.tween(this.recorded, { alpha: 1, duration: MOTION.fast });
+    const pending = traceId ? this.pendingVerdicts.get(traceId) : undefined;
+    if (pending) {
+      this.pendingVerdicts.delete(traceId!);
+      this.showVerdict(pending);
+    }
+  }
+
+  /* PRISM's own reading of the trace, appended to the RECORDED line. verify.py gated the sentence before speech;
+     this is the independent record and auditor, never the thing that blocked it. */
+  private onVerdict(pl: any): void {
+    const id = pl.trace_id ?? null;
+    if (id && this.recorded.visible && this.traceId === id) {
+      this.showVerdict(pl);
+      return;
+    }
+    if (id) {
+      this.pendingVerdicts.set(id, pl);
+      if (this.pendingVerdicts.size > 20) this.pendingVerdicts.delete(this.pendingVerdicts.keys().next().value!);
+    }
+  }
+
+  private showVerdict(pl: any): void {
+    let a = "";
+    let b = "";
+    if (pl.status === "scored" && pl.flagged) {
+      a = "PRISM · ";
+      b = "FLAGGED";
+    } else if (pl.status === "scored") a = `PRISM · SCORED ${Math.round(Number(pl.score ?? 0))} · NO FLAG`;
+    else if (pl.status === "recorded") a = `PRISM · RECORDED · ${String(pl.trace_id ?? "").slice(0, 8)}`;
+    else a = "PRISM · NOT RECORDED";
+    const x = snap(this.recorded.x + this.recorded.width + 16);
+    this.verdictA.text = a;
+    this.verdictA.position.set(x, this.recorded.y + 1);
+    this.verdictB.text = b;
+    this.verdictB.position.set(snap(x + this.verdictA.width, 1), this.recorded.y + 1);
+    this.verdictA.alpha = this.verdictB.alpha = 0;
+    this.verdictA.visible = true;
+    this.verdictB.visible = b.length > 0;
+    void this.tween(this.verdictA, { alpha: 1, duration: MOTION.fast });
+    if (b) void this.tween(this.verdictB, { alpha: 1, duration: MOTION.fast });
   }
 
   private async stageAnswer(agentId: string, text: string, durationMs: number, citations: string[]): Promise<void> {
@@ -682,7 +735,7 @@ export class Room {
   private async stageReleased(): Promise<void> {
     const back: Promise<void>[] = [];
     this.retrieved.forEach((row, i) => back.push(this.tween(row.group, { x: this.agendaLines[2].x, y: this.agendaLines[2].y + i * ROOM.rowPitch, alpha: 0, duration: MOTION.fast, delay: i * MOTION.stagger })));
-    back.push(this.tween(this.lineG, { alpha: 0, duration: MOTION.fast }), this.tween(this.crossG, { alpha: 0, duration: MOTION.fast }), this.tween(this.recorded, { alpha: 0, duration: MOTION.fast }), this.tween(this.flagged, { alpha: 0, duration: MOTION.fast }), this.tween(this.flaggedUnderline, { alpha: 0, duration: MOTION.fast }));
+    back.push(this.tween(this.lineG, { alpha: 0, duration: MOTION.fast }), this.tween(this.crossG, { alpha: 0, duration: MOTION.fast }), this.tween(this.recorded, { alpha: 0, duration: MOTION.fast }), this.tween(this.flagged, { alpha: 0, duration: MOTION.fast }), this.tween(this.flaggedUnderline, { alpha: 0, duration: MOTION.fast }), this.tween(this.verdictA, { alpha: 0, duration: MOTION.fast }), this.tween(this.verdictB, { alpha: 0, duration: MOTION.fast }));
     for (const s of this.seats.values()) {
       back.push(this.tween(s.group, { alpha: 1, duration: MOTION.fast }));
       s.label.style.fill = COLOR.muted;
@@ -705,6 +758,8 @@ export class Room {
     this.crossG.alpha = 1;
     this.recorded.visible = this.flagged.visible = false;
     this.recorded.alpha = this.flagged.alpha = 1;
+    this.verdictA.visible = this.verdictB.visible = false;
+    this.traceId = null;
     this.flaggedUnderline.clear();
     this.flaggedUnderline.alpha = 1;
     this.q.textContent = "";

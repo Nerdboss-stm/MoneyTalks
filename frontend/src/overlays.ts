@@ -149,10 +149,20 @@ export function openProve(data: any): void {
     ["Seconds to detect", v1.seconds_to_detect == null ? "—" : `${v1.seconds_to_detect}`, v2.seconds_to_detect == null ? "—" : `${v2.seconds_to_detect}`],
     ["Payroll status", v1.payroll_status ?? "—", v2.payroll_status ?? "—"],
   ];
+  const rem = data?.remediation;
+  const credits = data?.prism_credits_used;
+  const cycle = data?.prism_credits_cycle ?? 100;
+  const links: any[] = data?.links?.entries ?? [];
+  const mono10 = `font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.04em;`;
   el.innerHTML =
-    `<div class="head">GET /prove</div><div class="rule"></div>` +
+    `<div class="head">GET /explain/prove</div><div class="rule"></div>` +
     `<div class="row"><div class="k"></div><div class="v">V1</div><div class="v">V2</div></div>` +
-    rows.map(([k, a, b]) => `<div class="row"><div class="k">${esc(k)}</div><div class="v">${esc(a)}</div><div class="v">${esc(b)}</div></div>`).join("");
+    rows.map(([k, a, b]) => `<div class="row"><div class="k">${esc(k)}</div><div class="v">${esc(a)}</div><div class="v">${esc(b)}</div></div>`).join("") +
+    `<div class="row"><div class="k">Remediation</div><div class="v" style="font-family:'Inter','Inter Tight',sans-serif;letter-spacing:0;white-space:normal">${rem ? esc(String(rem.text ?? "")) : "—"}</div><div class="v">${rem ? `${esc(String(rem.commit ?? "").slice(0, 12))}<div class="muted" style="${mono10}">${esc(String(rem.id ?? ""))} · ${esc(String(rem.timestamp ?? ""))}</div>` : `<span class="muted">no commit yet</span>`}</div></div>` +
+    `<div class="line">PRISM credits used: ${credits == null ? "—" : esc(String(credits))} of ${esc(String(cycle))}</div>` +
+    `<div class="rule"></div><div class="head">OPEN IN PRISM</div>` +
+    links.map((l) => `<div class="line"><a href="${esc(String(l.url ?? "#"))}" target="_blank" rel="noopener" style="${mono10}color:#E6E6E3;text-decoration:underline">${esc(String(l.label ?? l.session_id ?? ""))}</a><span class="muted" style="${mono10}margin-left:12px">${esc(String(l.link_label ?? "Open PRISM"))}${l.trace_id ? ` · ${esc(String(l.trace_id).slice(0, 8))}` : ""}</span></div>`).join("") +
+    `<div class="rule"></div>`;
   el.style.display = "block";
 }
 
