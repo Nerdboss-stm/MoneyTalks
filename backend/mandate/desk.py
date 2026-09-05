@@ -56,24 +56,72 @@ def edit_distance(a: str, b: str) -> int:
     return prev[-1]
 
 
-def match_agent(text: str) -> tuple[str, str] | None:
-    """Utterance begins with (or fuzzy-matches, edit distance <= 2) an agent display name or id."""
-    low = re.sub(r"[^a-z0-9 ]", " ", text.lower()).strip()
-    words = low.split()
-    best: tuple[int, str, int] | None = None
-    for agent_id, display in ROLES:
-        for name in (display.lower(), agent_id.replace("_", " ")):
-            n = len(name.split())
-            head = " ".join(words[:n])
-            if not head:
+NAME_SKIP = 3  # words of lead-in ("so", "okay then") a name may sit behind
+
+
+def name_distance(head: str, name: str) -> int:
+    """Exact and prefix hits are free, so 'taxes' still reaches Tax."""
+    if head == name or (len(name) <= 3 and head.startswith(name)):
+        return 0
+    return edit_distance(head, name)
+
+
+def name_tolerance(name: str) -> int:
+    """Scaled to the name's length. A short name must be near-exact: 'fx' is within two edits of
+    every two-letter filler ('so', 'um', 'ok'), which used to send those utterances to FX."""
+    n = len(name)
+    return 0 if n <= 3 else 1 if n <= 6 else 2
+
+
+def name_tokens(text: str) -> tuple[list[str], list[int]]:
+    """Lowercased words and the index in text.split() where each begins. Runs of single letters are
+    joined back together: STT writes FX as 'F X' and AP West as 'A P West'."""
+    raw = text.split()
+    strip = lambda w: re.sub(r"[^a-z0-9]", "", w.lower())  # noqa: E731
+    words: list[str] = []
+    starts: list[int] = []
+    i = 0
+    while i < len(raw):
+        w = strip(raw[i])
+        if not w:
+            i += 1
+            continue
+        if len(w) == 1 and w.isalpha():
+            j, run = i, []
+            while j < len(raw) and len(strip(raw[j])) == 1 and strip(raw[j]).isalpha():
+                run.append(strip(raw[j]))
+                j += 1
+            if len(run) >= 2:
+                words.append("".join(run))
+                starts.append(i)
+                i = j
                 continue
-            d = edit_distance(head, name)
-            if d <= 2 and (best is None or d < best[0]):
-                best = (d, agent_id, n)
+        words.append(w)
+        starts.append(i)
+        i += 1
+    return words, starts
+
+
+def match_agent(text: str) -> tuple[str, str] | None:
+    """Utterance names an agent in its first few words, exactly or within a length-scaled edit distance."""
+    words, starts = name_tokens(text)
+    best: tuple[int, int, str, int] | None = None  # distance, offset, agent, words consumed
+    for off in range(min(NAME_SKIP, len(words))):
+        for agent_id, display in ROLES:
+            for name in (display.lower(), agent_id.replace("_", " ")):
+                n = len(name.split())
+                head = " ".join(words[off : off + n])
+                if not head:
+                    continue
+                d = name_distance(head, name)
+                if d <= name_tolerance(name) and (best is None or (d, off) < (best[0], best[1])):
+                    best = (d, off, agent_id, off + n)
     if best is None:
         return None
-    _, agent_id, n = best
-    rest = " ".join(text.split()[n:]).lstrip(",:;- ").strip()
+    raw = text.split()
+    _, _, agent_id, end = best
+    consumed = starts[end] if end < len(starts) else len(raw)
+    rest = " ".join(raw[consumed:]).lstrip(",:;- ").strip()
     return agent_id, rest or text
 
 
