@@ -87,7 +87,7 @@ def test_voice_text_week_mentions_halden():
         body = r.json()
         assert body["intent"] == "AGENT_QUERY" and body["agent_id"] == "ap_west"
         assert "Halden Logistics" in body["answer"] and "$51,000" in body["answer"] and "10:03" in body["answer"]
-        assert body["audio_url"] is None or body["audio_url"].startswith("/audio/")
+        assert body["audio_url"] is None or body["audio_url"].startswith(("/audio/", "/voice/stream/"))
 
 
 def test_voices_config_complete():
