@@ -382,7 +382,7 @@ class Desk:
         if self.meeting:
             await self.fleet.publish("meeting.loaded", **self.meeting.summary())
 
-    async def _explain_turn(self, intent: Intent, text: str, speak: Callable[[str, str], Awaitable[Any]], llm: Any = None) -> dict:
+    async def _explain_turn(self, intent: Intent, text: str, speak: Callable[[str, str], Awaitable[Any]], llm: Any = "auto") -> dict:
         from explain import owners as O
         from explain import prism_steps
         from mandate import voice as V
@@ -529,7 +529,7 @@ class Desk:
 
     # ---- one voice turn
 
-    async def voice_turn(self, text: str | None, as_of: datetime | str | None = None, session: str | None = None, intent_engine: IntentEngine | None = None, answer_engine: AnswerEngine | None = None, speak: Callable[[str, str], Awaitable[Any]] | None = None, explain_llm: Any = None) -> dict:
+    async def voice_turn(self, text: str | None, as_of: datetime | str | None = None, session: str | None = None, intent_engine: IntentEngine | None = None, answer_engine: AnswerEngine | None = None, speak: Callable[[str, str], Awaitable[Any]] | None = None, explain_llm: Any = "auto") -> dict:
         from mandate import voice as V
 
         speak = speak or V.speak

@@ -51,10 +51,11 @@ async def test_v2_offline_fallback_is_grounded_and_cited():
     e = _engine()
     for agent in ("procurement", "controller_a", "controller_b", "payroll", "collections"):
         res = await owners.answer_as_owner(agent, "what moved?", "v2", "", e, llm=None)
-        assert res["verify"]["ok"] and not res["verify"]["unverifiable_figures"], agent
+        assert res["model"] == "rules" and res["verify"]["ok"] and not res["verify"]["unverifiable_figures"], agent
         assert re.search(r"\[E\d+\]$", res["answer"]), res["answer"]
         ids = {r["id"] for r in e.slice_for_owner(agent)["evidence"]}
-        assert set(res["citations"]) <= ids
+        assert res["citations"] and set(res["citations"]) <= ids
+        assert verify.citations("x [E1, E2][E3]") == ["E1", "E2", "E3"]
         assert [s["step_type"] for s in res["steps"]] == ["tool_call", "reasoning", "tool_call", "final_answer"]
 
 
@@ -89,15 +90,16 @@ async def test_memory_grows_one_line_per_v2_run(tmp_path):
     async def grounded(system, user, temperature):
         return owners.NO_RECORDS
 
+    rec = tmp_path / "recordings"
     for i in (1, 2):
-        out = await meeting.run_meeting("v2", i, meeting.DATA, llm=grounded, memory_path=mem, questions=["What changed in August?", "Procurement, why is cloud hosting up?"])
+        out = await meeting.run_meeting("v2", i, meeting.DATA, llm=grounded, memory_path=mem, questions=["What changed in August?", "Procurement, why is cloud hosting up?"], recordings_dir=rec)
         assert out["learned"] and "Northgate Financial" in out["learned"]
         lines = [l for l in mem.read_text().splitlines() if l.startswith("- ")]
         assert len(lines) == i
-    v1 = await meeting.run_meeting("v1", 1, meeting.DATA, llm=grounded, memory_path=mem, questions=["Payroll, anything to flag?"])
+    v1 = await meeting.run_meeting("v1", 1, meeting.DATA, llm=grounded, memory_path=mem, questions=["Payroll, anything to flag?"], recordings_dir=rec)
     assert v1["learned"] is None and len([l for l in mem.read_text().splitlines() if l.startswith("- ")]) == 2
     for sid in ("explain-v2-01", "explain-v2-02", "explain-v1-01"):
-        assert (meeting.RECORDINGS / f"{sid}.jsonl").exists()
+        assert (rec / f"{sid}.jsonl").exists()
 
 
 async def test_voice_path_speaks_v2_answer_end_to_end():

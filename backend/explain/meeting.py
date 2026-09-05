@@ -59,7 +59,7 @@ async def quiet_speak(text: str, voice_id: str) -> QuietJob:
     return QuietJob(text, voice_id)
 
 
-async def run_meeting(mode: str, index: int, directory: Path | None = None, llm: Any = None, speak: Any = None, memory_path: Path = owners.MEMORY_FILE, bus: Any = None, questions: list[str] | None = None) -> dict:
+async def run_meeting(mode: str, index: int, directory: Path | None = None, llm: Any = "auto", speak: Any = None, memory_path: Path = owners.MEMORY_FILE, bus: Any = None, questions: list[str] | None = None, recordings_dir: Path = RECORDINGS) -> dict:
     from mandate import prism_util
     from mandate.agents import Fleet, RuleDecider
     from mandate.bus import EventBus
@@ -67,8 +67,8 @@ async def run_meeting(mode: str, index: int, directory: Path | None = None, llm:
     from mandate.scenario import CompanyClock, build_scenario, ct
 
     sid = session_id(mode, index)
-    RECORDINGS.mkdir(parents=True, exist_ok=True)
-    path = RECORDINGS / f"{sid}.jsonl"
+    recordings_dir.mkdir(parents=True, exist_ok=True)
+    path = recordings_dir / f"{sid}.jsonl"
     if bus is None:
         if path.exists():
             path.unlink()

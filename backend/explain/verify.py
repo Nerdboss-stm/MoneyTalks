@@ -6,9 +6,23 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-CITATION = re.compile(r"\[(E\d+)\]")
+BRACKET = re.compile(r"\[([^\]]*)\]")
+CITE_ID = re.compile(r"\bE\d+\b")
 DATE = re.compile(r"\b(?:19|20)\d{2}-\d{2}(?:-\d{2})?\b")
-FIGURE = re.compile(r"(?<![\w\[])(\$?)(\d[\d,]*(?:\.\d+)?)\s*(%|percent|[kKmM]\b)?(?![\w\]])")
+FIGURE = re.compile(r"(?<![\w\[])(\$?)(\d[\d,]*(?:\.\d+)?)\s*(%|percent|[kKmM]\b|million|thousand|billion)?(?![\w\]])", re.I)
+SUFFIX = {"k": 1e3, "thousand": 1e3, "m": 1e6, "million": 1e6, "billion": 1e9}
+
+
+def citations(text: str) -> list[str]:
+    """Every E-id inside square brackets, in order: [E7], [E7, E9] and [E7][E9] all count."""
+    out: list[str] = []
+    for group in BRACKET.findall(text or ""):
+        out.extend(CITE_ID.findall(group))
+    return out
+
+
+def _strip_citations(text: str) -> str:
+    return BRACKET.sub(lambda m: " " if CITE_ID.search(m.group(1)) else m.group(0), text or "")
 REFUSAL = re.compile(r"records? (?:doesn't|don't|do not|does not) show", re.I)
 PCT_TOL = 0.5
 COVERAGE_MIN = 50.0
@@ -22,18 +36,15 @@ class Figure:
 
 
 def extract_figures(text: str) -> list[Figure]:
-    cleaned = DATE.sub(" ", CITATION.sub(" ", text or ""))
+    cleaned = DATE.sub(" ", _strip_citations(text))
     out: list[Figure] = []
     for m in FIGURE.finditer(cleaned):
-        dollar, num, suffix = m.group(1), m.group(2), (m.group(3) or "")
+        dollar, num, suffix = m.group(1), m.group(2).rstrip(",."), (m.group(3) or "").lower()
         try:
             value = float(num.replace(",", ""))
         except ValueError:
             continue
-        if suffix.lower() == "k":
-            value *= 1_000
-        elif suffix.lower() == "m":
-            value *= 1_000_000
+        value *= SUFFIX.get(suffix, 1)
         if suffix in ("%", "percent"):
             kind = "percent"
         elif dollar:
@@ -42,7 +53,7 @@ def extract_figures(text: str) -> list[Figure]:
             if "." not in num and "," not in num and 1900 <= value <= 2100:
                 continue  # a year, not a figure
             kind = "number"
-        out.append(Figure(m.group(0).strip(), kind, value))
+        out.append(Figure((m.group(1) + num + (" " + m.group(3) if m.group(3) else "")).strip(), kind, value))
     return out
 
 
@@ -89,7 +100,9 @@ def _matches(f: Figure, allowed: dict[str, set[float]]) -> bool:
     if f.kind == "percent":
         return any(abs(f.value - a) <= PCT_TOL for a in allowed["percent"])
     pool = allowed["dollar"] if f.kind == "dollar" else allowed["dollar"] | allowed["number"] | allowed["percent"]
-    if any(abs(f.value - a) < 0.005 for a in pool):
+    whole = "." not in f.raw.split(" ")[0]
+    tol = 0.5 if whole else 0.005  # a figure quoted without cents may be rounded to the dollar
+    if any(abs(f.value - a) <= tol for a in pool):
         return True
     if _sig_digits(f) <= 3:
         return any(a and abs(f.value - a) / abs(a) <= 0.01 for a in pool)
@@ -110,9 +123,21 @@ def _target_delta(evidence: dict, target: str) -> int:
     return 0
 
 
+def _target_pct(evidence: dict, target: str) -> float | None:
+    for v in evidence.get("variances", []):
+        if v.get("key") == target:
+            return v.get("delta_pct")
+    return None
+
+
 def driver_coverage(cited: list[dict], evidence: dict) -> float:
     by_target_dim: dict[tuple[str, str], int] = {}
     for r in cited:
+        if r.get("kind") == "variance":
+            p = _target_pct(evidence, r.get("target", ""))
+            if p is not None and abs(p) < 1.0:
+                return 100.0  # a flat account is fully explained by its own variance row
+            continue
         if r.get("kind") not in ("driver", "concentration"):
             continue
         fig = r.get("figures", {})
@@ -132,7 +157,7 @@ def check(text: str, evidence: dict) -> dict:
     figures = extract_figures(text)
     unverifiable = [f.raw for f in figures if not _matches(f, allowed)]
     rows = _rows(evidence)
-    cited_ids = CITATION.findall(text or "")
+    cited_ids = citations(text)
     unresolved = sorted({c for c in cited_ids if c not in rows})
     cited = [rows[c] for c in cited_ids if c in rows]
     coverage = driver_coverage(cited, evidence)

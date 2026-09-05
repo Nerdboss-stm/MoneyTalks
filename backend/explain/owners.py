@@ -114,11 +114,23 @@ def _strip_ids(obj: Any) -> Any:
     return obj
 
 
+def _usd(cents: Any) -> str:
+    try:
+        c = int(cents)
+    except (TypeError, ValueError):
+        return ""
+    return ("-" if c < 0 else "") + f"${abs(c) / 100:,.2f}"
+
+
 def evidence_prompt(evidence: dict) -> str:
+    """Dollar strings only — never raw cents — so the model cannot misread units. Statements carry the citable figures."""
+    variances = [
+        {"key": v["key"], "prior": _usd(v.get("prior")), "current": _usd(v.get("current")), "delta": _usd(v.get("delta_cents")), "delta_pct": v.get("delta_pct"), "owner_agent": v.get("owner_agent")}
+        for v in evidence.get("variances", [])
+    ]
     slim = {
         "periods": evidence.get("periods"),
-        "totals": evidence.get("totals"),
-        "variances": [{k: v[k] for k in ("key", "prior", "current", "delta_cents", "delta_pct", "owner_agent") if k in v} for v in evidence.get("variances", [])],
+        "variances": variances,
         "evidence": [{"id": r["id"], "kind": r["kind"], "target": r["target"], "statement": r["statement"]} for r in evidence.get("evidence", [])],
     }
     return json.dumps(_strip_ids(slim), separators=(",", ":"))
@@ -134,13 +146,22 @@ def top_driver(evidence: dict) -> dict | None:
 
 
 def grounded_fallback(evidence: dict) -> str:
+    """The top driver's evidence statement verbatim with its citation. A flat account (|Δ| < 1%) reads its variance row instead."""
+    rows = evidence.get("evidence", [])
+    variances = evidence.get("variances", [])
+    if variances and all(abs(v.get("delta_pct") or 0) < 1.0 for v in variances if not str(v.get("key", "")).startswith("TOTAL:")):
+        v = next((r for r in rows if r.get("kind") == "variance"), None)
+        if v:
+            return f"{v['statement']} [{v['id']}]"
     r = top_driver(evidence)
     return f"{r['statement']} [{r['id']}]" if r else NO_RECORDS
 
 
 V2_SYSTEM = (
-    "You are {display}, a finance agent, answering the CFO in a variance review meeting. Rules: at most {sentences} sentences, first person. "
-    "Use ONLY figures that appear in EVIDENCE below; never compute or estimate a new number. Every claim ends with the citation of the evidence row it comes from, like [E7]. "
+    "You are {display}, a finance agent, answering the CFO in a variance review meeting. Rules: at most {sentences} sentences, first person, plain prose. "
+    "Use ONLY figures that appear in EVIDENCE; copy each figure exactly as written there (same digits, same rounding, no M/K abbreviations); never compute, sum, or estimate a new number, "
+    "and never repeat a figure from CONTEXT MEMORY unless it also appears in EVIDENCE. Every claim ends with the citation of the evidence row it comes from, written as [E7] (one id per bracket). "
+    "Say what moved the number: cite at least one driver or concentration row, not only the variance row. "
     "If EVIDENCE does not contain the answer, reply exactly: {no_records}"
 )
 V1_SYSTEM = (
@@ -159,9 +180,17 @@ def _rows_prompt(rows: list[dict]) -> str:
     return "\n".join(",".join(str(r.get(c, "")) for c in cols) for r in rows)
 
 
-async def answer_as_owner(agent_id: str, question: str, mode: str, memory: str, engine: Any, llm: LLM | None = None, rows_limit: int = V1_ROWS, session_id: str = "") -> dict:
+AUTO = "auto"
+
+
+def _resolve_llm(llm: Any) -> LLM | None:
+    """'auto' picks haiku when a key is present; None means no model at all (deterministic fallback)."""
+    return default_llm() if llm == AUTO else llm
+
+
+async def answer_as_owner(agent_id: str, question: str, mode: str, memory: str, engine: Any, llm: Any = AUTO, rows_limit: int = V1_ROWS, session_id: str = "") -> dict:
     """v2 = grounded on slice_for_owner + memory, verified before anything is spoken. v1 = freeform on raw rows, verified after."""
-    llm = llm if llm is not None else default_llm()
+    llm = _resolve_llm(llm)
     display = DISPLAY.get(agent_id, agent_id)
     slice_ = engine.slice_for_owner(agent_id)
     steps: list[dict] = []
@@ -199,9 +228,9 @@ async def answer_as_owner(agent_id: str, question: str, mode: str, memory: str, 
     return {"agent_id": agent_id, "display": display, "mode": mode, "question": question, "answer": answer, "raw_answer": raw, "replaced": replaced, "verify": result, "citations": result.get("citations", []), "scope": "slice", "model": source, "steps": steps, "session_id": session_id}
 
 
-async def answer_change(question: str, mode: str, memory: str, engine: Any, llm: LLM | None = None, session_id: str = "") -> dict:
+async def answer_change(question: str, mode: str, memory: str, engine: Any, llm: Any = AUTO, session_id: str = "") -> dict:
     """The change question: controller_a answers from the FULL evidence JSON, three sentences allowed."""
-    llm = llm if llm is not None else default_llm()
+    llm = _resolve_llm(llm)
     full = engine.to_evidence_json()
     steps = [prism_steps.tool_step("evidence_lookup", {"scope": "full"}, f"{len(full['evidence'])} evidence rows, {len(full['variances'])} variances", "")]
     if llm is None or mode == "v1":
