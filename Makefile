@@ -39,5 +39,8 @@ explain-data:
 meeting:
 	cd backend && uv run python -m explain.meeting --mode $(V) --index $(N)
 
+explain-prove:
+	cd backend && uv run python -m explain.prove explain-v1-$(shell printf %02d $(N)) explain-v2-$(shell printf %02d $(N))
+
 ingest:
 	cd backend && uv run python -m explain.ingest $(addprefix ../,$(FILES)) --out ../$(OUT)

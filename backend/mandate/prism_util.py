@@ -294,7 +294,7 @@ def links(session_id: str | None = None, trace_id: str | None = None, label: str
     return {"label": label or session_id or "PRISM", "session_id": session_id, "trace_id": trace_id, "project_id": os.environ.get("PRISMTRACE_PROJECT_ID"), "url": host, "link_label": "Open PRISM", "url_shape": "host"}
 
 
-REMEDIATION_FILE = ROOT / "recordings" / "explain-v1-01" / "prism" / "remediation.md"
+REMEDIATION_FILE = ROOT / "recordings" / "explain-v1-04" / "prism" / "remediation.md"
 REMEDIATION_RE = re.compile(r"^apply PRISM remediation (\S+) \((.+?)\): ?(.*)$")
 
 
