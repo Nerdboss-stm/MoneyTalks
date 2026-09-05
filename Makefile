@@ -4,6 +4,8 @@ V ?= v1
 N ?= 1
 SPEED ?= 0
 S ?= mandate-v1-01
+DECIDER ?= llm
+PRISM ?= on
 
 setup:
 	cd backend && uv sync
@@ -20,7 +22,7 @@ test:
 	cd frontend && npx tsc --noEmit
 
 run:
-	cd backend && uv run python -m mandate.runner run --version $(V) --index $(N) --speed $(SPEED)
+	cd backend && MANDATE_DECIDER=$(DECIDER) PRISM_HANDLERS=$(PRISM) uv run python -m mandate.runner run --version $(V) --index $(N) --speed $(SPEED)
 
 replay:
 	cd backend && uv run python -m mandate.runner replay --session $(S) --speed $(SPEED)

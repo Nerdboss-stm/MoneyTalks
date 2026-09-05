@@ -35,13 +35,18 @@ def session_id(run_version: str, run_index: int) -> str:
 
 
 def make_decider() -> Any:
-    if os.environ.get("ANTHROPIC_API_KEY"):
+    choice = os.environ.get("MANDATE_DECIDER", "llm" if os.environ.get("ANTHROPIC_API_KEY") else "rules")
+    if choice == "llm":
+        print("decider: LLMDecider (claude-haiku-4-5)", file=sys.stderr)
         return LLMDecider()
-    print("ANTHROPIC_API_KEY not set: using RuleDecider (network-off fallback)", file=sys.stderr)
+    print("decider: RuleDecider (deterministic, network-off)", file=sys.stderr)
     return RuleDecider()
 
 
 def make_handlers(sid: str, agent_ids: list[str]) -> dict[str, Any]:
+    if os.environ.get("PRISM_HANDLERS", "on") == "off":
+        print("PRISM_HANDLERS=off: PRISM handlers disabled", file=sys.stderr)
+        return {}
     if not (os.environ.get("PRISMTRACE_API_KEY") and os.environ.get("PRISMTRACE_PROJECT_ID")):
         print("PRISMTRACE_* not set: PRISM handlers disabled", file=sys.stderr)
         return {}
