@@ -214,7 +214,7 @@ class AgentRuntime:
             p = fleet.ledger.payments[payment_id]
             when = datetime.combine(p.scheduled_at.date(), ct(at).time())
             tick = agent.now()
-            plan = {"tick": fmt(tick), "payment_id": payment_id, "execute_at": fmt(when), "status_template": None, "mandate_id": fleet.current_mandate_id()}
+            plan = {"tick": fmt(tick), "payment_id": payment_id, "execute_at": fmt(when), "vendor": p.vendor, "amount_cents": p.amount_cents, "rail": p.rail, "status_template": None, "mandate_id": fleet.current_mandate_id()}
             agent.plans[payment_id] = plan
             agent.queue.append((when, payment_id))
             agent.record["plans"].append(_entry(tick, **plan))
@@ -463,6 +463,16 @@ class Fleet:
         m = self.mandate_by_id(mandate_id)
         if m is not None:
             await self.expire_mandate(m, now or self.clock.now(), "released")
+
+    async def release_payment(self, payment_id: str, stamp: Stamp) -> None:
+        now = self.clock.now()
+        p = self.ledger.payments[payment_id]
+        self.ledger = L.release(self.ledger, payment_id, now, stamp)
+        agent = self.agents[p.agent_id]
+        agent.record_stamp(now, payment_id, stamp)
+        await self.publish("payment.released", agent_id=p.agent_id, payment_id=payment_id, amount_cents=p.amount_cents, mandate_id=stamp.mandate_id, order=0, prior_status=p.status, vendor=p.vendor, source="desk")
+        agent.plans[payment_id] = {"tick": None, "payment_id": payment_id, "execute_at": fmt(now), "vendor": p.vendor, "amount_cents": p.amount_cents, "rail": p.rail, "status_template": agent.status_template, "mandate_id": stamp.mandate_id, "released": True}
+        await agent.fire(payment_id, now)
 
     async def _payroll_check(self, now: datetime) -> None:
         p = self.ledger.payments.get(self.payroll_run_id) if self.payroll_run_id else None

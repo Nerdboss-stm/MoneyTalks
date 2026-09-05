@@ -5,10 +5,11 @@ import sys
 from typing import Any
 
 import structlog
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
-from mandate import runner
+from mandate import runner, voice
 from mandate.bus import EventBus, bus
 from mandate.desk import DeskError
 from mandate.schemas import Event
@@ -57,6 +58,16 @@ class ReplayCmd(BaseModel):
     arg: Any = None
 
 
+class VoiceText(BaseModel):
+    text: str
+    as_of: str | None = None
+    session: str | None = None
+
+
+class Released(BaseModel):
+    agent_id: str | None = None
+
+
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -78,15 +89,15 @@ async def desk_confirm(body: ConfirmIn) -> dict:
         m = await get_runtime().desk.confirm(body.mandate_id)
     except DeskError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
-    return m.model_dump(mode="json")
+    return m if isinstance(m, dict) else m.model_dump(mode="json")
 
 
 @app.get("/record/{agent_id}")
-async def record(agent_id: str, as_of: str | None = None) -> dict:
+async def record(agent_id: str, as_of: str | None = None, session: str | None = None) -> dict:
     rt = get_runtime()
     if agent_id not in rt.fleet.agents:
         raise HTTPException(status_code=404, detail="unknown agent")
-    return rt.fleet.get_record(agent_id, as_of)
+    return rt.desk.record_for(agent_id, as_of, session)
 
 
 @app.get("/prove")
@@ -102,8 +113,18 @@ async def start_run(until: str = "Fri 17:05") -> dict:
     rt = get_runtime()
     if rt.task and not rt.task.done():
         raise HTTPException(status_code=409, detail="a run or replay is active")
+    rt.desk.replay_session = None
     rt.task = asyncio.create_task(runner.run(rt.run_version, rt.run_index, rt.speed, bus=rt.bus, until=until))
     return {"started": runner.session_id(rt.run_version, rt.run_index)}
+
+
+# /replay/cmd must be declared before /replay/{session_id} or the wildcard shadows it
+@app.post("/replay/cmd")
+async def replay_cmd(body: ReplayCmd) -> dict:
+    rt = get_runtime()
+    if rt.replayer is None:
+        raise HTTPException(status_code=409, detail="no replay active")
+    return rt.replayer.command(body.cmd, body.arg)
 
 
 @app.post("/replay/{session_id}")
@@ -111,6 +132,7 @@ async def start_replay(session_id: str, speed: float = 1.0, stage: bool = False)
     rt = get_runtime()
     if rt.task and not rt.task.done():
         raise HTTPException(status_code=409, detail="a run or replay is active")
+    rt.desk.replay_session = session_id
     if stage:
         rt.replayer = runner.Replayer(rt.bus, runner.load_events(session_id), 1.0)
 
@@ -128,12 +150,53 @@ async def start_replay(session_id: str, speed: float = 1.0, stage: bool = False)
     return rt.replayer.status()
 
 
-@app.post("/replay/cmd")
-async def replay_cmd(body: ReplayCmd) -> dict:
+# ---- voice
+
+
+@app.post("/voice/text")
+async def voice_text(body: VoiceText) -> dict:
     rt = get_runtime()
-    if rt.replayer is None:
-        raise HTTPException(status_code=409, detail="no replay active")
-    return rt.replayer.command(body.cmd, body.arg)
+    return await rt.desk.voice_turn(body.text, as_of=body.as_of, session=body.session)
+
+
+@app.post("/voice/utterance")
+async def voice_utterance(audio: UploadFile = File(...), as_of: str | None = None, session: str | None = None) -> dict:
+    rt = get_runtime()
+    data = await audio.read()
+    text = await voice.stt(data, audio.content_type or "audio/webm")
+    if rt.replayer is not None and not rt.replayer.done:
+        rt.replayer.pause()
+    out = await rt.desk.voice_turn(text, as_of=as_of, session=session)
+    out["transcript"] = text
+    return out
+
+
+@app.post("/voice/released")
+async def voice_released(body: Released) -> dict:
+    rt = get_runtime()
+    if body.agent_id:
+        await rt.fleet.publish("agent.released", agent_id=body.agent_id)
+    if rt.replayer is not None and not rt.replayer.done:
+        rt.replayer.resume()
+    return {"ok": True}
+
+
+@app.get("/voice/stream/{job_id}")
+async def voice_stream(job_id: str) -> StreamingResponse:
+    job = voice.JOBS.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="unknown speech job")
+    return StreamingResponse(job.iter(), media_type="audio/mpeg", headers={"Cache-Control": "no-store", "X-Voice-Source": job.source})
+
+
+@app.get("/audio/{name}")
+async def audio_file(name: str) -> FileResponse:
+    if not name.endswith(".mp3") or "/" in name or ".." in name:
+        raise HTTPException(status_code=404)
+    p = voice.AUDIO_CACHE / name
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="not cached")
+    return FileResponse(p, media_type="audio/mpeg")
 
 
 @app.websocket("/ws/events")

@@ -13,6 +13,7 @@ dependencies = [
     "reportlab>=4",
     "httpx>=0.27",
     "prismtrace-sdk>=0.4.0",
+    "python-multipart>=0.0.32",
 ]
 
 [dependency-groups]

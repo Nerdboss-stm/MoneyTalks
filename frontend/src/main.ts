@@ -8,11 +8,13 @@ import { Floor } from "./floor";
 import { Clock, Model, dollars, fmtClock, parseCompany, type Payment } from "./model";
 import * as ui from "./overlays";
 import { MOTION } from "./tokens";
+import { Voice } from "./voice";
 import { connect, send, wsOpen, type BusEvent } from "./ws";
 
 const model = new Model();
 const clock = new Clock();
 let floor: Floor;
+let voice: Voice;
 let pendingMandate: string | null = null;
 let net = "NET —";
 let netOk = false;
@@ -164,7 +166,11 @@ async function onKey(e: KeyboardEvent): Promise<void> {
   if (e.repeat) return;
   if (e.key === " ") {
     e.preventDefault();
-    floor.setRecording(true);
+    if (!netOk) {
+      ui.showTransientAnswer("NET DOWN: mic disabled, use V to type");
+      return;
+    }
+    void voice.start();
     return;
   }
   if (e.key === "Escape") {
@@ -231,6 +237,13 @@ async function onKey(e: KeyboardEvent): Promise<void> {
         () => undefined,
       );
       break;
+    case "v":
+    case "V":
+      ui.openOrderInput(
+        (text) => void voice.speakText(text, model.mode === "REPLAY" ? model.sessionId : null, null).catch((err) => ui.showTransientAnswer(`voice: ${(err as Error).message}`)),
+        () => undefined,
+      );
+      break;
     case "p":
     case "P":
       if (document.getElementById("prove")!.style.display === "block") ui.closeOverlays();
@@ -274,8 +287,14 @@ async function boot(): Promise<void> {
     }
   });
   window.addEventListener("keydown", (e) => void onKey(e));
+  voice = new Voice({
+    onRecording: (on) => floor.setRecording(on),
+    onAnswer: () => undefined, // text arrives on the bus as agent.answer / desk.answer / query.answer
+    onError: (msg) => ui.showTransientAnswer(msg),
+    isReplaying: () => model.mode === "REPLAY",
+  });
   window.addEventListener("keyup", (e) => {
-    if (e.key === " ") floor.setRecording(false);
+    if (e.key === " ") void voice.stop();
   });
   if (import.meta.env.DEV) (window as any).__inject = (ev: BusEvent) => window.dispatchEvent(new CustomEvent<BusEvent>("bus:event", { detail: ev }));
   connect();
