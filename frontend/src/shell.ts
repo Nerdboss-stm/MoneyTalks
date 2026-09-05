@@ -1,5 +1,7 @@
 import { DISPLAY, type Side } from "./room";
 import { SHELL } from "./tokens";
+
+const V1_ROWS = 150; // backend/explain/owners.py: the raw rows a freeform owner reads instead of evidence
 import { txn } from "./txns";
 import type { BusEvent } from "./ws";
 
@@ -90,6 +92,7 @@ export class Shell {
         this.hooks.onEvidence(chip.dataset.id!);
       }
     });
+    this.setRun(2); // the method line is correct from the first paint, before a meeting loads
   }
 
   // ---------------------------------------------------------------- chrome
@@ -130,8 +133,25 @@ export class Shell {
     $<HTMLAnchorElement>("prism-link").href = links.session ?? links.project ?? links.host;
   }
 
+  /* The agenda is the engine's output and is identical in both runs; what changes is what an owner is
+     allowed to read before it speaks. The method line and the chips say which run is loaded. */
   setRun(index: number): void {
     for (const b of this.root.querySelectorAll<HTMLButtonElement>("#runs button")) b.classList.toggle("on", Number(b.dataset.run) === index);
+    const freeform = index === 1;
+    const method = $("agenda-method");
+    method.textContent = freeform ? `FREEFORM · estimates from ${V1_ROWS} raw rows · verified after speech` : "GROUNDED · quotes these rows only · verified before speech";
+    method.classList.toggle("freeform", freeform);
+    $("agenda-rows").classList.toggle("freeform", freeform);
+  }
+
+  /* Each row carries what this run's owner did with it: the verifier's verdict on their answer. */
+  private markOwner(agentId: unknown, ok: boolean): void {
+    for (const el of this.root.querySelectorAll<HTMLElement>(`#agenda-rows .row[data-owner="${CSS.escape(String(agentId ?? ""))}"]`)) {
+      el.classList.remove("verified", "unverified");
+      el.classList.add(ok ? "verified" : "unverified");
+      const s = el.querySelector(".state");
+      if (s) s.textContent = ok ? "· verified" : "· unverified";
+    }
   }
 
   setRecording(on: boolean): void {
@@ -186,6 +206,7 @@ export class Shell {
       case "agent.verified": {
         const c = this.cardOf(pl.agent_id);
         if (c) this.verdict(c, Boolean(pl.ok), Array.isArray(pl.checks) ? pl.checks.length : (pl.unverifiable ?? []).length);
+        this.markOwner(pl.agent_id, Boolean(pl.ok));
         break;
       }
       case "agent.traced": {
@@ -253,10 +274,11 @@ export class Shell {
       el.className = `row${v.bad ? " bad" : ""}`;
       el.setAttribute("role", "button");
       el.tabIndex = 0;
+      el.dataset.owner = String(v.owner_agent ?? "");
       el.innerHTML =
         `<span class="name">${esc(String(v.account ?? "").replace(/^\d+-/, ""))}</span>` +
         `<span class="num">${esc(usdK(Number(v.delta_cents ?? 0)))}<span class="pct">${esc(pct(v.delta_pct))}</span></span>` +
-        `<span class="owner">${esc(DISPLAY[v.owner_agent] ?? v.owner_agent ?? "")}</span>` +
+        `<span class="owner">${esc(DISPLAY[v.owner_agent] ?? v.owner_agent ?? "")}<span class="state"></span></span>` +
         `<span class="chipcol">${id ? `<span class="chip" data-id="${esc(id)}">${esc(id)}</span>` : ""}</span>`;
       if (id) {
         el.addEventListener("click", () => this.hooks.onEvidence(id));

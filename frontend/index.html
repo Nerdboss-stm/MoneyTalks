@@ -75,6 +75,8 @@
       #meeting-panel { right: 0; width: var(--right); border-left: 1px solid var(--border); }
       .panel h2 { margin: 0; padding: 16px 16px 8px; font-size: 22px; font-weight: 600; line-height: 1.2; display: flex; align-items: baseline; justify-content: space-between; }
       .panel h2 small { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); font-weight: 400; }
+      #agenda-method { padding: 0 16px 10px; font-size: 12px; color: var(--muted); line-height: 1.4; }
+      #agenda-method.freeform { color: var(--amber); }
       #agenda-head { padding: 8px 16px 16px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
       #agenda-head .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
       #agenda-head .v { font-family: var(--mono); font-size: 26px; letter-spacing: 0.02em; line-height: 1.2; margin-top: 2px; }
@@ -89,6 +91,14 @@
       #agenda-rows .row.bad .num { color: var(--amber); }
       #agenda-rows .row.bad .num .pct { color: var(--amber); }
       #agenda-rows .owner { font-size: 13px; color: var(--muted); }
+      /* the citation chips are what the grounded agent must quote; the freeform agent never reads them */
+      #agenda-rows.freeform .chip { opacity: 0.35; }
+      #agenda-rows .row.verified::before, #agenda-rows .row.unverified::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+      #agenda-rows .row.verified::before { background: var(--border); }
+      #agenda-rows .row.unverified::before { background: var(--red); }
+      #agenda-rows .state { margin-left: 8px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; }
+      #agenda-rows .row.verified .state { color: var(--muted); }
+      #agenda-rows .row.unverified .state { color: var(--red); }
       #agenda-rows .chipcol { text-align: right; }
       .chip { display: inline-block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; line-height: 1.4; cursor: pointer; transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
       .chip:hover { color: var(--text); border-color: var(--muted); }
@@ -206,6 +216,7 @@
       </header>
       <aside id="agenda-panel" class="panel">
         <h2>Agenda<small id="agenda-sub"></small></h2>
+        <div id="agenda-method" class="mono"></div>
         <div id="agenda-head">
           <div><div class="k">REVENUE</div><div class="v" id="rev">—</div></div>
           <div><div class="k">EXPENSES</div><div class="v" id="exp">—</div></div>
