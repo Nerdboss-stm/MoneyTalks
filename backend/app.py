@@ -68,6 +68,12 @@ class Released(BaseModel):
     agent_id: str | None = None
 
 
+class ExplainLoad(BaseModel):
+    dir: str | None = None
+    mode: str = "v2"
+    index: int = 1
+
+
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -148,6 +154,30 @@ async def start_replay(session_id: str, speed: float = 1.0, stage: bool = False)
         rt.replayer = runner.Replayer(rt.bus, runner.load_events(session_id), speed)
         rt.task = asyncio.create_task(rt.replayer.play())
     return rt.replayer.status()
+
+
+# ---- explain
+
+
+@app.post("/explain/load")
+async def explain_load(body: ExplainLoad) -> dict:
+    from explain.meeting import data_dir
+
+    rt = get_runtime()
+    try:
+        meeting = rt.desk.load_meeting(body.dir or data_dir(), body.mode, body.index)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    await rt.desk.publish_meeting_loaded()
+    return meeting.summary()
+
+
+@app.get("/explain/evidence")
+async def explain_evidence() -> dict:
+    rt = get_runtime()
+    if rt.desk.meeting is None:
+        raise HTTPException(status_code=404, detail="no meeting loaded")
+    return rt.desk.meeting.evidence
 
 
 # ---- voice

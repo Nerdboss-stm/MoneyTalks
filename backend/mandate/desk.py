@@ -26,7 +26,8 @@ DISPLAY = dict(ROLES)
 ROOT = Path(__file__).resolve().parents[2]
 RECORDINGS = ROOT / "recordings"
 
-IntentKind = Literal["MANDATE", "RELEASE", "QUERY", "AGENT_QUERY", "NOISE"]
+IntentKind = Literal["MANDATE", "RELEASE", "QUERY", "AGENT_QUERY", "CHANGE_QUERY", "NOISE"]
+CHANGE_WORDS = ("what changed", "what has changed", "walk me through", "what moved", "why did", "what drove", "variance", "month over month", "month-over-month", "vs july", "versus july", "vs last month", "explain the month", "explain august", "happened in august", "changed in august", "the drivers", "what's driving", "what is driving", "biggest changes", "biggest movers")
 
 
 class Intent(BaseModel):
@@ -82,6 +83,12 @@ RELEASE_WORDS = ("release", "unhold", "unfreeze", "let it go", "let that through
 QUERY_WORDS = ("cash", "payroll", "held", "hold count", "how many", "in flight", "in-flight", "mandate", "balance", "what is", "what's", "status", "total")
 
 
+def is_change_question(text: str) -> bool:
+    """Change-shaped question with no agent name: routed to controller_a with the full evidence JSON."""
+    low = re.sub(r"\s+", " ", text.lower())
+    return match_agent(text) is None and any(w in low for w in CHANGE_WORDS)
+
+
 def rules_classify(text: str) -> Intent:
     low = text.lower().strip()
     if not low:
@@ -89,6 +96,8 @@ def rules_classify(text: str) -> Intent:
     m = match_agent(text)
     if m:
         return Intent(kind="AGENT_QUERY", confidence=1.0, agent_id=m[0], question=m[1])
+    if is_change_question(text):
+        return Intent(kind="CHANGE_QUERY", confidence=1.0, agent_id="controller_a", question=text)
     if any(w in low for w in RELEASE_WORDS):
         return Intent(kind="RELEASE", confidence=0.9)
     if any(w in low for w in MANDATE_WORDS) and (compiler.parse_amount_cents(text) is not None or any(v in low for v in compiler.VAGUE)):
@@ -142,6 +151,8 @@ async def classify(text: str, engine: IntentEngine | None = None, timeout: float
     m = match_agent(text)
     if m:
         return Intent(kind="AGENT_QUERY", confidence=1.0, agent_id=m[0], question=m[1])
+    if is_change_question(text):
+        return Intent(kind="CHANGE_QUERY", confidence=1.0, agent_id="controller_a", question=text)
     engine = engine or default_intent_engine()
     try:
         intent = await asyncio.wait_for(engine(text), timeout=timeout)
@@ -291,8 +302,8 @@ def default_answer_engine() -> AnswerEngine:
     return rules_answer_async
 
 
-async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: str, latency_ms: int) -> str | None:
-    """Plain trace in the current fleet session, channel voice (docs/prism-notes.md §3)."""
+async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: str, latency_ms: int, session_id: str | None = None, metadata: dict | None = None) -> str | None:
+    """Plain trace in the current fleet session (or the given one), channel voice (docs/prism-notes.md §3)."""
     if os.environ.get("PRISM_HANDLERS", "on") == "off":
         return None
     key, project, host = os.environ.get("PRISMTRACE_API_KEY"), os.environ.get("PRISMTRACE_PROJECT_ID"), os.environ.get("PRISMTRACE_HOST", "https://prism.blockconvey.com")
@@ -304,10 +315,10 @@ async def prism_voice_trace(fleet: Any, agent_id: str, question: str, answer: st
         "input_messages": [{"role": "user", "content": question}],
         "output_message": answer,
         "latency_ms": latency_ms,
-        "session_id": fleet.session_id,
+        "session_id": session_id or fleet.session_id,
         "agent_id": agent_id,
         "agent_name": agent_id,
-        "metadata": {"channel": "voice", "company_day_id": company_day_id(fleet.clock.now()), "mandate_id": fleet.current_mandate_id(), "run_version": fleet.run_version, "tick": None, "seed": fleet.scenario.seed},
+        "metadata": {"channel": "voice", "company_day_id": company_day_id(fleet.clock.now()), "mandate_id": fleet.current_mandate_id(), "run_version": fleet.run_version, "tick": None, "seed": fleet.scenario.seed, **(metadata or {})},
     }
     try:
         async with httpx.AsyncClient(timeout=10) as client:
@@ -331,12 +342,71 @@ async def answer_as(record: dict, question: str, engine: AnswerEngine | None = N
 # ---------------------------------------------------------------- desk
 
 
+class Meeting:
+    """An explain evidence JSON is active: owners answer from their slices, the change question from the full JSON."""
+
+    def __init__(self, engine: Any, mode: str, index: int, directory: Path) -> None:
+        self.engine = engine
+        self.mode = mode
+        self.index = index
+        self.directory = directory
+        self.session_id = f"explain-{mode}-{index:02d}"
+        self.evidence = engine.to_evidence_json()
+
+    def summary(self) -> dict:
+        variances = self.evidence["variances"]
+        total = next((v for v in variances if v["key"] == "TOTAL:revenue"), None)
+        top = sorted([v for v in variances if not v["key"].startswith("TOTAL:")], key=lambda v: v["rank"] or 999)[:3]
+        return {"session_id": self.session_id, "mode": self.mode, "directory": str(self.directory), "periods": self.evidence["periods"], "total_revenue": total, "top_variances": top, "evidence_rows": len(self.evidence["evidence"])}
+
+
 class Desk:
     def __init__(self, fleet: Any) -> None:
         self.fleet = fleet
         self.pending: dict[str, tuple[Mandate, str, list[str]]] = {}
         self.pending_release: dict | None = None
         self.replay_session: str | None = None
+        self.meeting: Meeting | None = None
+        self.memory_path: Path | None = None
+
+    # ---- explain meeting
+
+    def load_meeting(self, directory: Path | str, mode: str = "v2", index: int = 1) -> Meeting:
+        from explain.meeting import load_engine
+
+        directory = Path(directory)
+        self.meeting = Meeting(load_engine(directory), mode, index, directory)
+        return self.meeting
+
+    async def publish_meeting_loaded(self) -> None:
+        if self.meeting:
+            await self.fleet.publish("meeting.loaded", **self.meeting.summary())
+
+    async def _explain_turn(self, intent: Intent, text: str, speak: Callable[[str, str], Awaitable[Any]], llm: Any = None) -> dict:
+        from explain import owners as O
+        from explain import prism_steps
+        from mandate import voice as V
+
+        m = self.meeting
+        assert m is not None
+        memory = O.read_memory(self.memory_path or O.MEMORY_FILE) if m.mode == "v2" else ""
+        agent_id = intent.agent_id or "controller_a"
+        await self.fleet.publish("agent.addressed", agent_id=agent_id, question=intent.question or text)
+        t0 = time.perf_counter()
+        if intent.kind == "CHANGE_QUERY":
+            res = await O.answer_change(text, m.mode, memory, m.engine, llm, m.session_id)
+        else:
+            res = await O.answer_as_owner(agent_id, intent.question or text, m.mode, memory, m.engine, llm, session_id=m.session_id)
+        latency = int((time.perf_counter() - t0) * 1000)
+        answer = res["answer"]
+        job = await speak(answer, V.VOICES.for_agent(agent_id))
+        trace_id = await prism_voice_trace(self.fleet, agent_id, text, answer, latency, session_id=m.session_id, metadata={"mode": m.mode, "agent_id": agent_id, "verifier": res["verify"], "scope": res["scope"]})
+        steps, sid = res["steps"], m.session_id
+        if self.fleet.agents[agent_id].prism:
+            self.fleet.prism.enqueue("trajectory", lambda: prism_steps.submit_steps(sid, trace_id, steps, agent_id=agent_id, model=res["model"]))
+        out = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": agent_id, "answer": answer, "raw_answer": res["raw_answer"], "verify": res["verify"], "replaced": res["replaced"], "citations": res["citations"], "mode": m.mode, "session_id": m.session_id, "audio_url": job.url if not job.error else V.cache_url(answer, job.voice_id), "duration_ms": job.duration_ms, "audio_error": job.error, "prism_trace_id": trace_id}
+        await self.fleet.publish("agent.answer", agent_id=agent_id, text=answer, audio_url=out["audio_url"], duration_ms=job.duration_ms, verify=res["verify"], citations=res["citations"], mode=m.mode, replaced=res["replaced"])
+        return out
 
     def company_state(self) -> CompanyState:
         sc = self.fleet.scenario
@@ -459,7 +529,7 @@ class Desk:
 
     # ---- one voice turn
 
-    async def voice_turn(self, text: str | None, as_of: datetime | str | None = None, session: str | None = None, intent_engine: IntentEngine | None = None, answer_engine: AnswerEngine | None = None, speak: Callable[[str, str], Awaitable[Any]] | None = None) -> dict:
+    async def voice_turn(self, text: str | None, as_of: datetime | str | None = None, session: str | None = None, intent_engine: IntentEngine | None = None, answer_engine: AnswerEngine | None = None, speak: Callable[[str, str], Awaitable[Any]] | None = None, explain_llm: Any = None) -> dict:
         from mandate import voice as V
 
         speak = speak or V.speak
@@ -468,6 +538,10 @@ class Desk:
         else:
             intent = await classify(text, intent_engine)
         out: dict[str, Any] = {"intent": intent.kind, "confidence": intent.confidence, "text": text, "agent_id": intent.agent_id}
+        if intent.kind in ("AGENT_QUERY", "CHANGE_QUERY") and self.meeting is not None:
+            return await self._explain_turn(intent, text or "", speak, explain_llm)
+        if intent.kind == "CHANGE_QUERY":
+            intent = Intent(kind="NOISE", confidence=intent.confidence, message="No meeting is loaded. Load an evidence set first.")
         if intent.kind == "AGENT_QUERY" and intent.agent_id:
             await self.fleet.publish("agent.addressed", agent_id=intent.agent_id, question=intent.question)
             t0 = time.perf_counter()

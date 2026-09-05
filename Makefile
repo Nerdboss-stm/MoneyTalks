@@ -36,5 +36,8 @@ prove:
 explain-data:
 	cd backend && uv run python -m explain.datagen
 
+meeting:
+	cd backend && uv run python -m explain.meeting --mode $(V) --index $(N)
+
 ingest:
 	cd backend && uv run python -m explain.ingest $(addprefix ../,$(FILES)) --out ../$(OUT)
