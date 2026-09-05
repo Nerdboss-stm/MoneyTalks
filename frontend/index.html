@@ -3,39 +3,170 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MANDATE</title>
+    <title>MONEY OPERATIONS</title>
     <style>
-      html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0B0C0E; overflow: hidden; color: #E6E6E3; }
+      :root {
+        --bg: #0B0C0E; --surface: #12141A; --border: #24272D; --text: #E6E6E3; --muted: #8A8F98; --amber: #D89B2B; --red: #D23B3B;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.45); --radius: 6px; --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94); --dur: 240ms;
+        --sans: "Inter", "Inter Tight", sans-serif; --mono: "IBM Plex Mono", monospace;
+        --top: 56px; --bottom: 72px; --left: 300px; --right: 380px; --drawer: 480px;
+      }
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); overflow: hidden; color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.4; }
       #floor { position: fixed; inset: 0; display: block; }
-      #ui { position: fixed; inset: 0; pointer-events: none; font-family: "Inter Tight", sans-serif; }
+      #ui { position: fixed; inset: 0; pointer-events: none; font-family: var(--sans); z-index: 1; }
       #ui > * { position: absolute; }
-      .mono { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; }
-      .muted { color: #7C8087; }
-      .rule { height: 1px; background: #2A2C30; }
+      .mono { font-family: var(--mono); letter-spacing: 0.04em; }
+      .muted { color: var(--muted); }
+      .rule { height: 1px; background: var(--border); }
       #hud-left { left: 4vw; top: 16px; font-size: 12px; line-height: 1.4; }
       #hud-right { right: 4vw; top: 16px; font-size: 12px; text-align: right; line-height: 1.4; }
-      #status { left: 4vw; bottom: 16px; font-size: 10px; color: #7C8087; }
+      #status { left: 4vw; bottom: 16px; font-size: 11px; color: var(--muted); }
       #mandate { left: max(4vw, calc(50% - 400px)); top: 12px; width: min(800px, 92vw); text-align: left; display: none; }
-      #mandate .text { font-size: 14px; line-height: 1.4; color: #E6E6E3; }
-      #mandate .id { font-size: 10px; color: #7C8087; margin-top: 4px; }
+      #mandate .text { font-size: 15px; line-height: 1.4; color: var(--text); }
+      #mandate .id { font-size: 11px; color: var(--muted); margin-top: 4px; }
       #mandate .rule { margin-top: 8px; }
       #order { left: max(4vw, calc(50% - 400px)); top: 12px; width: min(800px, 92vw); display: none; pointer-events: auto; }
-      #order input { width: 100%; box-sizing: border-box; background: #0B0C0E; color: #E6E6E3; border: 0; border-bottom: 1px solid #2A2C30; outline: none; font: 14px "Inter Tight", sans-serif; padding: 4px 0; }
-      #answers { right: 4vw; bottom: 40px; width: min(640px, 60vw); text-align: right; font-size: 13px; line-height: 1.4; color: #7C8087; }
-      #answers .who { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.04em; color: #7C8087; }
-      #answers .txt { color: #E6E6E3; }
-      #answers .hi { color: #E6E6E3; }
-      #answers .exec { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; color: #E6E6E3; margin-top: 4px; }
-      .overlay { left: max(4vw, calc(50% - 480px)); top: 160px; width: min(960px, 92vw); background: #0B0C0E; display: none; pointer-events: auto; padding: 0; }
-      .overlay .head { font-size: 11px; color: #7C8087; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; padding: 8px 0; }
-      .overlay .row { display: grid; grid-template-columns: 240px 1fr 1fr; font-size: 12px; line-height: 1.4; padding: 6px 0; border-bottom: 1px solid #2A2C30; }
-      .overlay .row .k { font-family: "Inter Tight", sans-serif; color: #7C8087; }
-      .overlay .row .v { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.04em; color: #E6E6E3; }
-      .overlay .line { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; line-height: 1.4; padding: 4px 0; }
-      .overlay .excerpt { font-family: "Inter Tight", sans-serif; font-size: 13px; line-height: 1.4; padding: 8px 0; }
+      #order input { width: 100%; box-sizing: border-box; background: var(--bg); color: var(--text); border: 0; border-bottom: 1px solid var(--border); outline: none; font: 15px var(--sans); padding: 4px 0; }
+      #answers { right: 4vw; bottom: 40px; width: min(640px, 60vw); text-align: right; font-size: 14px; line-height: 1.4; color: var(--muted); }
+      #answers .who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--muted); }
+      #answers .txt { color: var(--text); }
+      #answers .hi { color: var(--text); }
+      #answers .exec { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text); margin-top: 4px; }
+      .overlay { left: max(4vw, calc(50% - 480px)); top: 160px; width: min(960px, 92vw); background: var(--bg); display: none; pointer-events: auto; padding: 0; }
+      .overlay .head { font-size: 11px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.04em; padding: 8px 0; }
+      .overlay .row { display: grid; grid-template-columns: 240px 1fr 1fr; font-size: 13px; line-height: 1.4; padding: 6px 0; border-bottom: 1px solid var(--border); }
+      .overlay .row .k { font-family: var(--sans); color: var(--muted); }
+      .overlay .row .v { font-family: var(--mono); letter-spacing: 0.04em; color: var(--text); }
+      .overlay .line { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; line-height: 1.4; padding: 4px 0; }
+      .overlay .excerpt { font-family: var(--sans); font-size: 14px; line-height: 1.4; padding: 8px 0; }
       #record { left: max(4vw, calc(50% - 720px)); top: 96px; width: min(1440px, 92vw); max-height: 80vh; overflow: hidden; }
       #record .line { font-size: 11px; white-space: pre; }
       #timer { display: none; }
+
+      /* ---------------------------------------------------------------- product shell (MEETING mode) */
+      #shell { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+      #shell[hidden] { display: none; }
+      #shell > * { pointer-events: auto; }
+      #shell button, #shell input { font: inherit; color: inherit; }
+      #shell button { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; padding: 0 12px; height: 32px; transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+      #shell button:hover { background: var(--surface); }
+      #shell button:disabled { cursor: not-allowed; color: var(--muted); background: transparent; }
+      #shell :focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+      #shell svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+      #topbar { position: absolute; left: 0; right: 0; top: 0; height: var(--top); box-sizing: border-box; border-bottom: 1px solid var(--border); background: var(--bg); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 16px; }
+      #brand { font-weight: 600; font-size: 15px; letter-spacing: 0.02em; }
+      #brand small { margin-left: 12px; color: var(--muted); font-weight: 400; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; }
+      #center { display: flex; align-items: center; gap: 16px; }
+      #periods { font-family: var(--mono); font-size: 15px; letter-spacing: 0.04em; }
+      #runs { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      #runs button { border: 0; border-radius: 0; height: 32px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--muted); }
+      #runs button + button { border-left: 1px solid var(--border); }
+      #runs button.on { background: var(--surface); color: var(--text); }
+      #right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+      .pill { display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+      .pill.live { color: var(--text); }
+      .pill.down { color: var(--red); border-color: var(--red); }
+      #prism-link { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; color: var(--muted); text-decoration: none; font-size: 14px; height: 28px; padding: 0 4px; border-radius: var(--radius); transition: color var(--dur) var(--ease); }
+      #prism-link:hover { color: var(--text); }
+
+      .panel { position: absolute; top: var(--top); bottom: var(--bottom); background: var(--bg); box-sizing: border-box; display: flex; flex-direction: column; }
+      #agenda-panel { left: 0; width: var(--left); border-right: 1px solid var(--border); }
+      #meeting-panel { right: 0; width: var(--right); border-left: 1px solid var(--border); }
+      .panel h2 { margin: 0; padding: 16px 16px 8px; font-size: 22px; font-weight: 600; line-height: 1.2; display: flex; align-items: baseline; justify-content: space-between; }
+      .panel h2 small { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); font-weight: 400; }
+      #agenda-head { padding: 8px 16px 16px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      #agenda-head .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
+      #agenda-head .v { font-family: var(--mono); font-size: 26px; letter-spacing: 0.02em; line-height: 1.2; margin-top: 2px; }
+      #agenda-head .v.bad { color: var(--amber); }
+      #agenda-rows { flex: 1; overflow-y: auto; }
+      #agenda-rows .row { position: relative; padding: 10px 16px 10px 19px; border-bottom: 1px solid var(--border); cursor: pointer; display: grid; grid-template-columns: 1fr auto; row-gap: 2px; align-items: baseline; transition: background var(--dur) var(--ease); }
+      #agenda-rows .row:hover { background: var(--surface); }
+      #agenda-rows .row.bad::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--amber); }
+      #agenda-rows .name { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+      #agenda-rows .num { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; text-align: right; white-space: nowrap; }
+      #agenda-rows .num .pct { color: var(--muted); margin-left: 8px; }
+      #agenda-rows .row.bad .num { color: var(--amber); }
+      #agenda-rows .row.bad .num .pct { color: var(--amber); }
+      #agenda-rows .owner { font-size: 13px; color: var(--muted); }
+      #agenda-rows .chipcol { text-align: right; }
+      .chip { display: inline-block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; line-height: 1.4; cursor: pointer; transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+      .chip:hover { color: var(--text); border-color: var(--muted); }
+      #empty { padding: 16px; color: var(--muted); font-size: 14px; }
+
+      #transcript { flex: 1; overflow-y: auto; padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+      .turn.cfo { align-self: flex-end; max-width: 88%; text-align: right; color: var(--muted); font-size: 16px; }
+      .turn.cfo .who { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; margin-bottom: 2px; }
+      .turn.sys { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--muted); }
+      .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+      .card .head { display: flex; align-items: center; justify-content: space-between; }
+      .card .name { font-weight: 600; font-size: 14px; }
+      .bars { display: inline-flex; align-items: flex-end; gap: 3px; height: 14px; }
+      .bars i { display: block; width: 3px; height: 4px; background: var(--muted); }
+      .card.speaking .bars i { background: var(--text); animation: bar 600ms var(--ease) infinite alternate; }
+      .card.speaking .bars i:nth-child(2) { animation-delay: 150ms; }
+      .card.speaking .bars i:nth-child(3) { animation-delay: 300ms; }
+      @keyframes bar { from { height: 4px; } to { height: 14px; } }
+      .card .txt { font-size: 16px; line-height: 1.4; min-height: 1.4em; }
+      .card .txt .chip { vertical-align: 1px; margin: 0 2px; }
+      .card .verdict { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--muted); }
+      .card .verdict.bad { color: var(--red); }
+      .card .recorded { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
+
+      #bottombar { position: absolute; left: 0; right: 0; bottom: 0; height: var(--bottom); box-sizing: border-box; border-top: 1px solid var(--border); background: var(--bg); display: flex; align-items: center; gap: 16px; padding: 0 16px; }
+      #ptt { height: 44px; min-width: 260px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; user-select: none; touch-action: none; }
+      #ptt.rec { background: var(--amber); border-color: var(--amber); color: var(--bg); }
+      #meter { display: inline-flex; align-items: flex-end; gap: 4px; height: 24px; width: 92px; }
+      #meter i { display: block; width: 4px; height: 2px; background: var(--muted); transition: height 60ms linear; }
+      #meter i.on { background: var(--text); }
+      #ask { flex: 1; height: 44px; box-sizing: border-box; padding: 0 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); outline: none; font-size: 15px; transition: border-color var(--dur) var(--ease); }
+      #ask:focus { border-color: var(--muted); }
+      #ask:disabled { color: var(--muted); }
+      #hints { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+
+      #drawer { position: absolute; top: var(--top); bottom: var(--bottom); right: 0; width: var(--drawer); box-sizing: border-box; background: var(--surface); border-left: 1px solid var(--border); box-shadow: var(--shadow); transform: translateX(100%); visibility: hidden; transition: transform var(--dur) var(--ease), visibility 0s linear var(--dur); display: flex; flex-direction: column; }
+      #drawer.open { transform: none; visibility: visible; transition-delay: 0s; }
+      #drawer .head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+      #drawer .close { width: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+      #drawer .body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+      #drawer .statement { font-size: 16px; }
+      #drawer .figs { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 4px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+      #drawer .figs .k { color: var(--muted); }
+      #drawer .sub { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); }
+      #drawer table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; table-layout: fixed; }
+      #drawer th { text-align: left; color: var(--muted); font-weight: 400; padding: 4px 0; border-bottom: 1px solid var(--border); }
+      #drawer td { padding: 4px 0; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #drawer td + td, #drawer th + th { padding-left: 12px; }
+      #drawer td.amt, #drawer th.amt { text-align: right; }
+      #drawer .more { color: var(--muted); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; }
+
+      #scrim { position: absolute; inset: 0; background: rgba(11, 12, 14, 0.6); opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
+      #scrim.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+      #prove-modal { position: absolute; left: 50%; top: 50%; width: 760px; max-width: calc(100% - 64px); box-sizing: border-box; transform: translate(-50%, calc(-50% + 8px)); opacity: 0; visibility: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s linear var(--dur); }
+      #prove-modal.open { opacity: 1; visibility: visible; transform: translate(-50%, -50%); transition-delay: 0s; }
+      #prove-modal h2 { margin: 0 0 16px; font-size: 22px; font-weight: 600; display: flex; justify-content: space-between; align-items: baseline; }
+      #prove-modal h2 small { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); font-weight: 400; }
+      #prove-modal table { width: 100%; border-collapse: collapse; }
+      #prove-modal th { text-align: right; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); font-weight: 400; padding: 0 0 8px; }
+      #prove-modal th:first-child { text-align: left; }
+      #prove-modal td { padding: 8px 0; border-top: 1px solid var(--border); font-size: 15px; }
+      #prove-modal td.v { font-family: var(--mono); font-size: 30px; letter-spacing: 0.02em; text-align: right; width: 180px; line-height: 1.2; }
+      #prove-modal td.v.word { font-size: 15px; letter-spacing: 0.04em; }
+      #prove-modal td.v.bad { color: var(--red); }
+      #prove-modal .remed { margin-top: 16px; font-size: 15px; }
+      #prove-modal .remed .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 4px; }
+      #prove-modal .links { margin-top: 20px; display: flex; gap: 20px; }
+      #prove-modal .links a { color: var(--muted); text-decoration: none; font-size: 14px; display: inline-flex; gap: 6px; align-items: center; transition: color var(--dur) var(--ease); }
+      #prove-modal .links a:hover { color: var(--text); }
+
+      #popover { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 10px 12px; min-width: 200px; opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
+      #popover.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+      #popover .name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+      #popover .line { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); line-height: 1.6; white-space: nowrap; }
+      #popover .line.bad { color: var(--amber); }
+      #popover .hint { margin-top: 4px; font-size: 12px; color: var(--muted); }
+
+      @media (prefers-reduced-motion: reduce) { #shell * { transition-duration: 0ms !important; animation: none !important; } }
     </style>
   </head>
   <body>
@@ -56,6 +187,48 @@
       <div id="evidence" class="overlay"></div>
       <div id="prove" class="overlay"></div>
       <div id="record" class="overlay"></div>
+    </div>
+    <div id="shell" hidden>
+      <header id="topbar">
+        <div id="brand">MONEY OPERATIONS<small>MANDATE</small></div>
+        <div id="center">
+          <span id="periods">— vs —</span>
+          <div id="runs" role="group" aria-label="Run">
+            <button type="button" data-run="1">RUN 1 · FREEFORM</button>
+            <button type="button" data-run="2" class="on">RUN 2 · GROUNDED</button>
+          </div>
+        </div>
+        <div id="right">
+          <span id="pill-mode" class="pill">REPLAY</span>
+          <span id="pill-net" class="pill">NET —</span>
+          <a id="prism-link" href="https://prism.blockconvey.com" target="_blank" rel="noopener">Open in PRISM<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6"/></svg></a>
+        </div>
+      </header>
+      <aside id="agenda-panel" class="panel">
+        <h2>Agenda<small id="agenda-sub"></small></h2>
+        <div id="agenda-head">
+          <div><div class="k">REVENUE</div><div class="v" id="rev">—</div></div>
+          <div><div class="k">EXPENSES</div><div class="v" id="exp">—</div></div>
+        </div>
+        <div id="agenda-rows"><div id="empty">No meeting loaded. Press L.</div></div>
+      </aside>
+      <aside id="meeting-panel" class="panel">
+        <h2>Meeting<small id="meeting-sub"></small></h2>
+        <div id="transcript"></div>
+      </aside>
+      <footer id="bottombar">
+        <button id="ptt" type="button">HOLD SPACE TO SPEAK</button>
+        <span id="meter" aria-hidden="true"></span>
+        <input id="ask" type="text" placeholder="Ask the table. Enter sends." autocomplete="off" spellcheck="false" aria-label="Typed question" />
+        <span id="hints">SPACE talk · L load · 1 2 run · P prove · M payments · ESC close</span>
+      </footer>
+      <div id="popover"></div>
+      <div id="drawer" role="dialog" aria-label="Evidence">
+        <div class="head"><span id="drawer-title"></span><button class="close" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+        <div class="body" id="drawer-body"></div>
+      </div>
+      <div id="scrim"></div>
+      <div id="prove-modal" role="dialog" aria-modal="true" aria-label="Prove"></div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

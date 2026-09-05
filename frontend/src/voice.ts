@@ -1,11 +1,14 @@
 import { API } from "./ws";
 import { send } from "./ws";
+import { SHELL } from "./tokens";
 
 export interface VoiceHooks {
   onRecording: (on: boolean) => void;
   onAnswer: (out: any) => void;
   onError: (msg: string) => void;
   isReplaying: () => boolean;
+  onPlaying?: (on: boolean, agentId: string | null) => void;
+  onLevel?: (bars: number[]) => void;
 }
 
 /* Half-duplex push-to-talk. Record only while Space is held; never record while audio plays.
@@ -15,6 +18,9 @@ export class Voice {
   private chunks: Blob[] = [];
   private stream: MediaStream | null = null;
   private audio: HTMLAudioElement | null = null;
+  private ctx: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+  private raf = 0;
   playing = false;
   recording = false;
   private pausedReplay = false;
@@ -36,6 +42,7 @@ export class Voice {
     };
     this.recorder.start(100);
     this.recording = true;
+    this.meter(true);
     this.pauseReplay();
     this.hooks.onRecording(true);
   }
@@ -44,6 +51,7 @@ export class Voice {
     if (!this.recording || !this.recorder) return;
     const rec = this.recorder;
     this.recording = false;
+    this.meter(false);
     this.hooks.onRecording(false);
     await new Promise<void>((done) => {
       rec.onstop = () => done();
@@ -68,6 +76,44 @@ export class Voice {
     }
   }
 
+  /* Real input level from the recording stream: SHELL.meterBars bands, 0..1, once per frame while recording. */
+  private meter(on: boolean): void {
+    if (!on) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      this.hooks.onLevel?.(new Array(SHELL.meterBars).fill(0));
+      return;
+    }
+    try {
+      if (!this.ctx) this.ctx = new AudioContext();
+      if (!this.analyser && this.stream) {
+        this.analyser = this.ctx.createAnalyser();
+        this.analyser.fftSize = 64;
+        this.analyser.smoothingTimeConstant = 0.6;
+        this.ctx.createMediaStreamSource(this.stream).connect(this.analyser);
+      }
+      void this.ctx.resume();
+    } catch {
+      return;
+    }
+    const analyser = this.analyser;
+    if (!analyser) return;
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    const tick = () => {
+      if (!this.recording) return;
+      analyser.getByteFrequencyData(data);
+      const bars: number[] = [];
+      for (let i = 0; i < SHELL.meterBars; i++) {
+        const a = data[i * 2 + 1] ?? 0;
+        const b = data[i * 2 + 2] ?? 0;
+        bars.push(Math.min(1, Math.max(a, b) / 200));
+      }
+      this.hooks.onLevel?.(bars);
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+  }
+
   /* Plays a streamed or cached url; starts on the first chunk the browser can decode. */
   async play(url: string | null | undefined, agentId: string | null | undefined): Promise<void> {
     if (!url) {
@@ -75,6 +121,7 @@ export class Voice {
       return;
     }
     this.playing = true;
+    this.hooks.onPlaying?.(true, agentId ?? null);
     this.pauseReplay();
     const a = new Audio(`${API}${url}`);
     this.audio = a;
@@ -82,6 +129,7 @@ export class Voice {
       if (this.audio !== a) return;
       this.audio = null;
       this.playing = false;
+      this.hooks.onPlaying?.(false, agentId ?? null);
       await this.released(agentId);
     };
     a.onended = () => void finish();

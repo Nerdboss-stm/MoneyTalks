@@ -49,7 +49,17 @@ Every event is one JSON line on the bus, in the recordings and over `/ws/events`
 ## WebSocket control channel (`/ws/events`)
 Client → server: `{"cmd": "pause"|"resume"|"seek"|"set_speed"|"status", "arg"?: …}`. Server → client: `{"type": "replay.status", "payload": {paused, speed, company_now, idx, total, done}}`.
 
-## Room geometry (MEETING mode, key M; W, H = viewport)
+## Product shell (MEETING mode; the app boots here, M toggles PAYMENTS)
+Plain DOM over the canvas, all data from the events above. Surfaces #12141A on #0B0C0E, 1px #24272D borders, radius 6px, one shadow level on the drawer, the modal and the popover.
+- Top bar 56px: product name; `meeting.loaded.periods` as "AUG vs JUL"; the RUN 1 · FREEFORM | RUN 2 · GROUNDED switch (keys 1/2; selects `explain-v1-01`/`explain-v2-01` and reloads the desk in that mode); LIVE/REPLAY pill from the app mode; NET OK/DOWN pill from the 5 s health poll; "Open in PRISM" (href from `/explain/links` when it exists, else the documented host).
+- Left panel 300px "Agenda": `headline.revenue_pct`/`expense_pct` in 26px mono; every `top_variances` row as name, Δ, %, owner, `[E46]` chip; bad-direction rows carry a 3px amber bar; click opens the evidence drawer for `evidence_id`.
+- Center: the room canvas laid out inside the remaining rectangle (viewport provider), choreography unchanged. Seat labels are interactive: hover shows the owner's top variances (from `owners`), click posts `/voice/text` with "<Owner>, what changed on your side?".
+- Right panel 380px "Meeting": the transcript. `agent.addressed` → a right-aligned CFO turn (16px, muted) and a new owner card; the card fills word by word from the room's printer; `agent.verified` → "Verified · N figures" (muted) or "Unverified · N figures" (red); `agent.traced` → "Recorded · PRISM · explain-v2-01 · <trace_id>"; `agent.released` closes the card. The three 3px bars animate only while audio plays (or, when the answer carries no audio, while the words land). `desk.answer`/`query.answer`, `meeting.learned` and `meeting.end` are muted mono lines. Newest at the bottom, auto-scrolled.
+- Bottom bar 72px: hold-to-talk (pointer or Space; amber while recording) with a 12-bar level meter from the recorder's analyser; typed question input (Enter posts `/voice/text`, V focuses it); both disabled with the reason when the API or the voice host is down.
+- Evidence drawer 480px from the right over the transcript: statement, figures, and the row's `txn_ids` resolved to date, customer or vendor and amount from the bundled seeded ledgers. Esc or a click outside closes it.
+- Prove: key P toggles a modal with the `/prove` v1 vs v2 table in 30px mono, the remediation text when the payload carries one, and the PRISM links.
+
+## Room geometry (MEETING mode, key M; W, H = the center rectangle)
 - Table: trapezoid, 1px #2A2C30, no fill. Top edge y=0.22H width 0.46W, bottom edge y=0.72H width 0.68W, both centered.
 - Seats: five per long edge, evenly spaced; two on the far edge. Each is an 8px 1px tick across the edge plus an uppercase +4% tracking label outside it, #7C8087 at rest. Type by depth: nearest 12px, middle 11px, far 10px. Clockwise from the CFO's left: treasury, ap_east, ap_west, procurement, payroll (left, near→far); tax, saas_renewals (far, left→right); expenses, controller_a, controller_b, collections, fx (right, far→near).
 - CFO at (0.5W, 0.84H), Plex Mono 13px #E6E6E3, tick on the bottom edge. Space held: 2px bar and "LISTENING" under it.

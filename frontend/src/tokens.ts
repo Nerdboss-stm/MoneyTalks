@@ -1,31 +1,36 @@
 export const COLOR = {
   bg: 0x0b0c0e,
+  surface: 0x12141a,
   text: 0xe6e6e3,
-  muted: 0x7c8087,
-  rule: 0x2a2c30,
+  muted: 0x8a8f98,
+  rule: 0x24272d,
   amber: 0xd89b2b,
   red: 0xd23b3b,
 } as const;
 
 export const CSS = {
   bg: "#0B0C0E",
+  surface: "#12141A",
   text: "#E6E6E3",
-  muted: "#7C8087",
-  rule: "#2A2C30",
+  muted: "#8A8F98",
+  rule: "#24272D",
+  border: "#24272D",
   amber: "#D89B2B",
   red: "#D23B3B",
+  shadow: "0 8px 24px rgba(0, 0, 0, 0.45)",
+  radius: "6px",
 } as const;
 
 export const FONT = {
   mono: '"IBM Plex Mono", monospace',
-  sans: '"Inter Tight", sans-serif',
+  sans: '"Inter", "Inter Tight", sans-serif',
 } as const;
 
 export const MOTION = {
   ease: "power2.out",
   fast: 0.24,
-  slow: 0.36,
-  drop: 0.32,
+  slow: 0.3,
+  drop: 0.3,
   stagger: 0.08,
 } as const;
 
@@ -34,6 +39,16 @@ export const RULE_PX = 1;
 export const MONO_CAPS_TRACKING = 0.04;
 export const LINE_HEIGHT = 1.4;
 export const MIN_TEXT_PX = 10;
+
+// Product shell (MEETING mode). Fixed chrome in px; the room takes the remaining area.
+export const SHELL = {
+  top: 56,
+  bottom: 72,
+  left: 300,
+  right: 380,
+  drawer: 480,
+  meterBars: 12,
+} as const;
 
 // Radial round table. C = (50vw, 47vh), R = 0.40 * min(vw, vh).
 export const RADIAL = {
@@ -53,7 +68,7 @@ export const RADIAL = {
   push: 12, // collision offset, outward
 } as const;
 
-// Conference room (MEETING mode). Fractions of the viewport.
+// Conference room (MEETING mode). Fractions of the room viewport.
 export const ROOM = {
   topY: 0.22,
   botY: 0.72,
@@ -66,9 +81,13 @@ export const ROOM = {
   paperMin: 8,
   paperMax: 24,
   rowPitch: 16,
-  fontNear: 12,
-  fontMid: 11,
-  fontFar: 10,
+  fontNear: 13,
+  fontMid: 12,
+  fontFar: 11,
+  rowFont: 11,
+  headFont: 16,
+  qFont: 15,
+  aFont: 14,
   wordMs: 70, // pacing when the answer has no audio duration
   dim: 0.45,
   previous: 0.7,

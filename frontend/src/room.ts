@@ -5,11 +5,18 @@ import type { BusEvent } from "./ws";
 
 const mono = (size: number, fill: number) => new TextStyle({ fontFamily: FONT.mono, fontSize: size, fill, letterSpacing: size * 0.04 });
 
-type Side = "left" | "right" | "far";
+export type Side = "left" | "right" | "far";
 const LEFT = ["treasury", "ap_east", "ap_west", "procurement", "payroll"]; // near → far
 const FAR = ["tax", "saas_renewals"]; // left → right
 const RIGHT = ["expenses", "controller_a", "controller_b", "collections", "fx"]; // far → near
-const DISPLAY: Record<string, string> = { treasury: "Treasury", ap_east: "AP East", ap_west: "AP West", procurement: "Procurement", payroll: "Payroll", tax: "Tax", saas_renewals: "Renewals", expenses: "Expenses", controller_a: "Controller A", controller_b: "Controller B", collections: "Collections", fx: "FX" };
+export const DISPLAY: Record<string, string> = { treasury: "Treasury", ap_east: "AP East", ap_west: "AP West", procurement: "Procurement", payroll: "Payroll", tax: "Tax", saas_renewals: "Renewals", expenses: "Expenses", controller_a: "Controller A", controller_b: "Controller B", collections: "Collections", fx: "FX" };
+
+export interface RoomHooks {
+  onWord?: (agentId: string, text: string) => void;
+  onAnswerDone?: (agentId: string) => void;
+  onSeatHover?: (agentId: string | null, x: number, y: number, side: Side) => void;
+  onSeatTap?: (agentId: string) => void;
+}
 const ROW_TOKENS = 8;
 const ROW_POOL = 10;
 
@@ -72,15 +79,36 @@ export class Room {
   private queue: Promise<void> = Promise.resolve();
   private shown = false;
   private corners = { tl: [0, 0], tr: [0, 0], bl: [0, 0], br: [0, 0] } as Record<string, [number, number]>;
+  private ox = 0;
+  private oy = 0;
+  private viewport: () => [number, number, number, number] = () => [0, 0, window.innerWidth, window.innerHeight];
 
-  constructor(private app: Application, private onEvidence: (id: string) => void) {
-    this.q = this.dom("room-q", `position:absolute;font:12px ${FONT.sans};color:${CSS.muted};line-height:1.4;text-align:center;width:640px;pointer-events:none;`);
-    this.a = this.dom("room-a", `position:absolute;font:13px ${FONT.sans};color:${CSS.text};line-height:1.4;width:360px;pointer-events:auto;`);
+  constructor(private app: Application, private onEvidence: (id: string) => void, private hooks: RoomHooks = {}) {
+    this.q = this.dom("room-q", `position:absolute;font:${ROOM.qFont}px ${FONT.sans};color:${CSS.muted};line-height:1.4;text-align:center;width:640px;pointer-events:none;`);
+    this.a = this.dom("room-a", `position:absolute;font:${ROOM.aFont}px ${FONT.sans};color:${CSS.text};line-height:1.4;width:360px;max-height:4.2em;overflow:hidden;pointer-events:auto;`);
     this.root.visible = false;
     this.build();
     this.app.stage.addChild(this.root);
-    this.layout(window.innerWidth, window.innerHeight);
-    window.addEventListener("resize", () => this.layout(window.innerWidth, window.innerHeight));
+    this.relayout();
+    window.addEventListener("resize", () => this.relayout());
+  }
+
+  /* The room draws inside the rectangle the provider returns (page px); the shell owns the rest. */
+  setViewportProvider(fn: () => [number, number, number, number]): void {
+    this.viewport = fn;
+    this.relayout();
+  }
+
+  relayout(): void {
+    const [x, y, w, h] = this.viewport();
+    this.ox = snap(x);
+    this.oy = snap(y);
+    this.root.position.set(this.ox, this.oy);
+    this.layout(w, h);
+  }
+
+  seatVariances(agentId: string): any[] {
+    return (this.seats.get(agentId)?.papers ?? []).map((p) => p.data).filter(Boolean);
   }
 
   private dom(id: string, style: string): HTMLDivElement {
@@ -97,7 +125,7 @@ export class Room {
     this.root.addChild(this.tableG, this.lineG, this.crossG, this.cfoTick, this.recG);
     this.cfo = new Text({ text: "CFO", style: mono(13, COLOR.text) });
     this.cfo.anchor.set(0.5, 0.5);
-    this.listening = new Text({ text: "LISTENING", style: mono(10, COLOR.muted) });
+    this.listening = new Text({ text: "LISTENING", style: mono(ROOM.rowFont, COLOR.muted) });
     this.listening.anchor.set(0.5, 0);
     this.listening.visible = false;
     this.recG.visible = false;
@@ -115,7 +143,7 @@ export class Room {
       label.cursor = "pointer";
       const papers: Seat["papers"] = [0, 1].map(() => {
         const t = new Graphics();
-        const tag = new Text({ text: "", style: mono(10, COLOR.muted) });
+        const tag = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.muted) });
         tag.eventMode = "static";
         tag.cursor = "pointer";
         t.visible = tag.visible = false;
@@ -126,17 +154,20 @@ export class Room {
       this.root.addChild(group);
       const seat: Seat = { id, side, depth, x: 0, y: 0, nx: 0, ny: 0, group, tick, label, papers };
       papers.forEach((p) => p.tag.on("pointertap", () => p.data?.evidence_id && this.onEvidence(p.data.evidence_id)));
+      label.on("pointerover", () => this.hooks.onSeatHover?.(id, this.ox + seat.x, this.oy + seat.y, side));
+      label.on("pointerout", () => this.hooks.onSeatHover?.(null, 0, 0, side));
+      label.on("pointertap", () => this.hooks.onSeatTap?.(id));
       this.seats.set(id, seat);
     }
     for (let i = 0; i < 6; i++) {
-      const t = new Text({ text: "", style: i === 1 ? mono(14, COLOR.text) : mono(10, COLOR.muted) });
+      const t = new Text({ text: "", style: i === 1 ? mono(ROOM.headFont, COLOR.text) : mono(ROOM.rowFont, COLOR.muted) });
       this.agendaLines.push(t);
       this.agenda.addChild(t);
     }
     this.footer = this.agendaLines[5];
-    this.learned = new Text({ text: "", style: mono(10, COLOR.muted) });
+    this.learned = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.muted) });
     this.learned.style.wordWrap = true;
-    this.learned.style.lineHeight = 14;
+    this.learned.style.lineHeight = 16;
     this.learned.visible = false;
     this.agenda.addChild(this.agendaRule, this.learned);
     this.root.addChild(this.agenda);
@@ -144,7 +175,7 @@ export class Room {
       const group = new Container();
       const tokens: Text[] = [];
       for (let k = 0; k < ROW_TOKENS; k++) {
-        const t = new Text({ text: "", style: mono(10, COLOR.muted) });
+        const t = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.muted) });
         t.eventMode = "static";
         t.cursor = "pointer";
         tokens.push(t);
@@ -160,9 +191,9 @@ export class Room {
       this.rows.push(row);
       this.stackGroup.addChild(group);
     }
-    this.flagged = new Text({ text: "", style: mono(10, COLOR.text) });
+    this.flagged = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.text) });
     this.flagged.visible = false;
-    this.recorded = new Text({ text: "", style: mono(10, COLOR.muted) });
+    this.recorded = new Text({ text: "", style: mono(ROOM.rowFont, COLOR.muted) });
     this.recorded.visible = false;
     this.stackGroup.addChild(this.flagged, this.flaggedUnderline, this.recorded);
     this.root.addChild(this.stackGroup);
@@ -228,8 +259,8 @@ export class Room {
     this.recG.clear();
     this.recG.rect(cx - 24, snap(ROOM.cfoY * H) + 12, 48, 2).fill(COLOR.red);
     this.listening.position.set(cx, snap(ROOM.cfoY * H) + 18);
-    this.q.style.left = `${cx - 320}px`;
-    this.q.style.top = `${snap(ROOM.cfoY * H) + 32}px`;
+    this.q.style.left = `${this.ox + cx - 320}px`;
+    this.q.style.top = `${this.oy + snap(ROOM.cfoY * H) + 32}px`;
     this.layoutAgenda();
     this.lineG.clear();
     this.crossG.clear();
@@ -414,11 +445,71 @@ export class Room {
     await Promise.all([line, ...dims]);
   }
 
-  private stackOrigin(seat: Seat, rowW: number, n: number): [number, number] {
-    const y = snap(seat.y - (n * ROOM.rowPitch) / 2);
-    if (seat.side === "left") return [snap(seat.x + 176), y];
-    if (seat.side === "right") return [snap(seat.x - 176 - rowW), y];
-    return [snap(seat.x - rowW / 2), snap(seat.y + 40)];
+  private tableEdge(y: number, side: "left" | "right"): number {
+    const [ax, ay] = side === "left" ? this.corners.tl : this.corners.tr;
+    const [bx, by] = side === "left" ? this.corners.bl : this.corners.br;
+    const t = by === ay ? 0 : Math.max(0, Math.min(1, (y - ay) / (by - ay)));
+    return ax + (bx - ax) * t;
+  }
+
+  /* Everything inside the table that a stack must not cover: paper tags and the agenda, as [x0, x1, y0, y1]. */
+  private obstacles(): Array<[number, number, number, number]> {
+    const out: Array<[number, number, number, number]> = [];
+    for (const s of this.seats.values()) {
+      for (const p of s.papers) {
+        if (!p.tag.visible) continue;
+        const w = p.tag.width;
+        const x0 = s.side === "right" ? p.tag.x - w : s.side === "far" ? p.tag.x - w / 2 : p.tag.x;
+        out.push([x0, x0 + w, p.tag.y - 8, p.tag.y + 8]);
+      }
+    }
+    let aw = 0;
+    for (const t of this.agendaLines) aw = Math.max(aw, t.width);
+    const ay1 = this.learned.visible ? this.learned.y + this.learned.height : this.footer.y + 16;
+    out.push([this.agendaLines[0].x, this.agendaLines[0].x + aw, this.agendaLines[0].y, ay1]);
+    return out;
+  }
+
+  /* The stack sits in front of the seat where it fits best: above the seat's paper row, level with it, or below.
+     Returns the origin and the scale needed to clear the obstacles (never under 0.8). */
+  private stackOrigin(seat: Seat, rowW: number, n: number): [number, number, number] {
+    const stackH = n * ROOM.rowPitch + 40; // rows plus the flagged and RECORDED lines
+    if (seat.side === "far") return [snap(seat.x - rowW / 2), snap(seat.y + 40), 1];
+    const obs = this.obstacles();
+    const cx = this.W / 2;
+    const topY = this.corners.tl[1];
+    const botY = this.corners.bl[1];
+    const candidates: Array<[number, number]> = [
+      [snap(seat.y - 20 - stackH), seat.depth <= 2 ? 0.1 : 0],
+      [snap(seat.y - (n * ROOM.rowPitch) / 2), 0],
+      [snap(seat.y + 24), seat.depth >= 3 ? 0.1 : 0],
+    ];
+    let best: [number, number, number] | null = null;
+    let bestScore = -1;
+    for (const [oy, pref] of candidates) {
+      const y0 = oy;
+      const y1 = oy + stackH;
+      if (y0 < topY + 8 || y1 > botY - 8) continue; // stays inside the table
+      const ym = (y0 + y1) / 2;
+      // obstacles left of centre push the start right; obstacles right of centre cap the end
+      let xs = this.tableEdge(ym, "left") + 24;
+      let limit = this.tableEdge(ym, "right") - 8;
+      if (seat.side === "left") xs = Math.max(xs, seat.x + 24);
+      for (const [x0, x1, oy0, oy1] of obs) {
+        if (oy1 < y0 || oy0 > y1) continue;
+        if ((x0 + x1) / 2 < cx) xs = Math.max(xs, x1 + 16);
+        else limit = Math.min(limit, x0 - 16);
+      }
+      const avail = limit - xs;
+      const scale = Math.max(0.8, Math.min(1, avail / rowW));
+      const score = Math.min(1, avail / rowW) + pref;
+      if (score > bestScore) {
+        bestScore = score;
+        const x = seat.side === "right" && avail >= rowW ? Math.max(xs, Math.min(seat.x - 24 - rowW, limit - rowW)) : xs;
+        best = [snap(x), oy, scale];
+      }
+    }
+    return best ?? [snap(seat.side === "left" ? seat.x + 24 : seat.x - 24 - rowW), snap(seat.y - (n * ROOM.rowPitch) / 2), 0.8];
   }
 
   private fillRow(row: Row, data: any, index: number): void {
@@ -440,6 +531,7 @@ export class Room {
     row.tick.alpha = row.underline.alpha = 1;
     row.group.visible = true;
     row.group.alpha = 0;
+    row.group.scale.set(1);
     row.group.position.set(this.agendaLines[2].x, this.agendaLines[2].y + index * ROOM.rowPitch);
   }
 
@@ -450,17 +542,19 @@ export class Room {
     const n = Math.min(rows.length, ROW_POOL);
     for (let i = 0; i < n; i++) this.fillRow(this.rows[i], rows[i], i);
     const rowW = Math.max(...this.rows.slice(0, n).map((r) => r.width), 160);
-    const [ox, oy] = this.stackOrigin(seat, rowW, n);
+    const [ox, oy, scale] = this.stackOrigin(seat, rowW, n);
+    const pitch = ROOM.rowPitch * scale;
     const moves: Promise<void>[] = [];
     for (let i = 0; i < n; i++) {
       const row = this.rows[i];
       this.retrieved.push(row);
-      moves.push(this.tween(row.group, { x: ox, y: oy + i * ROOM.rowPitch, alpha: 1, duration: MOTION.fast, delay: i * MOTION.stagger }));
+      row.group.scale.set(scale);
+      moves.push(this.tween(row.group, { x: ox, y: snap(oy + i * pitch, 1), alpha: 1, duration: MOTION.fast, delay: i * MOTION.stagger }));
     }
     this.flagged.visible = this.recorded.visible = false;
     this.flaggedUnderline.clear();
-    this.flagged.position.set(ox, oy + n * ROOM.rowPitch + 8);
-    this.recorded.position.set(ox, oy + n * ROOM.rowPitch + 8);
+    this.flagged.position.set(ox, snap(oy + n * pitch + 8));
+    this.recorded.position.set(ox, snap(oy + n * pitch + 8));
     await Promise.all(moves);
   }
 
@@ -526,19 +620,19 @@ export class Room {
     if (seat.side === "left") {
       const w = snap(Math.max(160, Math.min(360, seat.label.x - 16)));
       a.style.width = `${w}px`;
-      a.style.left = `${snap(seat.label.x - w)}px`;
+      a.style.left = `${this.ox + snap(seat.label.x - w)}px`;
       a.style.textAlign = "right";
     } else if (seat.side === "right") {
       const w = snap(Math.max(160, Math.min(360, this.W - 16 - seat.label.x)));
       a.style.width = `${w}px`;
-      a.style.left = `${snap(seat.label.x)}px`;
+      a.style.left = `${this.ox + snap(seat.label.x)}px`;
       a.style.textAlign = "left";
     } else {
       a.style.width = "360px";
-      a.style.left = `${snap(seat.x - 180)}px`;
+      a.style.left = `${this.ox + snap(seat.x - 180)}px`;
       a.style.textAlign = "center";
     }
-    a.style.top = `${snap(seat.side === "far" ? seat.y - 80 : seat.y + 16)}px`;
+    a.style.top = `${this.oy + snap(seat.side === "far" ? seat.y - 80 : seat.y + 16)}px`;
     a.style.display = this.shown ? "block" : "none";
     const words = text.split(/\s+/).filter(Boolean);
     const total = durationMs > 0 ? durationMs : words.length * ROOM.wordMs;
@@ -555,7 +649,10 @@ export class Room {
     await new Promise<void>((resolve) => {
       let i = 0;
       const tick = () => {
-        if (i >= words.length) return resolve();
+        if (i >= words.length) {
+          this.hooks.onAnswerDone?.(agentId);
+          return resolve();
+        }
         const w = words[i++];
         const m = w.match(/^\[?(E\d+)[,\].]*$/);
         if (m) {
@@ -572,6 +669,8 @@ export class Room {
             window.setTimeout(() => (hit.tok.style.fill = COLOR.muted), 400);
           }
         }
+        a.scrollTop = a.scrollHeight; // the three-line window under the seat follows the words; the transcript keeps the whole answer
+        this.hooks.onWord?.(agentId, a.textContent ?? "");
         const due = t0 + i * step;
         window.setTimeout(tick, Math.max(0, due - performance.now()));
       };
@@ -595,6 +694,7 @@ export class Room {
     await Promise.all(back);
     for (const row of this.retrieved) {
       row.group.visible = false;
+      row.group.scale.set(1);
       row.tick.clear();
       row.underline.clear();
     }

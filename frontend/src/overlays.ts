@@ -24,7 +24,7 @@ export function setClock(d: Date): void {
 
 /* The payments HUD (cash, payroll, clock, mandate block) belongs to PAYMENTS mode only. */
 export function setPaymentsHud(on: boolean): void {
-  for (const id of ["hud-left", "hud-right", "mandate", "answers"]) {
+  for (const id of ["hud-left", "hud-right", "mandate", "answers", "status"]) {
     const el = document.getElementById(id);
     if (el) el.style.visibility = on ? "visible" : "hidden";
   }

@@ -35,7 +35,21 @@ export const api = {
   record: (agent: string) => get(`/record/${agent}`),
   explainLoad: (dir?: string, mode = "v2", index = 1) => post("/explain/load", { dir, mode, index }),
   explainEvidence: () => get("/explain/evidence"),
+  explainLinks: () => get("/explain/links"),
 };
+
+/* The only public PRISM host (docs/prism-notes.md §1). Used when /explain/links is absent. */
+export const PRISM_HOST = "https://prism.blockconvey.com";
+
+export async function prismLinks(): Promise<{ host: string; session?: string; project?: string; trace?: string }> {
+  try {
+    const j = await api.explainLinks();
+    if (j && typeof j === "object") return { host: PRISM_HOST, ...j };
+  } catch {
+    /* endpoint absent: fall back to the host */
+  }
+  return { host: PRISM_HOST };
+}
 
 export async function netCheck(): Promise<{ backend: boolean; voice: boolean }> {
   const backend = await api

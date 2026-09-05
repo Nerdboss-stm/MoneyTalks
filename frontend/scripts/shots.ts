@@ -99,6 +99,10 @@ async function main(): Promise<void> {
     shots.push(p);
   };
 
+  // the app boots into the meeting shell; the mandate frames need PAYMENTS mode
+  await page.evaluate(() => (window as any).__meeting(false));
+  await sleep(300);
+
   // v1
   await page.keyboard.press("1");
   await cmd("seek", "Fri 19:15");
@@ -158,68 +162,76 @@ async function main(): Promise<void> {
   };
   const v1 = rec("explain-v1-01");
   const v2 = rec("explain-v2-01");
-  const answerText = () => page.evaluate(() => document.getElementById("room-a")?.textContent ?? "");
-  const answerShown = () => page.waitForFunction(() => document.getElementById("room-a")?.style.display === "block", null, { timeout: 60000 });
   const answerGone = () => page.waitForFunction(() => document.getElementById("room-a")?.style.display !== "block", null, { timeout: 120000 });
-  const answerHas = (s: string) => page.waitForFunction((needle) => (document.getElementById("room-a")?.textContent ?? "").includes(needle), s, { timeout: 120000 });
+  const dump = () =>
+    page.evaluate(() => {
+      const cards = [...document.querySelectorAll("#transcript .card")].map((c) => ({ agent: (c as HTMLElement).dataset.agent, words: (c.querySelector(".txt")?.textContent ?? "").split(/\s+/).filter(Boolean).length, verdict: c.querySelector(".verdict")?.textContent, cls: c.className }));
+      const a = document.getElementById("room-a")!;
+      return JSON.stringify({ children: [...document.getElementById("transcript")!.children].map((c) => c.className), cards, roomA: { display: a.style.display, words: (a.textContent ?? "").split(/\s+/).filter(Boolean).length } });
+    });
+  const waitOrDump = async <T,>(p: Promise<T>, what: string): Promise<T> => {
+    try {
+      return await p;
+    } catch (err) {
+      console.error(`wait failed: ${what}`, await dump());
+      throw err;
+    }
+  };
+  const cardWords = (n: number) => waitOrDump(page.waitForFunction((min) => ((document.querySelector("#transcript .card:last-of-type .txt")?.textContent ?? "").split(/\s+/).filter(Boolean).length) >= min, n, { timeout: 60000 }), `cardWords(${n})`);
+  const cardHas = (sel: string) => waitOrDump(page.waitForFunction((s) => Boolean(document.querySelector(s)), sel, { timeout: 60000 }), `cardHas(${sel})`);
   await page.evaluate(() => (window as any).__meeting(true));
-  await inject(v1.find((e) => e.type === "meeting.loaded"));
-  await sleep(700);
-  await shot("room-01-rest");
-  const t1 = turns(v1, "procurement");
-  await inject(t1["agent.addressed"]);
-  await sleep(500);
-  await inject(t1["agent.retrieving"]);
-  await sleep(1600);
-  await shot("room-02-addressed-rows");
-  await inject(t1["agent.verified"]);
-  await sleep(1800);
-  await shot("room-03-v1-verified-red");
-  await inject(t1["agent.traced"]);
-  await inject({ ...t1["agent.answer"], payload: { ...t1["agent.answer"].payload, duration_ms: 1500 } });
-  await answerShown();
-  await inject(t1["agent.released"]);
-  await answerGone();
-  await sleep(400);
-  await page.keyboard.press("2");
+  await sleep(300);
+
+  // shell at rest: the v2 meeting loaded, nobody addressed
   await inject(v2.find((e) => e.type === "meeting.loaded"));
+  await sleep(700);
+  await shot("shell-01-rest");
+
+  // agent speaking with the transcript filling
   const t2 = turns(v2, "procurement");
   await inject(t2["agent.addressed"]);
   await inject(t2["agent.retrieving"]);
   await inject(t2["agent.verified"]);
   await inject(t2["agent.traced"]);
   await inject(t2["agent.answer"]);
-  // the frame is taken the moment a row figure is printed, while that token is lit
-  const rowFigs: string[] = t2["agent.retrieving"].payload.rows.flatMap((r: any) => r.figures ?? []);
-  const words: string[] = t2["agent.answer"].payload.text.split(/\s+/);
-  const lit = rowFigs.find((f) => words.some((w) => w.includes(f)));
-  if (lit) await answerHas(lit);
-  else {
-    await answerShown();
-    await sleep(1500);
-  }
-  await shot("room-04-v2-answer-midprint");
-  console.error("room-04 lit figure:", lit ?? "(none)", "printed:", (await answerText()).slice(0, 120));
+  await cardWords(10);
+  await shot("shell-02-speaking");
   await inject(t2["agent.released"]);
   await answerGone();
   await sleep(400);
-  // cross-examination: the next speaker cites rows the previous speaker cited
-  const t3 = turns(v2, "controller_a");
-  await inject({ ...t3["agent.addressed"], payload: { ...t3["agent.addressed"].payload, question: "Controller A, do you agree with Procurement's read?" } });
-  await inject({ ...t3["agent.retrieving"], payload: { ...t3["agent.retrieving"].payload, rows: t2["agent.retrieving"].payload.rows } });
-  await inject({ ...t3["agent.verified"], payload: { ...t3["agent.verified"].payload, checks: [] } });
-  await inject(t3["agent.traced"]);
-  await inject({ ...t3["agent.answer"], payload: { ...t3["agent.answer"].payload, text: `I read the same rows: cloud hosting is the expense story ${t2["agent.answer"].payload.citations.map((c: string) => `[${c}]`).join(" ")}.`, citations: t2["agent.answer"].payload.citations, duration_ms: 3000 } });
-  await answerHas("story");
+
+  // v1: the unverified card in red
+  await inject(v1.find((e) => e.type === "meeting.loaded"));
   await sleep(300);
-  await shot("room-05-cross-examination");
-  await inject(t3["agent.released"]);
+  const t1 = turns(v1, "procurement");
+  await inject(t1["agent.addressed"]);
+  await inject(t1["agent.retrieving"]);
+  await inject(t1["agent.verified"]);
+  await inject(t1["agent.traced"]);
+  await inject({ ...t1["agent.answer"], payload: { ...t1["agent.answer"].payload, duration_ms: 1500 } });
+  await cardHas("#transcript .card:last-of-type .verdict.bad");
+  await cardWords(40);
+  await sleep(600);
+  await shot("shell-03-v1-unverified");
+  await inject(t1["agent.released"]);
   await answerGone();
   await sleep(400);
-  const learned = v2.find((e) => e.type === "memory.learned");
-  await inject({ ...learned, type: "meeting.learned" });
-  await sleep(700);
-  await shot("room-06-learned");
+
+  // evidence drawer from the first agenda row
+  await page.click("#agenda-rows .row");
+  await page.waitForSelector("#drawer.open", { timeout: 20000 });
+  await sleep(500);
+  await shot("shell-04-drawer");
+  await page.keyboard.press("Escape");
+  await sleep(400);
+
+  // prove modal
+  await page.keyboard.press("p");
+  await page.waitForSelector("#prove-modal.open", { timeout: 20000 });
+  await sleep(500);
+  await shot("shell-05-prove");
+  await page.keyboard.press("Escape");
+  await sleep(300);
 
   const fps = fpsLog.length ? fpsLog.slice(-8) : [await page.evaluate(() => (window as any).__floor?.fps)];
   await browser.close();

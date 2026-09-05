@@ -32,17 +32,18 @@ New non-negotiable: no number is spoken or printed unless it exists in the evide
 - The Desk never binds on unknown scope, unknown vendor, unknown agent, or low confidence. It asks.
 
 ## Design system — violations are bugs
-- Background #0B0C0E. Text #E6E6E3. Muted #7C8087. Rules #2A2C30 at 1px.
-- Amber #D89B2B: held payments only. Red #D23B3B: payments executed after a mandate bound, exactly one in the scripted run. No green. No third accent.
-- IBM Plex Mono for every number, tag, code. Inter Tight for the few words.
-- FORBIDDEN: gradients, glow, blur, shadows, trails, grids, radar rings, cards, rounded corners, charts, icon libraries, emoji, avatars, decorative motion, centered hero text, anything that reads as a dashboard.
-- Motion encodes a state change or does not exist. GSAP timelines, power2.out, 240–360ms, no bounce, no elastic.
+- Dark premium finance software. Bloomberg density with Linear polish. A meeting workspace, not a dashboard.
+- Surfaces #12141A on #0B0C0E with 1px #24272D borders, radius up to 6px, one soft shadow level. Text #E6E6E3, muted #8A8F98.
+- Amber #D89B2B for attention (held payments, bad-direction variances). Red #D23B3B for failures (the one payment executed after a mandate bound, unverified figures). No green. No third accent.
+- Inter for UI. IBM Plex Mono for every number, tag, code.
+- FORBIDDEN: gradients, glow, neon, blur, trails, grids, radar rings, charts, emoji, avatars, stock icon sets (line icons at 16px only), decorative motion, centered hero text, anything that reads as a dashboard.
+- Motion encodes a state change or does not exist. GSAP timelines, power2.out, 200–300ms, no bounce, no elastic.
 - 60fps with 40 objects.
 - Payment tags are dense operational telemetry: vendor, amount, rail, ETA, status code. Uneven real spacing. Hard 1px lines.
 - Reference frames in design/frames/*.png are the target. Match them.
 - Component libraries (21st.dev, shadcn, Tailwind UI, MUI) and Framer Motion are forbidden. The floor is PixiJS + GSAP; overlays are plain DOM.
 - If the floor reads as bare, add information density, never decoration: PO numbers, settlement dates, sub-ledger codes on tags, 1px lane separators, a tick ruler on the execution line. The reference is a Bloomberg terminal, not a landing page.
-- Precision is the finish: everything snaps to a 4px grid, mono caps get +4% tracking, line-height 1.4 on multi-line text, no text under 10px at 1080p.
+- Precision is the finish: everything snaps to a 4px grid, mono caps get +4% tracking, line-height 1.4 on multi-line text. Projector legible: body 15px, headings 22 to 30px.
 
 ## Stack
 backend/: Python 3.12, uv, FastAPI, LangGraph, langchain-anthropic (claude-haiku-4-5), pydantic v2, websockets, structlog, pytest, reportlab, httpx.
