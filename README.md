@@ -134,5 +134,5 @@ Agent framework, voice pipeline, and visualization shell were built before the e
 ## 11. Tools
 
 - PRISM: sessions, trajectories, per-trace verdicts, Root Cause, Remediation; every fact used is in `docs/prism-notes.md`.
-- GIDE: `docs/gide-session.jsonl`, `docs/gide.png`.
+- GIDE: `docs/gide-session.jsonl`, the session in which GIDE was given the README brief.
 - ElevenLabs: Scribe for speech to text, Flash v2.5 for each owner's voice (`config/voices.json`).
