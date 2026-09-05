@@ -8,8 +8,10 @@ import httpx
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langgraph.graph import END, START, StateGraph
-from prismtrace import PRISMtrace, PRISMtraceLangGraphHandler, wrap_langgraph
+from prismtrace import PRISMtraceLangGraphHandler, wrap_langgraph
 from typing_extensions import TypedDict
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 if ENV_FILE.exists():
@@ -119,12 +121,10 @@ print(
 
 # (b2) trajectory for the run: spans alone render in Agent Runs as one LLM step with TOOLS 0;
 # the SDK's ClaudeAgentTracer emits spans AND a trajectory, so do the same (docs/prism-notes.md §4).
-client = PRISMtrace(api_key=API_KEY, host=HOST, project_id=PROJECT_ID)
-steps = [
-    {"step_type": "tool_call", "label": c["tool_name"], "tool_name": c["tool_name"], "input_summary": c["input"], "output_summary": c["output"], "duration_ms": c["duration_ms"], "token_count": 0, "status": "success"}
-    for c in tool_calls
-] + [{"step_type": "final_answer", "label": "report", "output_summary": out["report"], "duration_ms": 0, "token_count": 0, "status": "success"}]
-traj = client.submit_trajectory(steps, agent_name=AGENT_ID, agent_id=AGENT_ID, conversation_id=SESSION_ID, request_id=run_trace_id, model=MODEL)
+from mandate import prism_util  # noqa: E402
+
+steps = [prism_util.tool_step(c["tool_name"], c["input"], c["output"], "", c["duration_ms"]) for c in tool_calls] + [prism_util.final_step(out["report"], "", "report")]
+traj = prism_util.submit_steps(SESSION_ID, run_trace_id, steps, agent_id=AGENT_ID, model=MODEL)
 print(f"(b2) POST /api/trajectories -> {traj}")
 
 # (c) ids ----------------------------------------------------------------------

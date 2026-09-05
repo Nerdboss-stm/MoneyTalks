@@ -13,7 +13,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
-from mandate import boundary, propagation
+from mandate import boundary, prism_util, propagation
 from mandate import ledger as L
 from mandate.bus import EventBus
 from mandate.scenario import TICK, CompanyClock, Scenario, company_day_id, ct, fmt, next_tick_after
@@ -144,28 +144,45 @@ def _entry(at: datetime, **kw: Any) -> dict:
 
 
 class AgentRuntime:
-    def __init__(self, fleet: "Fleet", agent_id: str, display: str, handler: Any = None) -> None:
+    def __init__(self, fleet: "Fleet", agent_id: str, display: str, prism: bool = False) -> None:
         self.fleet = fleet
         self.id = agent_id
         self.display = display
-        self.handler = handler
+        self.prism = prism
+        self.handler = None  # handlers are now per step (see _handler); kept so older callers find nothing to flush
         self.queue: list[tuple[datetime, str]] = []
         self.plans: dict[str, dict] = {}
         self.status_template = f"{display} has not planned yet."
         self.epoch_seen = 0
         self.record: dict[str, list] = {"plans": [], "tool_calls": [], "reports": [], "stamps": [], "mandates_seen": []}
+        self.last_steps: list[dict] = []
+        self.last_trace_id: str | None = None
         self.tools = self._make_tools()
         self.graph = self._build_graph()
-        if handler is not None:
-            from prismtrace import wrap_langgraph
-
-            self.graph = wrap_langgraph(self.graph, handler)
 
     def now(self) -> datetime:
         return self.fleet.clock.now()
 
     def _log_tool(self, name: str, args: dict, result: str) -> None:
-        self.record["tool_calls"].append(_entry(self.now(), tool=name, args=args, result=result))
+        self.record["tool_calls"].append(_entry(self.now(), tool=name, args=args, result=result, wall=datetime.now().isoformat(timespec="milliseconds")))
+
+    def _handler(self) -> Any:
+        """A fresh PRISM handler per step. Its auto-flush at chain end is deferred to the background queue
+        (docs/prism-notes.md §4: the handler flushes when the outermost chain ends; one trace_id per flush)."""
+        if not self.prism:
+            return None
+        h = prism_util.make_handler(self.id, self.fleet.session_id)
+        if h is None:
+            return None
+        return prism_util.detach_flush(h, self.fleet.prism)
+
+    def _submit(self, steps: list[dict], trace_id: str | None) -> None:
+        self.last_steps = steps
+        self.last_trace_id = trace_id
+        if not self.prism or not steps:
+            return
+        sid, aid, model = self.fleet.session_id, self.id, self.fleet.model_name
+        self.fleet.prism.enqueue("trajectory", lambda: prism_util.submit_steps(sid, trace_id, steps, agent_id=aid, model=model))
 
     def record_stamp(self, at: datetime, payment_id: str, stamp: Stamp) -> None:
         self.record["stamps"].append(_entry(at, payment_id=payment_id, **stamp.model_dump(mode="json")))
@@ -173,9 +190,9 @@ class AgentRuntime:
     def last_rationale(self) -> str:
         return self.record["reports"][-1]["sentence"] if self.record["reports"] else self.status_template
 
-    def config(self, tick: datetime | None) -> RunnableConfig:
+    def config(self, tick: datetime | None, handler: Any = None) -> RunnableConfig:
         return {
-            "callbacks": [self.handler] if self.handler is not None else [],
+            "callbacks": [handler] if handler is not None else [],
             "metadata": {
                 "company_day_id": company_day_id(self.now()),
                 "mandate_id": self.fleet.current_mandate_id(),
@@ -379,22 +396,36 @@ class AgentRuntime:
         due = self.due_at(tick)
         if not self.should_decide(tick, due):
             return
-        await self.graph.ainvoke({"tick": fmt(tick), "due_ids": due}, self.config(tick))
+        handler = self._handler()
+        trace_id = getattr(handler, "trace_id", None)
+        start = len(self.record["tool_calls"])
+        reports_before = len(self.record["reports"])
+        await self.graph.ainvoke({"tick": fmt(tick), "due_ids": due}, self.config(tick, handler))
+        # one trajectory per decision step: the step's tool invocations in order, the report last
+        calls = self.record["tool_calls"][start:]
+        report = self.record["reports"][reports_before] if len(self.record["reports"]) > reports_before else None
+        self._submit(prism_util.build_steps(calls, report["sentence"] if report else None, report["at_company"] if report else None), trace_id)
 
     async def fire(self, payment_id: str, at: datetime) -> None:
         plan = self.plans.get(payment_id, {})
         tick = ct(plan["tick"]) if plan.get("tick") else None
-        config = self.config(tick)
-        trace_id = getattr(self.handler, "trace_id", None)
+        handler = self._handler()
+        trace_id = getattr(handler, "trace_id", None)
+        config = self.config(tick, handler)
         if self.fleet.ledger.payments[payment_id].status == "planned":
             self.fleet.ledger = L.begin(self.fleet.ledger, payment_id)
+        start = len(self.record["tool_calls"])
         await self.tools["execute_payment"].ainvoke({"payment_id": payment_id}, config)
-        if self.handler is not None:
-            self.handler.flush()
+        if handler is not None:
+            handler.flush()  # detached: builds the payload now, posts on the background queue
+        fired = self.record["tool_calls"][start:]
         if self.fleet.ledger.payments[payment_id].status == "executed":
             sentence = plan.get("status_template") or self.status_template
             self.record["reports"].append(_entry(at, sentence=sentence, source="executor", scheduled_at_tick=plan.get("tick"), prism_trace_id=trace_id))
             await self.fleet.publish("status.report", agent_id=self.id, sentence=sentence, source="executor", scheduled_at_tick=plan.get("tick"), payment_id=payment_id)
+            self._submit(prism_util.build_steps(fired, sentence, fmt(at)), trace_id)
+        else:
+            self._submit(prism_util.build_steps(fired, None, None), trace_id)
         await propagation.sweep(self.fleet, at)
 
 
@@ -416,8 +447,10 @@ class Fleet:
         self.payroll_run_id = next((i for i in scenario.exception_eligible if scenario.by_id()[i].agent_id == "payroll"), None)
         self.last_exposure: dict[str, dict] = {}
         self.sem = asyncio.Semaphore(MAX_PARALLEL)
-        handlers = handlers or {}
-        self.agents = {a.id: AgentRuntime(self, a.id, a.display, handlers.get(a.id)) for a in scenario.agents}
+        self.prism = prism_util.PrismQueue()
+        prism_on = bool(handlers) and prism_util.config() is not None
+        self.model_name = MODEL if isinstance(self.decider, LLMDecider) else "rules"
+        self.agents = {a.id: AgentRuntime(self, a.id, a.display, prism_on) for a in scenario.agents}
         self.next_tick = next_tick_after(clock.now())
         self.timers.append((scenario.company.payroll.due, self._payroll_check))
 
@@ -525,6 +558,7 @@ class Fleet:
             for m in list(self.mandates):
                 if m.id not in self.expired and m.window_end <= now and m.expires_on != "payroll_cleared":
                     await self.expire_mandate(m, now, "window_end")
+        await self.prism.drain()
 
     def get_record(self, agent_id: str, as_of: datetime | str | None = None) -> dict:
         agent = self.agents[agent_id]
