@@ -32,3 +32,9 @@ stage:
 
 prove:
 	cd backend && uv run python -m mandate.runner prove
+
+explain-data:
+	cd backend && uv run python -m explain.datagen
+
+ingest:
+	cd backend && uv run python -m explain.ingest $(addprefix ../,$(FILES)) --out ../$(OUT)

@@ -1,0 +1,52 @@
+# Owner rules: first matching rule wins. Patterns are case-insensitive globs on a column value.
+# Columns: account, category, segment, vendor, customer, or any dimension the ingester kept.
+default: controller_a
+rules:
+  - match: {category: payroll}
+    owner: payroll
+  - match: {category: cloud_hosting}
+    owner: procurement
+  - match: {category: subscription, segment: smb}
+    owner: controller_b
+  - match: {segment: smb}
+    owner: controller_b
+  - match: {segment: enterprise}
+    owner: controller_a
+  - match: {category: subscription, segment: mid_market}
+    owner: collections
+  - match: {category: services, segment: mid_market}
+    owner: treasury
+  - match: {category: one_time, segment: mid_market}
+    owner: fx
+  - match: {account: "4*-ENT"}
+    owner: controller_a
+  - match: {account: "4*-SMB"}
+    owner: controller_b
+  - match: {account: "6000*"}
+    owner: payroll
+  - match: {account: "6100*"}
+    owner: procurement
+  - match: {vendor: "*tax*"}
+    owner: tax
+  - match: {vendor: "*revenue dept*"}
+    owner: tax
+  - match: {vendor: "*travel*"}
+    owner: expenses
+  - match: {vendor: "*card*"}
+    owner: expenses
+  - match: {vendor: "*software*"}
+    owner: saas_renewals
+  - match: {vendor: "*analytics*"}
+    owner: saas_renewals
+  - match: {vendor: "*crm*"}
+    owner: saas_renewals
+  - match: {vendor: "*east*"}
+    owner: ap_east
+  - match: {vendor: "*atlantic*"}
+    owner: ap_east
+  - match: {vendor: "*west*"}
+    owner: ap_west
+  - match: {vendor: "*pacific*"}
+    owner: ap_west
+  - match: {category: vendor_spend}
+    owner: ap_east

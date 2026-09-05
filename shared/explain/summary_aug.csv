@@ -1,0 +1,17 @@
+period,account,category,segment,owner_agent,txn_count,amount_cents
+2026-08,4010-SUB-ENT,subscription,enterprise,controller_a,16,377000000
+2026-08,4010-SUB-MM,subscription,mid_market,collections,40,122994667
+2026-08,4010-SUB-SMB,subscription,smb,controller_b,143,81900000
+2026-08,4100-SVC-ENT,services,enterprise,controller_a,15,145200000
+2026-08,4100-SVC-MM,services,mid_market,treasury,27,44773000
+2026-08,4100-SVC-SMB,services,smb,controller_b,108,25048889
+2026-08,4200-ONE-ENT,one_time,enterprise,controller_a,4,52000000
+2026-08,4200-ONE-MM,one_time,mid_market,fx,10,20679111
+2026-08,4200-ONE-SMB,one_time,smb,controller_b,40,15404333
+2026-08,6000-PAYROLL,payroll,,payroll,16,215860000
+2026-08,6100-CLOUD-HOSTING,cloud_hosting,,procurement,36,59220000
+2026-08,6200-VENDOR-SPEND,vendor_spend,,ap_east,140,41872408
+2026-08,6200-VENDOR-SPEND,vendor_spend,,ap_west,55,16755380
+2026-08,6200-VENDOR-SPEND,vendor_spend,,expenses,25,10247963
+2026-08,6200-VENDOR-SPEND,vendor_spend,,saas_renewals,41,17329637
+2026-08,6200-VENDOR-SPEND,vendor_spend,,tax,18,5864612

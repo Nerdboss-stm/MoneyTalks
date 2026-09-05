@@ -1,0 +1,104 @@
+{
+  "drivers": [
+    {
+      "aug": 885000000,
+      "id": "total_revenue",
+      "jul": 750000000,
+      "pct": 18.0
+    },
+    {
+      "aug": 574200000,
+      "id": "enterprise_revenue",
+      "jul": 435000000,
+      "named_customers": [
+        {
+          "customer": "Northgate Financial",
+          "delta_cents": 36288000
+        },
+        {
+          "customer": "Halvorsen Industries",
+          "delta_cents": 28512000
+        },
+        {
+          "customer": "Meridian Health Systems",
+          "delta_cents": 21600000
+        }
+      ],
+      "named_share_of_total_increase": 0.64,
+      "owner": "controller_a",
+      "pct": 32.0,
+      "segment": "enterprise"
+    },
+    {
+      "aug": 81900000,
+      "category": "subscription",
+      "id": "smb_subscription",
+      "jul": 90000000,
+      "owner": "controller_b",
+      "pct": -9.0,
+      "segment": "smb"
+    },
+    {
+      "aug": 59220000,
+      "category": "cloud_hosting",
+      "id": "cloud_hosting",
+      "jul": 42000000,
+      "named_share_of_increase": 0.78,
+      "named_vendors": [
+        {
+          "delta_cents": 8058960,
+          "vendor": "Nimbus Cloud Platform"
+        },
+        {
+          "delta_cents": 5372640,
+          "vendor": "Stratus Compute"
+        }
+      ],
+      "owner": "procurement",
+      "pct": 41.0
+    },
+    {
+      "aug": 215860000,
+      "category": "payroll",
+      "id": "payroll",
+      "jul": 215000000,
+      "owner": "payroll",
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "noise",
+      "lines": {
+        "mid_market/one_time": {
+          "aug": 20679111,
+          "jul": 20000000
+        },
+        "mid_market/services": {
+          "aug": 44773000,
+          "jul": 45000000
+        },
+        "mid_market/subscription": {
+          "aug": 122994667,
+          "jul": 120000000
+        },
+        "smb/one_time": {
+          "aug": 15404333,
+          "jul": 15000000
+        },
+        "smb/services": {
+          "aug": 25048889,
+          "jul": 25000000
+        },
+        "vendor_spend": {
+          "aug": 92070000,
+          "jul": 90000000
+        }
+      },
+      "tolerance_pct": 4.0
+    }
+  ],
+  "periods": [
+    "2026-07",
+    "2026-08"
+  ],
+  "seed": 7
+}

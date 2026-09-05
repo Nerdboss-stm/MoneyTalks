@@ -1,0 +1,735 @@
+txn_id,date,customer,segment,category,account,vendor,amount_cents,owner_agent
+T2608-0001,2026-08-01,Dunmore Garden,smb,one_time,4200-ONE-SMB,,247902,controller_b
+T2608-0002,2026-08-01,Pemberton Foods,mid_market,one_time,4200-ONE-MM,,3353826,fx
+T2608-0003,2026-08-01,Granite Optics,mid_market,services,4100-SVC-MM,,3312716,treasury
+T2608-0004,2026-08-01,Pinecrest Optics,mid_market,services,4100-SVC-MM,,842865,treasury
+T2608-0005,2026-08-01,Beacon & Sons,smb,subscription,4010-SUB-SMB,,183742,controller_b
+T2608-0006,2026-08-01,Beacon Industries,enterprise,subscription,4010-SUB-ENT,,15462727,controller_a
+T2608-0007,2026-08-01,Cobalt Kitchen,smb,subscription,4010-SUB-SMB,,223722,controller_b
+T2608-0008,2026-08-01,Dunmore Retail Group,enterprise,subscription,4010-SUB-ENT,,32221887,controller_a
+T2608-0009,2026-08-01,Fairholm Brewing,mid_market,subscription,4010-SUB-MM,,1531512,collections
+T2608-0010,2026-08-01,Foxglove Books,smb,subscription,4010-SUB-SMB,,1018927,controller_b
+T2608-0011,2026-08-01,Foxglove Consulting,smb,subscription,4010-SUB-SMB,,336335,controller_b
+T2608-0012,2026-08-01,Foxglove Fitness,smb,subscription,4010-SUB-SMB,,290082,controller_b
+T2608-0013,2026-08-01,Foxglove Music,smb,subscription,4010-SUB-SMB,,635717,controller_b
+T2608-0014,2026-08-01,Granite Optics,mid_market,subscription,4010-SUB-MM,,2560960,collections
+T2608-0015,2026-08-01,Greymont Realty,mid_market,subscription,4010-SUB-MM,,1754442,collections
+T2608-0016,2026-08-01,Greymont Studio,smb,subscription,4010-SUB-SMB,,621298,controller_b
+T2608-0017,2026-08-01,Harbor Bikes,smb,subscription,4010-SUB-SMB,,409999,controller_b
+T2608-0018,2026-08-01,Hartwell Brewing,mid_market,subscription,4010-SUB-MM,,1882569,collections
+T2608-0019,2026-08-01,Hartwell Yoga,smb,subscription,4010-SUB-SMB,,401768,controller_b
+T2608-0020,2026-08-01,Isla Bikes,smb,subscription,4010-SUB-SMB,,157120,controller_b
+T2608-0021,2026-08-01,Isla Bikes,smb,subscription,4010-SUB-SMB,,261689,controller_b
+T2608-0022,2026-08-01,Isla Music,smb,subscription,4010-SUB-SMB,,425809,controller_b
+T2608-0023,2026-08-01,Isla Studio,smb,subscription,4010-SUB-SMB,,556357,controller_b
+T2608-0024,2026-08-01,Jasper Bikes,smb,subscription,4010-SUB-SMB,,743497,controller_b
+T2608-0025,2026-08-01,Jasper Consulting,smb,subscription,4010-SUB-SMB,,1011136,controller_b
+T2608-0026,2026-08-01,Juniper Bikes,smb,subscription,4010-SUB-SMB,,627047,controller_b
+T2608-0027,2026-08-01,Juniper Studio,smb,subscription,4010-SUB-SMB,,272251,controller_b
+T2608-0028,2026-08-01,Kingsley Kitchen,smb,subscription,4010-SUB-SMB,,658103,controller_b
+T2608-0029,2026-08-01,Lumen Brewing,mid_market,subscription,4010-SUB-MM,,3496197,collections
+T2608-0030,2026-08-01,Meridian Health Systems,enterprise,subscription,4010-SUB-ENT,,22173446,controller_a
+T2608-0031,2026-08-01,Norbeck Garden,smb,subscription,4010-SUB-SMB,,289386,controller_b
+T2608-0032,2026-08-01,Norbeck Garden,smb,subscription,4010-SUB-SMB,,456850,controller_b
+T2608-0033,2026-08-01,Orchard Consulting,smb,subscription,4010-SUB-SMB,,521514,controller_b
+T2608-0034,2026-08-01,Orchard Pets,smb,subscription,4010-SUB-SMB,,840843,controller_b
+T2608-0035,2026-08-01,Orchard Studio,smb,subscription,4010-SUB-SMB,,367013,controller_b
+T2608-0036,2026-08-01,Pemberton Labs,mid_market,subscription,4010-SUB-MM,,5399525,collections
+T2608-0037,2026-08-01,Quarry Garden,smb,subscription,4010-SUB-SMB,,925077,controller_b
+T2608-0038,2026-08-01,Quarry Print,smb,subscription,4010-SUB-SMB,,833345,controller_b
+T2608-0039,2026-08-01,Quill Bakery,smb,subscription,4010-SUB-SMB,,543373,controller_b
+T2608-0040,2026-08-01,Quill Bikes,smb,subscription,4010-SUB-SMB,,910255,controller_b
+T2608-0041,2026-08-01,Ridgeway Design,smb,subscription,4010-SUB-SMB,,304910,controller_b
+T2608-0042,2026-08-01,Sable Bakery,smb,subscription,4010-SUB-SMB,,1086506,controller_b
+T2608-0043,2026-08-01,Sable Pets,smb,subscription,4010-SUB-SMB,,311367,controller_b
+T2608-0044,2026-08-01,Sable Pets,smb,subscription,4010-SUB-SMB,,371421,controller_b
+T2608-0045,2026-08-01,Tidewater Bakery,smb,subscription,4010-SUB-SMB,,1031905,controller_b
+T2608-0046,2026-08-01,Westcott Music,smb,subscription,4010-SUB-SMB,,227968,controller_b
+T2608-0047,2026-08-01,Yardley Pharmaceuticals,enterprise,subscription,4010-SUB-ENT,,17785382,controller_a
+T2608-0048,2026-08-01,Yardley Robotics,mid_market,subscription,4010-SUB-MM,,3125116,collections
+T2608-0049,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,169040,saas_renewals
+T2608-0050,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,312748,ap_east
+T2608-0051,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,378575,ap_east
+T2608-0052,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,381095,ap_east
+T2608-0053,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,224533,ap_east
+T2608-0054,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,226638,ap_east
+T2608-0055,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,593144,saas_renewals
+T2608-0056,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,450036,expenses
+T2608-0057,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,244930,ap_east
+T2608-0058,2026-08-01,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,280627,ap_west
+T2608-0059,2026-08-02,Hartwell Print,smb,one_time,4200-ONE-SMB,,526335,controller_b
+T2608-0060,2026-08-02,Granite Bakery,smb,services,4100-SVC-SMB,,194505,controller_b
+T2608-0061,2026-08-02,Kestrel Music,smb,services,4100-SVC-SMB,,498237,controller_b
+T2608-0062,2026-08-02,Lumen Brewing,mid_market,services,4100-SVC-MM,,1435075,treasury
+T2608-0063,2026-08-02,Pinecrest Optics,mid_market,services,4100-SVC-MM,,1229858,treasury
+T2608-0064,2026-08-02,Tidewater Analytics,mid_market,services,4100-SVC-MM,,1529428,treasury
+T2608-0065,2026-08-02,Alder Fitness,smb,subscription,4010-SUB-SMB,,464182,controller_b
+T2608-0066,2026-08-02,Alder Media,mid_market,subscription,4010-SUB-MM,,2179061,collections
+T2608-0067,2026-08-02,Beacon Industries,enterprise,subscription,4010-SUB-ENT,,16401618,controller_a
+T2608-0068,2026-08-02,Brightwater Fitness,smb,subscription,4010-SUB-SMB,,311375,controller_b
+T2608-0069,2026-08-02,Cobalt Coffee,smb,subscription,4010-SUB-SMB,,917336,controller_b
+T2608-0070,2026-08-02,Cobalt Kitchen,smb,subscription,4010-SUB-SMB,,329355,controller_b
+T2608-0071,2026-08-02,Driftwood Books,smb,subscription,4010-SUB-SMB,,630144,controller_b
+T2608-0072,2026-08-02,Dunmore Brewing,mid_market,subscription,4010-SUB-MM,,5907787,collections
+T2608-0073,2026-08-02,Dunmore Garden,smb,subscription,4010-SUB-SMB,,346948,controller_b
+T2608-0074,2026-08-02,Dunmore Industries,enterprise,subscription,4010-SUB-ENT,,26044295,controller_a
+T2608-0075,2026-08-02,Emberly Pets,smb,subscription,4010-SUB-SMB,,381350,controller_b
+T2608-0076,2026-08-02,Fairholm Books,smb,subscription,4010-SUB-SMB,,208568,controller_b
+T2608-0077,2026-08-02,Fairholm Manufacturing,enterprise,subscription,4010-SUB-ENT,,12454929,controller_a
+T2608-0078,2026-08-02,Foxglove Garden,smb,subscription,4010-SUB-SMB,,931851,controller_b
+T2608-0079,2026-08-02,Foxglove Pets,smb,subscription,4010-SUB-SMB,,285208,controller_b
+T2608-0080,2026-08-02,Granite & Sons,smb,subscription,4010-SUB-SMB,,401253,controller_b
+T2608-0081,2026-08-02,Hartwell Kitchen,smb,subscription,4010-SUB-SMB,,728687,controller_b
+T2608-0082,2026-08-02,Ironside & Sons,smb,subscription,4010-SUB-SMB,,1099927,controller_b
+T2608-0083,2026-08-02,Ironside Print,smb,subscription,4010-SUB-SMB,,559798,controller_b
+T2608-0084,2026-08-02,Isla Studio,smb,subscription,4010-SUB-SMB,,487960,controller_b
+T2608-0085,2026-08-02,Jasper Freight,mid_market,subscription,4010-SUB-MM,,5955603,collections
+T2608-0086,2026-08-02,Juniper Yoga,smb,subscription,4010-SUB-SMB,,366760,controller_b
+T2608-0087,2026-08-02,Kingsley & Sons,smb,subscription,4010-SUB-SMB,,987186,controller_b
+T2608-0088,2026-08-02,Kingsley Labs,mid_market,subscription,4010-SUB-MM,,1787160,collections
+T2608-0089,2026-08-02,Marlowe Apparel,mid_market,subscription,4010-SUB-MM,,4860744,collections
+T2608-0090,2026-08-02,Marlowe Kitchen,smb,subscription,4010-SUB-SMB,,293449,controller_b
+T2608-0091,2026-08-02,Marlowe Music,smb,subscription,4010-SUB-SMB,,620203,controller_b
+T2608-0092,2026-08-02,Marlowe Yoga,smb,subscription,4010-SUB-SMB,,623410,controller_b
+T2608-0093,2026-08-02,Meridian Health Systems,enterprise,subscription,4010-SUB-ENT,,25259003,controller_a
+T2608-0094,2026-08-02,Mosaic Dental,mid_market,subscription,4010-SUB-MM,,3800739,collections
+T2608-0095,2026-08-02,Mosaic Kitchen,smb,subscription,4010-SUB-SMB,,1062885,controller_b
+T2608-0096,2026-08-02,Oakridge Bikes,smb,subscription,4010-SUB-SMB,,722964,controller_b
+T2608-0097,2026-08-02,Oakridge Yoga,smb,subscription,4010-SUB-SMB,,726996,controller_b
+T2608-0098,2026-08-02,Quarry Coffee,smb,subscription,4010-SUB-SMB,,327139,controller_b
+T2608-0099,2026-08-02,Quill Tutoring,smb,subscription,4010-SUB-SMB,,1037583,controller_b
+T2608-0100,2026-08-02,Ridgeway Music,smb,subscription,4010-SUB-SMB,,262280,controller_b
+T2608-0101,2026-08-02,Thornbury Realty,mid_market,subscription,4010-SUB-MM,,4644686,collections
+T2608-0102,2026-08-02,Tidewater Fitness,smb,subscription,4010-SUB-SMB,,687715,controller_b
+T2608-0103,2026-08-02,Underhill Health Systems,enterprise,subscription,4010-SUB-ENT,,32571957,controller_a
+T2608-0104,2026-08-02,Vantage Music,smb,subscription,4010-SUB-SMB,,351971,controller_b
+T2608-0105,2026-08-02,Vantage Tutoring,smb,subscription,4010-SUB-SMB,,418726,controller_b
+T2608-0106,2026-08-02,Verity Books,smb,subscription,4010-SUB-SMB,,748209,controller_b
+T2608-0107,2026-08-02,Verity Consulting,smb,subscription,4010-SUB-SMB,,1143374,controller_b
+T2608-0108,2026-08-02,Yardley Bakery,smb,subscription,4010-SUB-SMB,,725286,controller_b
+T2608-0109,2026-08-02,Zephyr Coffee,smb,subscription,4010-SUB-SMB,,308668,controller_b
+T2608-0110,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Freight,351905,ap_east
+T2608-0111,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,350297,ap_east
+T2608-0112,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,669031,tax
+T2608-0113,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,407729,ap_east
+T2608-0114,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,154666,ap_east
+T2608-0115,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Ledgerline Accounting Software,463330,saas_renewals
+T2608-0116,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Ledgerline Accounting Software,489329,saas_renewals
+T2608-0117,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Ledgerline Accounting Software,803736,saas_renewals
+T2608-0118,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,142105,ap_east
+T2608-0119,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,354298,ap_west
+T2608-0120,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,368796,saas_renewals
+T2608-0121,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,283246,ap_east
+T2608-0122,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,276761,ap_east
+T2608-0123,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,455296,ap_west
+T2608-0124,2026-08-02,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,133678,ap_west
+T2608-0125,2026-08-03,Beacon & Sons,smb,one_time,4200-ONE-SMB,,593978,controller_b
+T2608-0126,2026-08-03,Juniper Fitness,smb,one_time,4200-ONE-SMB,,374007,controller_b
+T2608-0127,2026-08-03,Beacon & Sons,smb,services,4100-SVC-SMB,,148416,controller_b
+T2608-0128,2026-08-03,Ellery Bakery,smb,services,4100-SVC-SMB,,186051,controller_b
+T2608-0129,2026-08-03,Greymont Realty,mid_market,services,4100-SVC-MM,,2604551,treasury
+T2608-0130,2026-08-03,Marlowe Yoga,smb,services,4100-SVC-SMB,,132112,controller_b
+T2608-0131,2026-08-03,Summit Labs,mid_market,services,4100-SVC-MM,,695316,treasury
+T2608-0132,2026-08-03,Alder Aerospace,enterprise,subscription,4010-SUB-ENT,,12807295,controller_a
+T2608-0133,2026-08-03,Ashford Bikes,smb,subscription,4010-SUB-SMB,,767171,controller_b
+T2608-0134,2026-08-03,Brightwater Bikes,smb,subscription,4010-SUB-SMB,,859552,controller_b
+T2608-0135,2026-08-03,Brightwater Fitness,smb,subscription,4010-SUB-SMB,,287104,controller_b
+T2608-0136,2026-08-03,Brightwater Studio,smb,subscription,4010-SUB-SMB,,572066,controller_b
+T2608-0137,2026-08-03,Dunmore Coffee,smb,subscription,4010-SUB-SMB,,718552,controller_b
+T2608-0138,2026-08-03,Ellery Bakery,smb,subscription,4010-SUB-SMB,,984541,controller_b
+T2608-0139,2026-08-03,Fairholm Bikes,smb,subscription,4010-SUB-SMB,,510874,controller_b
+T2608-0140,2026-08-03,Fairholm Books,smb,subscription,4010-SUB-SMB,,234909,controller_b
+T2608-0141,2026-08-03,Fairholm Pets,smb,subscription,4010-SUB-SMB,,491109,controller_b
+T2608-0142,2026-08-03,Greymont Kitchen,smb,subscription,4010-SUB-SMB,,430765,controller_b
+T2608-0143,2026-08-03,Greymont Realty,mid_market,subscription,4010-SUB-MM,,2847560,collections
+T2608-0144,2026-08-03,Halvorsen Industries,enterprise,subscription,4010-SUB-ENT,,53266328,controller_a
+T2608-0145,2026-08-03,Hartwell Analytics,mid_market,subscription,4010-SUB-MM,,1551089,collections
+T2608-0146,2026-08-03,Juniper Design,smb,subscription,4010-SUB-SMB,,187913,controller_b
+T2608-0147,2026-08-03,Juniper Realty,mid_market,subscription,4010-SUB-MM,,2658462,collections
+T2608-0148,2026-08-03,Juniper Studio,smb,subscription,4010-SUB-SMB,,261472,controller_b
+T2608-0149,2026-08-03,Kestrel Bikes,smb,subscription,4010-SUB-SMB,,940223,controller_b
+T2608-0150,2026-08-03,Kestrel Kitchen,smb,subscription,4010-SUB-SMB,,896744,controller_b
+T2608-0151,2026-08-03,Kestrel Tutoring,smb,subscription,4010-SUB-SMB,,332857,controller_b
+T2608-0152,2026-08-03,Kingsley Freight,mid_market,subscription,4010-SUB-MM,,2154829,collections
+T2608-0153,2026-08-03,Kingsley Freight,mid_market,subscription,4010-SUB-MM,,3448910,collections
+T2608-0154,2026-08-03,Lumen Bikes,smb,subscription,4010-SUB-SMB,,586440,controller_b
+T2608-0155,2026-08-03,Lumen Media,mid_market,subscription,4010-SUB-MM,,5632907,collections
+T2608-0156,2026-08-03,Lumen Optics,mid_market,subscription,4010-SUB-MM,,2259245,collections
+T2608-0157,2026-08-03,Marlowe Yoga,smb,subscription,4010-SUB-SMB,,503429,controller_b
+T2608-0158,2026-08-03,Mosaic Books,smb,subscription,4010-SUB-SMB,,302467,controller_b
+T2608-0159,2026-08-03,Nettle & Sons,smb,subscription,4010-SUB-SMB,,885748,controller_b
+T2608-0160,2026-08-03,Norbeck Financial,enterprise,subscription,4010-SUB-ENT,,12537912,controller_a
+T2608-0161,2026-08-03,Oakridge Consulting,smb,subscription,4010-SUB-SMB,,463498,controller_b
+T2608-0162,2026-08-03,Oakridge Media,mid_market,subscription,4010-SUB-MM,,2107212,collections
+T2608-0163,2026-08-03,Orchard Kitchen,smb,subscription,4010-SUB-SMB,,299377,controller_b
+T2608-0164,2026-08-03,Ridgeway Bakery,smb,subscription,4010-SUB-SMB,,886150,controller_b
+T2608-0165,2026-08-03,Sable Design,smb,subscription,4010-SUB-SMB,,510605,controller_b
+T2608-0166,2026-08-03,Sable Freight,mid_market,subscription,4010-SUB-MM,,1007549,collections
+T2608-0167,2026-08-03,Summit Labs,mid_market,subscription,4010-SUB-MM,,5174847,collections
+T2608-0168,2026-08-03,Thornbury Yoga,smb,subscription,4010-SUB-SMB,,513609,controller_b
+T2608-0169,2026-08-03,Westcott Books,smb,subscription,4010-SUB-SMB,,1093010,controller_b
+T2608-0170,2026-08-03,Westcott Pets,smb,subscription,4010-SUB-SMB,,273003,controller_b
+T2608-0171,2026-08-03,Wren Bakery,smb,subscription,4010-SUB-SMB,,392760,controller_b
+T2608-0172,2026-08-03,Wren Design,smb,subscription,4010-SUB-SMB,,501204,controller_b
+T2608-0173,2026-08-03,Wren Fitness,smb,subscription,4010-SUB-SMB,,362442,controller_b
+T2608-0174,2026-08-03,Yardley Studio,smb,subscription,4010-SUB-SMB,,902215,controller_b
+T2608-0175,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,154057,saas_renewals
+T2608-0176,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Franchise Tax Board,183611,tax
+T2608-0177,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,216773,ap_east
+T2608-0178,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,133186,expenses
+T2608-0179,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,659730,saas_renewals
+T2608-0180,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,515409,ap_east
+T2608-0181,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,284172,ap_east
+T2608-0182,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,433574,ap_west
+T2608-0183,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,297985,ap_west
+T2608-0184,2026-08-03,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,201729,ap_west
+T2608-0185,2026-08-04,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,1928797,procurement
+T2608-0186,2026-08-04,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1858943,procurement
+T2608-0187,2026-08-04,Marlowe Music,smb,one_time,4200-ONE-SMB,,535615,controller_b
+T2608-0188,2026-08-04,Tidewater Fitness,smb,one_time,4200-ONE-SMB,,289944,controller_b
+T2608-0189,2026-08-04,Dunmore Brewing,mid_market,services,4100-SVC-MM,,1140519,treasury
+T2608-0190,2026-08-04,Ironside Design,smb,services,4100-SVC-SMB,,166098,controller_b
+T2608-0191,2026-08-04,Isla Garden,smb,services,4100-SVC-SMB,,561638,controller_b
+T2608-0192,2026-08-04,Northgate Financial,enterprise,services,4100-SVC-ENT,,6560782,controller_a
+T2608-0193,2026-08-04,Yardley Robotics,mid_market,services,4100-SVC-MM,,3025592,treasury
+T2608-0194,2026-08-04,Alder Consulting,smb,subscription,4010-SUB-SMB,,999541,controller_b
+T2608-0195,2026-08-04,Alder Pets,smb,subscription,4010-SUB-SMB,,175363,controller_b
+T2608-0196,2026-08-04,Alder Pets,smb,subscription,4010-SUB-SMB,,208737,controller_b
+T2608-0197,2026-08-04,Ashford Yoga,smb,subscription,4010-SUB-SMB,,506411,controller_b
+T2608-0198,2026-08-04,Brightwater Tutoring,smb,subscription,4010-SUB-SMB,,768919,controller_b
+T2608-0199,2026-08-04,Emberly Print,smb,subscription,4010-SUB-SMB,,993728,controller_b
+T2608-0200,2026-08-04,Fairholm Manufacturing,enterprise,subscription,4010-SUB-ENT,,13631137,controller_a
+T2608-0201,2026-08-04,Greymont Brewing,mid_market,subscription,4010-SUB-MM,,5698647,collections
+T2608-0202,2026-08-04,Greymont Studio,smb,subscription,4010-SUB-SMB,,520091,controller_b
+T2608-0203,2026-08-04,Hartwell Analytics,mid_market,subscription,4010-SUB-MM,,1195159,collections
+T2608-0204,2026-08-04,Isla Garden,smb,subscription,4010-SUB-SMB,,499266,controller_b
+T2608-0205,2026-08-04,Juniper Books,smb,subscription,4010-SUB-SMB,,1013436,controller_b
+T2608-0206,2026-08-04,Juniper Fitness,smb,subscription,4010-SUB-SMB,,640216,controller_b
+T2608-0207,2026-08-04,Kestrel Music,smb,subscription,4010-SUB-SMB,,675893,controller_b
+T2608-0208,2026-08-04,Kingsley Fitness,smb,subscription,4010-SUB-SMB,,553736,controller_b
+T2608-0209,2026-08-04,Kingsley Labs,mid_market,subscription,4010-SUB-MM,,1804492,collections
+T2608-0210,2026-08-04,Lumen Brewing,mid_market,subscription,4010-SUB-MM,,1938321,collections
+T2608-0211,2026-08-04,Mosaic Media,mid_market,subscription,4010-SUB-MM,,2860961,collections
+T2608-0212,2026-08-04,Mosaic Media,mid_market,subscription,4010-SUB-MM,,3051858,collections
+T2608-0213,2026-08-04,Mosaic Tutoring,smb,subscription,4010-SUB-SMB,,839510,controller_b
+T2608-0214,2026-08-04,Nettle Studio,smb,subscription,4010-SUB-SMB,,726680,controller_b
+T2608-0215,2026-08-04,Norbeck Financial,enterprise,subscription,4010-SUB-ENT,,11973909,controller_a
+T2608-0216,2026-08-04,Norbeck Music,smb,subscription,4010-SUB-SMB,,331390,controller_b
+T2608-0217,2026-08-04,Norbeck Yoga,smb,subscription,4010-SUB-SMB,,190137,controller_b
+T2608-0218,2026-08-04,Norbeck Yoga,smb,subscription,4010-SUB-SMB,,328175,controller_b
+T2608-0219,2026-08-04,Orchard Analytics,mid_market,subscription,4010-SUB-MM,,6025266,collections
+T2608-0220,2026-08-04,Orchard Kitchen,smb,subscription,4010-SUB-SMB,,401616,controller_b
+T2608-0221,2026-08-04,Orchard Yoga,smb,subscription,4010-SUB-SMB,,642774,controller_b
+T2608-0222,2026-08-04,Pemberton Pets,smb,subscription,4010-SUB-SMB,,763722,controller_b
+T2608-0223,2026-08-04,Ridgeway Consulting,smb,subscription,4010-SUB-SMB,,325299,controller_b
+T2608-0224,2026-08-04,Sable Design,smb,subscription,4010-SUB-SMB,,503135,controller_b
+T2608-0225,2026-08-04,Tidewater Analytics,mid_market,subscription,4010-SUB-MM,,2291758,collections
+T2608-0226,2026-08-04,Umber Foods,mid_market,subscription,4010-SUB-MM,,2206131,collections
+T2608-0227,2026-08-04,Umber Print,smb,subscription,4010-SUB-SMB,,947994,controller_b
+T2608-0228,2026-08-04,Westcott Pets,smb,subscription,4010-SUB-SMB,,267683,controller_b
+T2608-0229,2026-08-04,Wren Bakery,smb,subscription,4010-SUB-SMB,,404369,controller_b
+T2608-0230,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,237804,ap_east
+T2608-0231,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Figment Design Software,425431,saas_renewals
+T2608-0232,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,323101,ap_east
+T2608-0233,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,287746,ap_east
+T2608-0234,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,400696,expenses
+T2608-0235,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,471647,expenses
+T2608-0236,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,340737,ap_west
+T2608-0237,2026-08-04,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,388984,ap_west
+T2608-0238,2026-08-05,,,cloud_hosting,6100-CLOUD-HOSTING,Nimbus Cloud Platform,3157742,procurement
+T2608-0239,2026-08-05,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,1474654,procurement
+T2608-0240,2026-08-05,Verity Consulting,smb,one_time,4200-ONE-SMB,,563609,controller_b
+T2608-0241,2026-08-05,Emberly Print,smb,services,4100-SVC-SMB,,669419,controller_b
+T2608-0242,2026-08-05,Foxglove Garden,smb,services,4100-SVC-SMB,,422277,controller_b
+T2608-0243,2026-08-05,Foxglove Music,smb,services,4100-SVC-SMB,,307337,controller_b
+T2608-0244,2026-08-05,Greymont Kitchen,smb,services,4100-SVC-SMB,,80196,controller_b
+T2608-0245,2026-08-05,Norbeck Music,smb,services,4100-SVC-SMB,,142046,controller_b
+T2608-0246,2026-08-05,Sable Bakery,smb,services,4100-SVC-SMB,,129335,controller_b
+T2608-0247,2026-08-05,Beacon & Sons,smb,subscription,4010-SUB-SMB,,155315,controller_b
+T2608-0248,2026-08-05,Beacon Music,smb,subscription,4010-SUB-SMB,,453502,controller_b
+T2608-0249,2026-08-05,Driftwood Music,smb,subscription,4010-SUB-SMB,,700892,controller_b
+T2608-0250,2026-08-05,Ellery Coffee,smb,subscription,4010-SUB-SMB,,1013154,controller_b
+T2608-0251,2026-08-05,Emberly Yoga,smb,subscription,4010-SUB-SMB,,350504,controller_b
+T2608-0252,2026-08-05,Fairholm Brewing,mid_market,subscription,4010-SUB-MM,,2011061,collections
+T2608-0253,2026-08-05,Foxglove Pets,smb,subscription,4010-SUB-SMB,,378847,controller_b
+T2608-0254,2026-08-05,Granite Bakery,smb,subscription,4010-SUB-SMB,,429206,controller_b
+T2608-0255,2026-08-05,Hartwell Print,smb,subscription,4010-SUB-SMB,,784126,controller_b
+T2608-0256,2026-08-05,Ironside Design,smb,subscription,4010-SUB-SMB,,495990,controller_b
+T2608-0257,2026-08-05,Jasper Industries,enterprise,subscription,4010-SUB-ENT,,16957018,controller_a
+T2608-0258,2026-08-05,Juniper Design,smb,subscription,4010-SUB-SMB,,402253,controller_b
+T2608-0259,2026-08-05,Nettle Yoga,smb,subscription,4010-SUB-SMB,,1103142,controller_b
+T2608-0260,2026-08-05,Norbeck Music,smb,subscription,4010-SUB-SMB,,539439,controller_b
+T2608-0261,2026-08-05,Norbeck Studio,smb,subscription,4010-SUB-SMB,,847126,controller_b
+T2608-0262,2026-08-05,Northgate Financial,enterprise,subscription,4010-SUB-ENT,,55451157,controller_a
+T2608-0263,2026-08-05,Oakridge Kitchen,smb,subscription,4010-SUB-SMB,,517509,controller_b
+T2608-0264,2026-08-05,Orchard Coffee,smb,subscription,4010-SUB-SMB,,1132873,controller_b
+T2608-0265,2026-08-05,Orchard Yoga,smb,subscription,4010-SUB-SMB,,408963,controller_b
+T2608-0266,2026-08-05,Pemberton Foods,mid_market,subscription,4010-SUB-MM,,4782490,collections
+T2608-0267,2026-08-05,Pinecrest Design,smb,subscription,4010-SUB-SMB,,1123473,controller_b
+T2608-0268,2026-08-05,Pinecrest Optics,mid_market,subscription,4010-SUB-MM,,4135393,collections
+T2608-0269,2026-08-05,Redfern Yoga,smb,subscription,4010-SUB-SMB,,361798,controller_b
+T2608-0270,2026-08-05,Ridgeway Music,smb,subscription,4010-SUB-SMB,,321078,controller_b
+T2608-0271,2026-08-05,Sable Freight,mid_market,subscription,4010-SUB-MM,,872358,collections
+T2608-0272,2026-08-05,Underhill Dental,mid_market,subscription,4010-SUB-MM,,1518888,collections
+T2608-0273,2026-08-05,Underhill Dental,mid_market,subscription,4010-SUB-MM,,1869612,collections
+T2608-0274,2026-08-05,Westcott Music,smb,subscription,4010-SUB-SMB,,362677,controller_b
+T2608-0275,2026-08-05,Westcott Studio,smb,subscription,4010-SUB-SMB,,557678,controller_b
+T2608-0276,2026-08-05,Wren Music,smb,subscription,4010-SUB-SMB,,925747,controller_b
+T2608-0277,2026-08-05,Yardley Robotics,mid_market,subscription,4010-SUB-MM,,3003561,collections
+T2608-0278,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Freight,240909,ap_east
+T2608-0279,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Corporate Card Settlement,646988,expenses
+T2608-0280,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,201331,ap_east
+T2608-0281,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,271936,ap_east
+T2608-0282,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,408622,saas_renewals
+T2608-0283,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,236966,ap_east
+T2608-0284,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,595945,ap_west
+T2608-0285,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,410285,saas_renewals
+T2608-0286,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,140500,tax
+T2608-0287,2026-08-05,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,167414,ap_west
+T2608-0288,2026-08-06,,,cloud_hosting,6100-CLOUD-HOSTING,Nimbus Cloud Platform,3280419,procurement
+T2608-0289,2026-08-06,Ellery Bakery,smb,one_time,4200-ONE-SMB,,274748,controller_b
+T2608-0290,2026-08-06,Emberly Print,smb,one_time,4200-ONE-SMB,,331452,controller_b
+T2608-0291,2026-08-06,Greymont Brewing,mid_market,one_time,4200-ONE-MM,,1551662,fx
+T2608-0292,2026-08-06,Granite Bakery,smb,services,4100-SVC-SMB,,103600,controller_b
+T2608-0293,2026-08-06,Westcott Music,smb,services,4100-SVC-SMB,,145588,controller_b
+T2608-0294,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Corporate Card Settlement,755098,expenses
+T2608-0295,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,246767,expenses
+T2608-0296,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,250250,ap_east
+T2608-0297,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,326808,ap_east
+T2608-0298,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,315435,ap_west
+T2608-0299,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,412985,saas_renewals
+T2608-0300,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,411332,ap_east
+T2608-0301,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,193990,tax
+T2608-0302,2026-08-06,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,162314,ap_west
+T2608-0303,2026-08-07,Greymont Realty,mid_market,one_time,4200-ONE-MM,,1189585,fx
+T2608-0304,2026-08-07,Lumen Brewing,mid_market,one_time,4200-ONE-MM,,1539116,fx
+T2608-0305,2026-08-07,Orchard Consulting,smb,one_time,4200-ONE-SMB,,248301,controller_b
+T2608-0306,2026-08-07,Pemberton Labs,mid_market,one_time,4200-ONE-MM,,2961345,fx
+T2608-0307,2026-08-07,Hartwell Yoga,smb,services,4100-SVC-SMB,,668199,controller_b
+T2608-0308,2026-08-07,Jasper Bikes,smb,services,4100-SVC-SMB,,152840,controller_b
+T2608-0309,2026-08-07,Northgate Financial,enterprise,services,4100-SVC-ENT,,9011869,controller_a
+T2608-0310,2026-08-07,Sable Bakery,smb,services,4100-SVC-SMB,,143958,controller_b
+T2608-0311,2026-08-07,Yardley Bakery,smb,services,4100-SVC-SMB,,167039,controller_b
+T2608-0312,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,736198,ap_east
+T2608-0313,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,377087,saas_renewals
+T2608-0314,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,169358,ap_east
+T2608-0315,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,432971,ap_east
+T2608-0316,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,646470,saas_renewals
+T2608-0317,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Summit Travel Agency,451454,expenses
+T2608-0318,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,285234,ap_west
+T2608-0319,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,357892,ap_west
+T2608-0320,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,163035,ap_west
+T2608-0321,2026-08-07,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,373769,ap_west
+T2608-0322,2026-08-08,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,1451160,procurement
+T2608-0323,2026-08-08,,,cloud_hosting,6100-CLOUD-HOSTING,Nimbus Cloud Platform,5178277,procurement
+T2608-0324,2026-08-08,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,634245,procurement
+T2608-0325,2026-08-08,Hartwell Analytics,mid_market,one_time,4200-ONE-MM,,1125913,fx
+T2608-0326,2026-08-08,Jasper Consulting,smb,one_time,4200-ONE-SMB,,561847,controller_b
+T2608-0327,2026-08-08,Norbeck Financial,enterprise,one_time,4200-ONE-ENT,,18820865,controller_a
+T2608-0328,2026-08-08,Foxglove Books,smb,services,4100-SVC-SMB,,189550,controller_b
+T2608-0329,2026-08-08,Granite & Sons,smb,services,4100-SVC-SMB,,296908,controller_b
+T2608-0330,2026-08-08,Oakridge Media,mid_market,services,4100-SVC-MM,,4134979,treasury
+T2608-0331,2026-08-08,Orchard Yoga,smb,services,4100-SVC-SMB,,155686,controller_b
+T2608-0332,2026-08-08,Summit Labs,mid_market,services,4100-SVC-MM,,1135881,treasury
+T2608-0333,2026-08-08,Tidewater Analytics,mid_market,services,4100-SVC-MM,,1472233,treasury
+T2608-0334,2026-08-08,Tidewater Bakery,smb,services,4100-SVC-SMB,,238081,controller_b
+T2608-0335,2026-08-08,Westcott Pets,smb,services,4100-SVC-SMB,,70603,controller_b
+T2608-0336,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,117095,ap_east
+T2608-0337,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,229347,ap_east
+T2608-0338,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,138231,ap_east
+T2608-0339,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,364465,ap_east
+T2608-0340,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,524179,ap_west
+T2608-0341,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,516439,ap_west
+T2608-0342,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,430179,saas_renewals
+T2608-0343,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Summit Travel Agency,457306,expenses
+T2608-0344,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Summit Travel Agency,693143,expenses
+T2608-0345,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,280454,expenses
+T2608-0346,2026-08-08,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,183738,ap_west
+T2608-0347,2026-08-09,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,471637,procurement
+T2608-0348,2026-08-09,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,842123,procurement
+T2608-0349,2026-08-09,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1481039,procurement
+T2608-0350,2026-08-09,Dunmore Retail Group,enterprise,services,4100-SVC-ENT,,10940338,controller_a
+T2608-0351,2026-08-09,Norbeck Yoga,smb,services,4100-SVC-SMB,,70666,controller_b
+T2608-0352,2026-08-09,Thornbury Yoga,smb,services,4100-SVC-SMB,,270686,controller_b
+T2608-0353,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,219189,ap_east
+T2608-0354,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Corporate Card Settlement,479830,expenses
+T2608-0355,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,265509,ap_east
+T2608-0356,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,199175,ap_east
+T2608-0357,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,527234,saas_renewals
+T2608-0358,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,463305,ap_east
+T2608-0359,2026-08-09,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,234838,ap_west
+T2608-0360,2026-08-10,,,cloud_hosting,6100-CLOUD-HOSTING,Helix Managed Kubernetes,1100751,procurement
+T2608-0361,2026-08-10,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1859948,procurement
+T2608-0362,2026-08-10,Thornbury Yoga,smb,one_time,4200-ONE-SMB,,361648,controller_b
+T2608-0363,2026-08-10,Fairholm Pets,smb,services,4100-SVC-SMB,,523464,controller_b
+T2608-0364,2026-08-10,Hartwell Brewing,mid_market,services,4100-SVC-MM,,2368723,treasury
+T2608-0365,2026-08-10,Ironside Design,smb,services,4100-SVC-SMB,,324484,controller_b
+T2608-0366,2026-08-10,Pinecrest Design,smb,services,4100-SVC-SMB,,115431,controller_b
+T2608-0367,2026-08-10,Sable Design,smb,services,4100-SVC-SMB,,276833,controller_b
+T2608-0368,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,194670,ap_east
+T2608-0369,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,375731,ap_east
+T2608-0370,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,156900,ap_east
+T2608-0371,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Figment Design Software,498141,saas_renewals
+T2608-0372,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,253918,expenses
+T2608-0373,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,277784,ap_east
+T2608-0374,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,406429,ap_east
+T2608-0375,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,386259,ap_west
+T2608-0376,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,498836,ap_east
+T2608-0377,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,332442,saas_renewals
+T2608-0378,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,180496,ap_west
+T2608-0379,2026-08-10,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,204151,ap_west
+T2608-0380,2026-08-11,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,862968,procurement
+T2608-0381,2026-08-11,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,820520,procurement
+T2608-0382,2026-08-11,Foxglove Books,smb,services,4100-SVC-SMB,,103421,controller_b
+T2608-0383,2026-08-11,Kingsley Kitchen,smb,services,4100-SVC-SMB,,524046,controller_b
+T2608-0384,2026-08-11,Meridian Health Systems,enterprise,services,4100-SVC-ENT,,2875812,controller_a
+T2608-0385,2026-08-11,Orchard Yoga,smb,services,4100-SVC-SMB,,125833,controller_b
+T2608-0386,2026-08-11,Pemberton Pets,smb,services,4100-SVC-SMB,,245397,controller_b
+T2608-0387,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Freight,313094,ap_east
+T2608-0388,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,124111,saas_renewals
+T2608-0389,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,300725,tax
+T2608-0390,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,393700,ap_east
+T2608-0391,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,199043,ap_east
+T2608-0392,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,254278,expenses
+T2608-0393,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,456469,ap_west
+T2608-0394,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,578272,ap_east
+T2608-0395,2026-08-11,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,218249,ap_west
+T2608-0396,2026-08-12,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,1242072,procurement
+T2608-0397,2026-08-12,,,cloud_hosting,6100-CLOUD-HOSTING,Nimbus Cloud Platform,2802905,procurement
+T2608-0398,2026-08-12,Jasper Industries,enterprise,one_time,4200-ONE-ENT,,11978558,controller_a
+T2608-0399,2026-08-12,Fairholm Books,smb,services,4100-SVC-SMB,,221547,controller_b
+T2608-0400,2026-08-12,Lumen Media,mid_market,services,4100-SVC-MM,,3750176,treasury
+T2608-0401,2026-08-12,Oakridge Yoga,smb,services,4100-SVC-SMB,,176510,controller_b
+T2608-0402,2026-08-12,Orchard Yoga,smb,services,4100-SVC-SMB,,152286,controller_b
+T2608-0403,2026-08-12,Tidewater Fitness,smb,services,4100-SVC-SMB,,485073,controller_b
+T2608-0404,2026-08-12,Westcott Music,smb,services,4100-SVC-SMB,,149172,controller_b
+T2608-0405,2026-08-12,Westcott Music,smb,services,4100-SVC-SMB,,253023,controller_b
+T2608-0406,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,152060,ap_east
+T2608-0407,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,274697,ap_east
+T2608-0408,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,341952,ap_east
+T2608-0409,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,438713,saas_renewals
+T2608-0410,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,592089,saas_renewals
+T2608-0411,2026-08-12,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,306997,ap_east
+T2608-0412,2026-08-13,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1467386,procurement
+T2608-0413,2026-08-13,Kestrel Kitchen,smb,services,4100-SVC-SMB,,178594,controller_b
+T2608-0414,2026-08-13,Kingsley Fitness,smb,services,4100-SVC-SMB,,419900,controller_b
+T2608-0415,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,264097,ap_east
+T2608-0416,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,188401,ap_east
+T2608-0417,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,200927,ap_east
+T2608-0418,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Ledgerline Accounting Software,791237,saas_renewals
+T2608-0419,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,346156,ap_east
+T2608-0420,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,339024,ap_west
+T2608-0421,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,372409,ap_west
+T2608-0422,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,277736,ap_east
+T2608-0423,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,356434,ap_east
+T2608-0424,2026-08-13,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,212985,ap_east
+T2608-0425,2026-08-14,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,2209024,procurement
+T2608-0426,2026-08-14,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,2284354,procurement
+T2608-0427,2026-08-14,Ellery Coffee,smb,services,4100-SVC-SMB,,138226,controller_b
+T2608-0428,2026-08-14,Tidewater Analytics,mid_market,services,4100-SVC-MM,,1392712,treasury
+T2608-0429,2026-08-14,Yardley Bakery,smb,services,4100-SVC-SMB,,177121,controller_b
+T2608-0430,2026-08-14,Yardley Robotics,mid_market,services,4100-SVC-MM,,2139455,treasury
+T2608-0431,2026-08-14,,,vendor_spend,6200-VENDOR-SPEND,Franchise Tax Board,268225,tax
+T2608-0432,2026-08-14,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,230091,ap_east
+T2608-0433,2026-08-14,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,151521,ap_east
+T2608-0434,2026-08-15,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,813274,procurement
+T2608-0435,2026-08-15,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1675114,procurement
+T2608-0436,2026-08-15,Hartwell Brewing,mid_market,one_time,4200-ONE-MM,,2858596,fx
+T2608-0437,2026-08-15,Juniper Studio,smb,one_time,4200-ONE-SMB,,357861,controller_b
+T2608-0438,2026-08-15,Kestrel Tutoring,smb,one_time,4200-ONE-SMB,,216824,controller_b
+T2608-0439,2026-08-15,Ridgeway Consulting,smb,one_time,4200-ONE-SMB,,535104,controller_b
+T2608-0440,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Engineering,15708043,payroll
+T2608-0441,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Finance,9994658,payroll
+T2608-0442,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Marketing,15313925,payroll
+T2608-0443,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Operations,14810828,payroll
+T2608-0444,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · People,10773311,payroll
+T2608-0445,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Product,18368279,payroll
+T2608-0446,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Sales,17673878,payroll
+T2608-0447,2026-08-15,,,payroll,6000-PAYROLL,ADP Payroll Services · Support,5287078,payroll
+T2608-0448,2026-08-15,Brightwater Fitness,smb,services,4100-SVC-SMB,,549513,controller_b
+T2608-0449,2026-08-15,Granite & Sons,smb,services,4100-SVC-SMB,,158332,controller_b
+T2608-0450,2026-08-15,Greymont Kitchen,smb,services,4100-SVC-SMB,,154433,controller_b
+T2608-0451,2026-08-15,Hartwell Brewing,mid_market,services,4100-SVC-MM,,1107702,treasury
+T2608-0452,2026-08-15,Jasper Bikes,smb,services,4100-SVC-SMB,,332749,controller_b
+T2608-0453,2026-08-15,Lumen Brewing,mid_market,services,4100-SVC-MM,,1118656,treasury
+T2608-0454,2026-08-15,Norbeck Music,smb,services,4100-SVC-SMB,,172569,controller_b
+T2608-0455,2026-08-15,Pinecrest Design,smb,services,4100-SVC-SMB,,94259,controller_b
+T2608-0456,2026-08-15,Ridgeway Music,smb,services,4100-SVC-SMB,,91616,controller_b
+T2608-0457,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,351331,ap_east
+T2608-0458,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,369641,ap_east
+T2608-0459,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,478438,ap_east
+T2608-0460,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,156139,expenses
+T2608-0461,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Ledgerline Accounting Software,646970,saas_renewals
+T2608-0462,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,390170,ap_east
+T2608-0463,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,471714,ap_west
+T2608-0464,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,584473,ap_east
+T2608-0465,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,388682,ap_west
+T2608-0466,2026-08-15,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,149715,ap_west
+T2608-0467,2026-08-16,Alder Consulting,smb,one_time,4200-ONE-SMB,,556898,controller_b
+T2608-0468,2026-08-16,Nettle Studio,smb,one_time,4200-ONE-SMB,,607983,controller_b
+T2608-0469,2026-08-16,Norbeck Yoga,smb,one_time,4200-ONE-SMB,,494768,controller_b
+T2608-0470,2026-08-16,Alder Aerospace,enterprise,services,4100-SVC-ENT,,10008650,controller_a
+T2608-0471,2026-08-16,Jasper Bikes,smb,services,4100-SVC-SMB,,162457,controller_b
+T2608-0472,2026-08-16,Lumen Optics,mid_market,services,4100-SVC-MM,,416733,treasury
+T2608-0473,2026-08-16,Yardley Bakery,smb,services,4100-SVC-SMB,,115793,controller_b
+T2608-0474,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,380966,tax
+T2608-0475,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,573618,tax
+T2608-0476,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,706060,ap_east
+T2608-0477,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,417732,saas_renewals
+T2608-0478,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,266778,ap_east
+T2608-0479,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,201111,ap_east
+T2608-0480,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,241875,ap_east
+T2608-0481,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,371539,ap_east
+T2608-0482,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,285163,ap_west
+T2608-0483,2026-08-16,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,166341,ap_west
+T2608-0484,2026-08-17,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,740849,procurement
+T2608-0485,2026-08-17,Foxglove Books,smb,one_time,4200-ONE-SMB,,376543,controller_b
+T2608-0486,2026-08-17,Kestrel Bikes,smb,one_time,4200-ONE-SMB,,574943,controller_b
+T2608-0487,2026-08-17,Dunmore Retail Group,enterprise,services,4100-SVC-ENT,,13988920,controller_a
+T2608-0488,2026-08-17,Greymont Studio,smb,services,4100-SVC-SMB,,71663,controller_b
+T2608-0489,2026-08-17,Juniper Books,smb,services,4100-SVC-SMB,,74629,controller_b
+T2608-0490,2026-08-17,Nettle Yoga,smb,services,4100-SVC-SMB,,57045,controller_b
+T2608-0491,2026-08-17,Sable Bakery,smb,services,4100-SVC-SMB,,194980,controller_b
+T2608-0492,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,173973,ap_east
+T2608-0493,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,582630,tax
+T2608-0494,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,231333,ap_east
+T2608-0495,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,362815,ap_east
+T2608-0496,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,416737,saas_renewals
+T2608-0497,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,283382,tax
+T2608-0498,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,423309,ap_west
+T2608-0499,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,241713,ap_west
+T2608-0500,2026-08-17,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,280336,ap_west
+T2608-0501,2026-08-18,Ironside Design,smb,one_time,4200-ONE-SMB,,417518,controller_b
+T2608-0502,2026-08-18,Brightwater Studio,smb,services,4100-SVC-SMB,,407327,controller_b
+T2608-0503,2026-08-18,Marlowe Yoga,smb,services,4100-SVC-SMB,,167655,controller_b
+T2608-0504,2026-08-18,Meridian Health Systems,enterprise,services,4100-SVC-ENT,,5965644,controller_a
+T2608-0505,2026-08-18,Orchard Pets,smb,services,4100-SVC-SMB,,274897,controller_b
+T2608-0506,2026-08-18,Underhill Dental,mid_market,services,4100-SVC-MM,,938708,treasury
+T2608-0507,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,268022,ap_east
+T2608-0508,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,147245,ap_east
+T2608-0509,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,159494,ap_east
+T2608-0510,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,607562,saas_renewals
+T2608-0511,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,319751,ap_east
+T2608-0512,2026-08-18,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,403771,saas_renewals
+T2608-0513,2026-08-19,Fairholm Bikes,smb,one_time,4200-ONE-SMB,,153772,controller_b
+T2608-0514,2026-08-19,Fairholm Pets,smb,one_time,4200-ONE-SMB,,206920,controller_b
+T2608-0515,2026-08-19,Hartwell Yoga,smb,one_time,4200-ONE-SMB,,163467,controller_b
+T2608-0516,2026-08-19,Orchard Kitchen,smb,one_time,4200-ONE-SMB,,384324,controller_b
+T2608-0517,2026-08-19,Fairholm Books,smb,services,4100-SVC-SMB,,168013,controller_b
+T2608-0518,2026-08-19,Foxglove Books,smb,services,4100-SVC-SMB,,121680,controller_b
+T2608-0519,2026-08-19,Isla Bikes,smb,services,4100-SVC-SMB,,226800,controller_b
+T2608-0520,2026-08-19,Westcott Pets,smb,services,4100-SVC-SMB,,47281,controller_b
+T2608-0521,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,327221,ap_east
+T2608-0522,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,436343,ap_east
+T2608-0523,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,246432,expenses
+T2608-0524,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,304591,saas_renewals
+T2608-0525,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,254721,ap_east
+T2608-0526,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,318754,ap_east
+T2608-0527,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,286164,ap_west
+T2608-0528,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Quill Docs Software,349790,saas_renewals
+T2608-0529,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Summit Travel Agency,721729,expenses
+T2608-0530,2026-08-19,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,187628,ap_west
+T2608-0531,2026-08-20,,,cloud_hosting,6100-CLOUD-HOSTING,Helix Managed Kubernetes,1152540,procurement
+T2608-0532,2026-08-20,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,906082,procurement
+T2608-0533,2026-08-20,Foxglove Pets,smb,services,4100-SVC-SMB,,147424,controller_b
+T2608-0534,2026-08-20,Granite Bakery,smb,services,4100-SVC-SMB,,191691,controller_b
+T2608-0535,2026-08-20,Norbeck Music,smb,services,4100-SVC-SMB,,204516,controller_b
+T2608-0536,2026-08-20,Sable Design,smb,services,4100-SVC-SMB,,349473,controller_b
+T2608-0537,2026-08-20,Thornbury Yoga,smb,services,4100-SVC-SMB,,321354,controller_b
+T2608-0538,2026-08-20,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,336942,ap_east
+T2608-0539,2026-08-20,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,166454,ap_west
+T2608-0540,2026-08-21,Orchard Analytics,mid_market,one_time,4200-ONE-MM,,1941796,fx
+T2608-0541,2026-08-21,Alder Aerospace,enterprise,services,4100-SVC-ENT,,9371251,controller_a
+T2608-0542,2026-08-21,Dunmore Brewing,mid_market,services,4100-SVC-MM,,1493877,treasury
+T2608-0543,2026-08-21,Fairholm Manufacturing,enterprise,services,4100-SVC-ENT,,30253317,controller_a
+T2608-0544,2026-08-21,Jasper Industries,enterprise,services,4100-SVC-ENT,,9112087,controller_a
+T2608-0545,2026-08-21,Norbeck Yoga,smb,services,4100-SVC-SMB,,76746,controller_b
+T2608-0546,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Freight,431261,ap_east
+T2608-0547,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,157371,saas_renewals
+T2608-0548,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Franchise Tax Board,266052,tax
+T2608-0549,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,302105,ap_east
+T2608-0550,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,127276,ap_east
+T2608-0551,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,219767,ap_east
+T2608-0552,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,259774,ap_east
+T2608-0553,2026-08-21,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,245390,ap_west
+T2608-0554,2026-08-22,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,1357031,procurement
+T2608-0555,2026-08-22,,,cloud_hosting,6100-CLOUD-HOSTING,Nimbus Cloud Platform,3827546,procurement
+T2608-0556,2026-08-22,Oakridge Consulting,smb,one_time,4200-ONE-SMB,,152928,controller_b
+T2608-0557,2026-08-22,Orchard Yoga,smb,one_time,4200-ONE-SMB,,477557,controller_b
+T2608-0558,2026-08-22,Quarry Garden,smb,one_time,4200-ONE-SMB,,526481,controller_b
+T2608-0559,2026-08-22,Ridgeway Music,smb,one_time,4200-ONE-SMB,,583699,controller_b
+T2608-0560,2026-08-22,Vantage Music,smb,one_time,4200-ONE-SMB,,357263,controller_b
+T2608-0561,2026-08-22,Ashford Bikes,smb,services,4100-SVC-SMB,,443333,controller_b
+T2608-0562,2026-08-22,Northgate Financial,enterprise,services,4100-SVC-ENT,,7462732,controller_a
+T2608-0563,2026-08-22,Summit Labs,mid_market,services,4100-SVC-MM,,1200218,treasury
+T2608-0564,2026-08-22,Westcott Books,smb,services,4100-SVC-SMB,,326169,controller_b
+T2608-0565,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,195524,ap_east
+T2608-0566,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,141568,saas_renewals
+T2608-0567,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,388481,ap_east
+T2608-0568,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,150399,ap_east
+T2608-0569,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,227248,ap_east
+T2608-0570,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,319182,ap_east
+T2608-0571,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Pacific Signage,512076,ap_west
+T2608-0572,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,344641,ap_east
+T2608-0573,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,519805,saas_renewals
+T2608-0574,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,194806,tax
+T2608-0575,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Summit Travel Agency,616567,expenses
+T2608-0576,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,249840,ap_east
+T2608-0577,2026-08-22,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,269435,ap_west
+T2608-0578,2026-08-23,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,1529408,procurement
+T2608-0579,2026-08-23,,,cloud_hosting,6100-CLOUD-HOSTING,Vaultspace Storage,1385283,procurement
+T2608-0580,2026-08-23,Beacon & Sons,smb,services,4100-SVC-SMB,,126851,controller_b
+T2608-0581,2026-08-23,Beacon & Sons,smb,services,4100-SVC-SMB,,243455,controller_b
+T2608-0582,2026-08-23,Greymont Kitchen,smb,services,4100-SVC-SMB,,130791,controller_b
+T2608-0583,2026-08-23,Jasper Consulting,smb,services,4100-SVC-SMB,,355700,controller_b
+T2608-0584,2026-08-23,Lumen Optics,mid_market,services,4100-SVC-MM,,382201,treasury
+T2608-0585,2026-08-23,Meridian Health Systems,enterprise,services,4100-SVC-ENT,,5517629,controller_a
+T2608-0586,2026-08-23,Norbeck Yoga,smb,services,4100-SVC-SMB,,53697,controller_b
+T2608-0587,2026-08-23,Pemberton Foods,mid_market,services,4100-SVC-MM,,3325825,treasury
+T2608-0588,2026-08-23,Quarry Print,smb,services,4100-SVC-SMB,,271850,controller_b
+T2608-0589,2026-08-23,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,400020,ap_east
+T2608-0590,2026-08-23,,,vendor_spend,6200-VENDOR-SPEND,Franchise Tax Board,308727,tax
+T2608-0591,2026-08-23,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,471115,ap_east
+T2608-0592,2026-08-23,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,300635,ap_east
+T2608-0593,2026-08-24,Pemberton Pets,smb,one_time,4200-ONE-SMB,,309116,controller_b
+T2608-0594,2026-08-24,Ridgeway Design,smb,one_time,4200-ONE-SMB,,212654,controller_b
+T2608-0595,2026-08-24,Alder Aerospace,enterprise,services,4100-SVC-ENT,,8508644,controller_a
+T2608-0596,2026-08-24,Foxglove Pets,smb,services,4100-SVC-SMB,,210121,controller_b
+T2608-0597,2026-08-24,Marlowe Music,smb,services,4100-SVC-SMB,,325532,controller_b
+T2608-0598,2026-08-24,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,429097,ap_east
+T2608-0599,2026-08-24,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,127543,tax
+T2608-0600,2026-08-25,Northgate Financial,enterprise,one_time,4200-ONE-ENT,,8406354,controller_a
+T2608-0601,2026-08-25,Alder Fitness,smb,services,4100-SVC-SMB,,517584,controller_b
+T2608-0602,2026-08-25,Emberly Pets,smb,services,4100-SVC-SMB,,203860,controller_b
+T2608-0603,2026-08-25,Kestrel Kitchen,smb,services,4100-SVC-SMB,,221056,controller_b
+T2608-0604,2026-08-25,Kestrel Kitchen,smb,services,4100-SVC-SMB,,226231,controller_b
+T2608-0605,2026-08-25,Nettle Yoga,smb,services,4100-SVC-SMB,,116022,controller_b
+T2608-0606,2026-08-25,Ridgeway Music,smb,services,4100-SVC-SMB,,132083,controller_b
+T2608-0607,2026-08-25,Zephyr Coffee,smb,services,4100-SVC-SMB,,513161,controller_b
+T2608-0608,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,141856,ap_east
+T2608-0609,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Corporate Card Settlement,606804,expenses
+T2608-0610,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,326302,tax
+T2608-0611,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,179540,ap_east
+T2608-0612,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,325179,ap_east
+T2608-0613,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,227557,ap_east
+T2608-0614,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,137235,expenses
+T2608-0615,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Lumen Analytics Software,650382,saas_renewals
+T2608-0616,2026-08-25,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,380483,ap_west
+T2608-0617,2026-08-26,,,cloud_hosting,6100-CLOUD-HOSTING,Helix Managed Kubernetes,1631625,procurement
+T2608-0618,2026-08-26,,,cloud_hosting,6100-CLOUD-HOSTING,Lattice Edge CDN,1214082,procurement
+T2608-0619,2026-08-26,Brightwater Bikes,smb,services,4100-SVC-SMB,,318610,controller_b
+T2608-0620,2026-08-26,Isla Bikes,smb,services,4100-SVC-SMB,,181383,controller_b
+T2608-0621,2026-08-26,Jasper Industries,enterprise,services,4100-SVC-ENT,,7943097,controller_a
+T2608-0622,2026-08-26,Juniper Books,smb,services,4100-SVC-SMB,,42889,controller_b
+T2608-0623,2026-08-26,Nettle Yoga,smb,services,4100-SVC-SMB,,114450,controller_b
+T2608-0624,2026-08-26,Orchard Kitchen,smb,services,4100-SVC-SMB,,506677,controller_b
+T2608-0625,2026-08-26,Westcott Books,smb,services,4100-SVC-SMB,,270612,controller_b
+T2608-0626,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,407000,ap_east
+T2608-0627,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,160295,ap_east
+T2608-0628,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,207506,ap_east
+T2608-0629,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,213016,ap_east
+T2608-0630,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,410141,ap_east
+T2608-0631,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Figment Design Software,507681,saas_renewals
+T2608-0632,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Figment Design Software,514061,saas_renewals
+T2608-0633,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Franchise Tax Board,290488,tax
+T2608-0634,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,175945,expenses
+T2608-0635,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,344240,ap_east
+T2608-0636,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,280574,ap_east
+T2608-0637,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Registrar Filing Fee,347180,ap_east
+T2608-0638,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,State Revenue Dept,166788,tax
+T2608-0639,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,225956,ap_east
+T2608-0640,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,262340,ap_west
+T2608-0641,2026-08-26,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,112702,ap_west
+T2608-0642,2026-08-27,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,663690,procurement
+T2608-0643,2026-08-27,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,2334988,procurement
+T2608-0644,2026-08-27,Kingsley Labs,mid_market,one_time,4200-ONE-MM,,958376,fx
+T2608-0645,2026-08-27,Mosaic Kitchen,smb,one_time,4200-ONE-SMB,,322015,controller_b
+T2608-0646,2026-08-27,Foxglove Pets,smb,services,4100-SVC-SMB,,188687,controller_b
+T2608-0647,2026-08-27,Hartwell Kitchen,smb,services,4100-SVC-SMB,,102405,controller_b
+T2608-0648,2026-08-27,Hartwell Kitchen,smb,services,4100-SVC-SMB,,105743,controller_b
+T2608-0649,2026-08-27,Jasper Consulting,smb,services,4100-SVC-SMB,,186727,controller_b
+T2608-0650,2026-08-27,Jasper Industries,enterprise,services,4100-SVC-ENT,,7679228,controller_a
+T2608-0651,2026-08-27,Juniper Books,smb,services,4100-SVC-SMB,,61562,controller_b
+T2608-0652,2026-08-27,Quill Tutoring,smb,services,4100-SVC-SMB,,354265,controller_b
+T2608-0653,2026-08-27,Ridgeway Design,smb,services,4100-SVC-SMB,,552090,controller_b
+T2608-0654,2026-08-27,Westcott Pets,smb,services,4100-SVC-SMB,,53953,controller_b
+T2608-0655,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,284539,ap_east
+T2608-0656,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,87996,saas_renewals
+T2608-0657,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,118163,saas_renewals
+T2608-0658,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,231376,ap_east
+T2608-0659,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Corporate Card Settlement,705075,expenses
+T2608-0660,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,455912,ap_east
+T2608-0661,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Figment Design Software,568041,saas_renewals
+T2608-0662,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Harbor Card Services,204369,expenses
+T2608-0663,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,178394,ap_east
+T2608-0664,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,512967,ap_west
+T2608-0665,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Westbay Janitorial,156954,ap_west
+T2608-0666,2026-08-27,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,257886,ap_west
+T2608-0667,2026-08-28,,,cloud_hosting,6100-CLOUD-HOSTING,Stratus Compute,1276216,procurement
+T2608-0668,2026-08-28,Ellery Coffee,smb,one_time,4200-ONE-SMB,,473136,controller_b
+T2608-0669,2026-08-28,Westcott Studio,smb,one_time,4200-ONE-SMB,,296391,controller_b
+T2608-0670,2026-08-28,Greymont Studio,smb,services,4100-SVC-SMB,,129040,controller_b
+T2608-0671,2026-08-28,Underhill Dental,mid_market,services,4100-SVC-MM,,619029,treasury
+T2608-0672,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Freight,405366,ap_east
+T2608-0673,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,360215,ap_east
+T2608-0674,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,158076,saas_renewals
+T2608-0675,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,173324,ap_east
+T2608-0676,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,East Harbor Print,617344,ap_east
+T2608-0677,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,344936,ap_east
+T2608-0678,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Pacific Pallet Co,542216,ap_west
+T2608-0679,2026-08-28,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,300700,ap_west
+T2608-0680,2026-08-29,Nettle & Sons,smb,one_time,4200-ONE-SMB,,257737,controller_b
+T2608-0681,2026-08-29,Lumen Optics,mid_market,services,4100-SVC-MM,,577775,treasury
+T2608-0682,2026-08-29,Mosaic Books,smb,services,4100-SVC-SMB,,426882,controller_b
+T2608-0683,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Atlantic Office Supply,235760,ap_east
+T2608-0684,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Audit Partners LLP,437912,ap_east
+T2608-0685,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,County Tax Collector,607228,tax
+T2608-0686,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,218320,ap_east
+T2608-0687,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,163131,ap_east
+T2608-0688,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,211568,ap_east
+T2608-0689,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,381109,ap_east
+T2608-0690,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Redfern Legal,680621,ap_east
+T2608-0691,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,354213,expenses
+T2608-0692,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,310349,ap_east
+T2608-0693,2026-08-29,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,237454,ap_west
+T2608-0694,2026-08-30,,,cloud_hosting,6100-CLOUD-HOSTING,Orbital Object Store,629973,procurement
+T2608-0695,2026-08-30,Kingsley Fitness,smb,one_time,4200-ONE-SMB,,391317,controller_b
+T2608-0696,2026-08-30,Underhill Health Systems,enterprise,one_time,4200-ONE-ENT,,12794223,controller_a
+T2608-0697,2026-08-30,Fairholm Books,smb,services,4100-SVC-SMB,,187761,controller_b
+T2608-0698,2026-08-30,Greymont Studio,smb,services,4100-SVC-SMB,,104994,controller_b
+T2608-0699,2026-08-30,Sable Freight,mid_market,services,4100-SVC-MM,,1382197,treasury
+T2608-0700,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Eastern Logistics,207345,ap_east
+T2608-0701,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Eastfield Packaging,361176,ap_east
+T2608-0702,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Granite Utilities,215397,ap_east
+T2608-0703,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,163120,ap_east
+T2608-0704,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Mosaic Catering,226904,ap_east
+T2608-0705,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Northeast Courier,358858,ap_east
+T2608-0706,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Verity Background Checks,298915,ap_east
+T2608-0707,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,363581,ap_west
+T2608-0708,2026-08-30,,,vendor_spend,6200-VENDOR-SPEND,Westline Courier,152604,ap_west
+T2608-0709,2026-08-31,,,cloud_hosting,6100-CLOUD-HOSTING,Helix Managed Kubernetes,1673335,procurement
+T2608-0710,2026-08-31,Norbeck Studio,smb,one_time,4200-ONE-SMB,,284413,controller_b
+T2608-0711,2026-08-31,Oakridge Bikes,smb,one_time,4200-ONE-SMB,,586964,controller_b
+T2608-0712,2026-08-31,Oakridge Kitchen,smb,one_time,4200-ONE-SMB,,216351,controller_b
+T2608-0713,2026-08-31,Underhill Dental,mid_market,one_time,4200-ONE-MM,,3198896,fx
+T2608-0714,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Engineering,14109011,payroll
+T2608-0715,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Finance,17742214,payroll
+T2608-0716,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Marketing,14275720,payroll
+T2608-0717,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Operations,8577816,payroll
+T2608-0718,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · People,17772419,payroll
+T2608-0719,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Product,19661732,payroll
+T2608-0720,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Sales,8850252,payroll
+T2608-0721,2026-08-31,,,payroll,6000-PAYROLL,ADP Payroll Services · Support,6940836,payroll
+T2608-0722,2026-08-31,Ellery Coffee,smb,services,4100-SVC-SMB,,160649,controller_b
+T2608-0723,2026-08-31,Norbeck Studio,smb,services,4100-SVC-SMB,,230634,controller_b
+T2608-0724,2026-08-31,Verity Books,smb,services,4100-SVC-SMB,,515053,controller_b
+T2608-0725,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Beacon Analytics,123864,saas_renewals
+T2608-0726,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Bond Insurance Premium,181264,ap_east
+T2608-0727,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Kestrel Recruiting,246416,ap_east
+T2608-0728,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Notary Services Inc,261772,ap_east
+T2608-0729,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Oakridge Facilities,340807,ap_east
+T2608-0730,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Relay CRM,519288,saas_renewals
+T2608-0731,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Tidewater Waste Services,162702,ap_east
+T2608-0732,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Travel Desk Remit,348654,expenses
+T2608-0733,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,West Ridge Fleet Fuel,244528,ap_west
+T2608-0734,2026-08-31,,,vendor_spend,6200-VENDOR-SPEND,Westgate Security,232648,ap_west

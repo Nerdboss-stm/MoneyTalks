@@ -1,0 +1,17 @@
+period,account,category,segment,owner_agent,txn_count,amount_cents
+2026-07,4010-SUB-ENT,subscription,enterprise,controller_a,15,290000000
+2026-07,4010-SUB-MM,subscription,mid_market,collections,38,120000000
+2026-07,4010-SUB-SMB,subscription,smb,controller_b,150,90000000
+2026-07,4100-SVC-ENT,services,enterprise,controller_a,14,105000000
+2026-07,4100-SVC-MM,services,mid_market,treasury,23,45000000
+2026-07,4100-SVC-SMB,services,smb,controller_b,128,25000000
+2026-07,4200-ONE-ENT,one_time,enterprise,controller_a,4,40000000
+2026-07,4200-ONE-MM,one_time,mid_market,fx,10,20000000
+2026-07,4200-ONE-SMB,one_time,smb,controller_b,40,15000000
+2026-07,6000-PAYROLL,payroll,,payroll,16,215000000
+2026-07,6100-CLOUD-HOSTING,cloud_hosting,,procurement,32,42000000
+2026-07,6200-VENDOR-SPEND,vendor_spend,,ap_east,134,40089728
+2026-07,6200-VENDOR-SPEND,vendor_spend,,ap_west,41,16845749
+2026-07,6200-VENDOR-SPEND,vendor_spend,,expenses,23,9991238
+2026-07,6200-VENDOR-SPEND,vendor_spend,,saas_renewals,43,17013629
+2026-07,6200-VENDOR-SPEND,vendor_spend,,tax,23,6059656
