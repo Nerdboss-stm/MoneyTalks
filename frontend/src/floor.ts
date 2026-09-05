@@ -360,34 +360,41 @@ export class Floor {
       const a = this.bearing(p.lane);
       const c = Math.cos(a);
       const s = Math.sin(a);
-      const right = c >= -0.01;
+      let right = c >= -0.01;
       // collision: a later tag overlapping an earlier one moves 12px outward (up to three times); if the spoke is
-      // too flat for outward motion to clear it, the tag steps 12px perpendicular to the spoke instead
+      // too flat for outward motion to clear it, the tag steps 12px perpendicular to the spoke instead; as a last
+      // resort it flips to the other side of its point
       let push = 0;
       let dy = 0;
       if (p.place !== "done") {
         const w = sp.tagW;
-        for (const [pp, dd] of Floor.CANDIDATES) {
-          const rr = sp.r + pp;
-          const x = cx + c * rr;
-          const y = cy + s * rr + dd;
-          const x0 = right ? x + RADIAL.tagGap : x - RADIAL.tagGap - w;
-          const x1 = x0 + w;
-          const y0 = y - 6;
-          const y1 = y + 6;
-          let hit = false;
-          for (let k = 0; k < boxes.length; k++) {
-            const b = boxes[k];
-            if (y0 < b[3] && y1 > b[1] && x0 < b[2] && x1 > b[0]) {
-              hit = true;
+        let placed = false;
+        for (const side of [right, !right]) {
+          for (const [pp, dd] of Floor.CANDIDATES) {
+            const rr = sp.r + pp;
+            const x = cx + c * rr;
+            const y = cy + s * rr + dd;
+            const x0 = side ? x + RADIAL.tagGap : x - RADIAL.tagGap - w;
+            const x1 = x0 + w;
+            const y0 = y - 6;
+            const y1 = y + 6;
+            let hit = false;
+            for (let k = 0; k < boxes.length; k++) {
+              const b = boxes[k];
+              if (y0 < b[3] && y1 > b[1] && x0 < b[2] && x1 > b[0]) {
+                hit = true;
+                break;
+              }
+            }
+            if (!hit) {
+              push = pp;
+              dy = dd;
+              right = side;
+              placed = true;
               break;
             }
           }
-          if (!hit) {
-            push = pp;
-            dy = dd;
-            break;
-          }
+          if (placed) break;
         }
       }
       sp.push = push;
