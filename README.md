@@ -2,6 +2,16 @@
 
 Finance agents that may only say numbers a deterministic engine proved. Built for MONEY TALKS (Block Convey, New York, 5 September 2026).
 
+## How this maps to the judging criteria
+
+| Criterion | What the product does | Where to see it |
+|---|---|---|
+| Use of Hackathon Tools & Sponsor Technology | PRISM sessions explain-v1-04 and explain-v2-04 with tool trajectories, live verdict line, failure_class metadata, Root Cause, Remediation applied as a commit (none applied yet; `scripts/apply_remediation.sh` writes it and `/explain/prove` reads it back); GIDE session log; ElevenLabs Scribe and Flash TTS, twelve voices | `shots/prism/`, `docs/gide-session.jsonl`, `config/voices.json` |
+| Financial Workflow Automation | Automates flux analysis, the variance commentary step of the month-end close: compares periods, ranks variances, drills to transaction drivers, produces cited commentary; MANDATE payments mode enforces a spoken standing order on cash outflows | `make meeting V=v2 N=4`; key `M` |
+| AI Intelligence & Accuracy | Agents answer only from engine-computed evidence slices; verify.py rejects any figure not in the evidence before it is spoken; v1 freeform produced 42 unverifiable figures, v2 produced zero | `/explain/prove`, the red card in explain-v1-04 |
+| Business Value & Decision Support | Days of spreadsheet flux analysis to minutes; the CFO cross-examines owners live; concentration insights ("3 customers, 64% of the increase"); context memory improves run over run | the transcript panel, `docs/context-memory.md` |
+| Product Execution & User Experience | End to end live: hold-to-talk, twelve voices under 3 s, transcript with citations and verdicts, evidence drawer to transactions, Run 1 / Run 2 switch | the demo video |
+
 ## 1. Problem
 
 Every month someone in finance explains why the numbers moved, reading two periods of summaries and transaction CSVs by hand. AI attempts write fluent paragraphs with figures that are not in the data. A confident wrong number in a finance meeting is the most expensive sentence there is.
