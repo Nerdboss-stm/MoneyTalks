@@ -72,6 +72,7 @@ export class Room {
   private verdictA!: Text;
   private verdictB!: Text;
   private traceId: string | null = null;
+  private aborted = false;
   private pendingVerdicts = new Map<string, any>();
   private stackGroup = new Container();
   private q: HTMLDivElement;
@@ -699,10 +700,11 @@ export class Room {
       for (const t of row.tokens) if (t.visible && !figures.has(clean(t.text))) figures.set(clean(t.text), { row, tok: t });
     }
     const t0 = performance.now();
+    this.aborted = false;
     await new Promise<void>((resolve) => {
       let i = 0;
       const tick = () => {
-        if (i >= words.length) {
+        if (this.aborted || i >= words.length) {
           this.hooks.onAnswerDone?.(agentId);
           return resolve();
         }
@@ -730,6 +732,11 @@ export class Room {
       tick();
     });
     this.previous = { id: agentId, citations };
+  }
+
+  /* Escape: end the word printer now so the queued release runs immediately instead of after the answer. */
+  stopSpeaking(): void {
+    this.aborted = true;
   }
 
   private async stageReleased(): Promise<void> {

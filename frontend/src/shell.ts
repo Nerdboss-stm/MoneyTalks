@@ -322,8 +322,8 @@ export class Shell {
     return card;
   }
 
-  private cardOf(agentId: unknown): Card | undefined {
-    for (let i = this.cards.length - 1; i >= 0; i--) if (this.cards[i].agentId === agentId && !this.cards[i].done) return this.cards[i];
+  private cardOf(agentId: unknown, includeDone = false): Card | undefined {
+    for (let i = this.cards.length - 1; i >= 0; i--) if (this.cards[i].agentId === agentId && (includeDone || !this.cards[i].done)) return this.cards[i];
     return undefined;
   }
 
@@ -365,8 +365,10 @@ export class Shell {
     this.scroll();
   }
 
+  /* Also lands after Escape, when the release has already closed the card: the transcript keeps the
+     whole answer that was generated and verified, even though its playback was cut off. */
   answerDone(agentId: string): void {
-    const c = this.cardOf(agentId);
+    const c = this.cardOf(agentId, true);
     if (!c) return;
     this.render(c.txt, c.text || c.txt.textContent || "");
     c.printed = true;

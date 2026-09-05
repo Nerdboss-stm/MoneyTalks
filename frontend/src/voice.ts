@@ -24,6 +24,7 @@ export class Voice {
   playing = false;
   recording = false;
   private pausedReplay = false;
+  private speakingAgent: string | null = null;
 
   constructor(private hooks: VoiceHooks) {}
 
@@ -121,13 +122,15 @@ export class Voice {
       return;
     }
     this.playing = true;
+    this.speakingAgent = agentId ?? null;
     this.hooks.onPlaying?.(true, agentId ?? null);
     this.pauseReplay();
     const a = new Audio(`${API}${url}`);
     this.audio = a;
     const finish = async () => {
-      if (this.audio !== a) return;
+      if (this.audio !== a) return; // cancel() cleared it: that path already released the agent
       this.audio = null;
+      this.speakingAgent = null;
       this.playing = false;
       this.hooks.onPlaying?.(false, agentId ?? null);
       await this.released(agentId);
@@ -139,6 +142,31 @@ export class Voice {
     } catch {
       await finish();
     }
+  }
+
+  /* Escape: cut the answer off now. Playback stops and the replay resumes without waiting for the
+     network, so this works with the backend unreachable; the release POST is best effort.
+     Returns the agent that was speaking, for the caller to release on screen. */
+  cancel(): string | null {
+    const agentId = this.speakingAgent;
+    const a = this.audio;
+    const was = this.playing;
+    this.audio = null;
+    this.speakingAgent = null;
+    this.playing = false;
+    if (a) {
+      try {
+        a.pause();
+        a.src = "";
+      } catch {
+        /* already torn down */
+      }
+    }
+    if (!was) return null;
+    this.hooks.onPlaying?.(false, agentId);
+    this.resumeReplay();
+    void this.released(agentId);
+    return agentId;
   }
 
   async speakText(text: string, session: string | null, asOf: string | null): Promise<any> {

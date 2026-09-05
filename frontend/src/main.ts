@@ -25,6 +25,7 @@ let voice: Voice;
 let meetingMode = false;
 let userMode: "meeting" | "payments" | null = null;
 let pendingMandate: string | null = null;
+let currentAgent: string | null = null;
 let net = "NET —";
 let netOk = false;
 let netInfo = { backend: false, voice: false };
@@ -208,6 +209,7 @@ function onEvent(e: BusEvent): void {
       case "addressed": {
         const lane = model.laneOf.get(fx.payload.agent_id);
         floor.setEmphasis(lane ?? null);
+        currentAgent = fx.payload.agent_id ?? null; // who Escape would release
         break;
       }
       case "answer": {
@@ -218,6 +220,7 @@ function onEvent(e: BusEvent): void {
       case "released_agent":
         floor.setEmphasis(null);
         ui.clearAnswer();
+        currentAgent = null;
         break;
       case "desk_answer":
       case "query_answer":
@@ -227,6 +230,13 @@ function onEvent(e: BusEvent): void {
   }
   ui.setCash(model.cash_cents);
   publishHook();
+}
+
+/* Escape cut the answer off: clear the seat, the rows and the card here, without waiting for the
+   backend's own agent.released. A later one from the bus lands on already-cleared state. */
+function releaseLocally(agentId: string): void {
+  const ev: BusEvent = { type: "agent.released", ts_wall: new Date().toISOString(), payload: { agent_id: agentId } };
+  window.dispatchEvent(new CustomEvent<BusEvent>("bus:event", { detail: ev }));
 }
 
 async function selectSession(s: string): Promise<void> {
@@ -266,6 +276,9 @@ async function onKey(e: KeyboardEvent): Promise<void> {
     return;
   }
   if (e.key === "Escape") {
+    const stopped = voice.cancel() ?? currentAgent; // live audio, or a replayed answer with none
+    room.stopSpeaking();
+    if (stopped) releaseLocally(stopped);
     ui.closeOverlays();
     shell.closeAll();
     return;
